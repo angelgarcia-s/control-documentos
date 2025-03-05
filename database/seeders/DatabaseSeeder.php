@@ -23,13 +23,13 @@ class DatabaseSeeder extends Seeder
             BarnicesSeeder::class,
             ColoresEmpaqueSeeder::class,
             ColoresSeeder::class,
+            TamanosSeeder::class,
             FamiliaProductosSeeder::class,
             MaterialesSeeder::class,
-            ProductosSeeder::class,
             ProveedoresSeeder::class,
-            TamanosSeeder::class,
             TiposEmpaqueSeeder::class,
             UnidadMedidaSeeder::class,
+            ProductosSeeder::class,
         ]);
     }
 }

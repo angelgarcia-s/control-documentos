@@ -18,7 +18,7 @@ use App\Http\Controllers\TablesController;
 use App\Http\Controllers\ChartsController;
 use App\Http\Controllers\MapsController;
 use App\Http\Controllers\IconsController;
-
+use App\Http\Controllers\ProductosController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,8 +29,8 @@ Route::get('/test', function () {
 });
 
 //PRODUCTOS//
-Route::get('productos/test', [ProductosController::class, 'test'])->name('productos.test');
-Route::resource('productos', ProductosController::class);
+Route::get('/productos/test', [ProductosController::class, 'test'])->name('productos.test');
+Route::resource('/productos', ProductosController::class);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
