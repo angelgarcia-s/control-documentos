@@ -18,5 +18,18 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        $this->call([
+            BarnicesSeeder::class,
+            ColoresEmpaqueSeeder::class,
+            ColoresSeeder::class,
+            FamiliaProductosSeeder::class,
+            MaterialesSeeder::class,
+            ProductosSeeder::class,
+            ProveedoresSeeder::class,
+            TamanosSeeder::class,
+            TiposEmpaqueSeeder::class,
+            UnidadMedidaSeeder::class,
+        ]);
     }
 }
