@@ -21,6 +21,7 @@
         
         <!-- APP SCSS -->
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://kit.fontawesome.com/7a3f062316.js" crossorigin="anonymous"></script>
         @vite(['resources/css/app.css', 'resources/sass/app.scss'])
 
 

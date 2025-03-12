@@ -47,6 +47,11 @@ class Producto extends Model
     {
         return $this->belongsTo(Color::class, 'id_color');
     }
+    
+    public function unidadMedida()
+    {
+        return $this->belongsTo(UnidadMedida::class, 'id_unidad_medida');
+    }
 
     public function printcards()
     {
@@ -57,5 +62,6 @@ class Producto extends Model
     {
         return $this->hasMany(CodigoBarra::class, 'producto_id');
     }
+
 }
 
