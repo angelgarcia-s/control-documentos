@@ -8,8 +8,8 @@
                     @foreach($columns as $column)
                         <th class="py-3 px-6 text-left border cursor-pointer" wire:click="sortBy('{{ $column['name'] }}')">
                             {{ $column['label'] }}
-                            @if($orderBy === $column['name']) 
-                                <i class="ti {{ $orderDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending' }} ml-1"></i>
+                            @if($column['sortable'])
+                                <i class="ti {{ $orderBy === $column['name'] ? ($orderDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending') : 'ti-arrows-sort' }} ml-1"></i>
                             @endif
                         </th>
                     @endforeach
@@ -21,15 +21,14 @@
                         @if($column['searchable'])
                             <div class="relative">
                                 <input type="text"
-                                       wire:model.lazy="search.{{ $column['name'] }}"
+                                       wire:model.live="search.{{ $column['name'] }}"
                                        class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
                                        placeholder="Buscar {{ $column['label'] }}'">
                     
                                 @if(!empty($search[$column['name']]))
                                     <button type="button"
-                                            wire:click="clearSearch('{{ $column['name'] }}')"
-                                            wire:target="clearSearch"
-                                            wire:loading.attr="disabled"
+                                           onclick="window.location.href='{{ route('productos.index') }}'"
+                                            
                                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                         <i class="ti ti-x text-sm"></i>
                                     </button>
@@ -61,7 +60,17 @@
                         </td>
                         @foreach($columns as $column)
                             <td class="py-3 px-6 border">
-                                {{ $producto->{$column['name']} ?? '-' }}
+                                @if ($column['name'] === 'id_familia')
+                                    {{ $producto->familia?->nombre ?? '-' }}
+                                @elseif ($column['name'] === 'id_color')
+                                    {{ $producto->colores?->nombre ?? '-' }}
+                                @elseif ($column['name'] === 'id_tamano')
+                                    {{ $producto->tamanos?->nombre ?? '-' }}
+                                @elseif ($column['name'] === 'id_proveedor')
+                                    {{ $producto->proveedor?->nombre ?? '-' }}
+                                @else
+                                    {{ $producto->{$column['name']} ?? '-' }}
+                                @endif
                             </td>
                         @endforeach
                     </tr>
@@ -74,3 +83,13 @@
         {{ $productos->links() }}
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:initialized', function () {
+        Livewire.on('search-updated', () => {
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+            });
+        });
+    });
+</script>

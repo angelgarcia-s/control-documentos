@@ -62,15 +62,11 @@ class ProductosTable extends Component
 
     public function clearSearch($field)
     {
-        $this->search[$field] = ''; // Borra el valor en Livewire
-        $this->resetPage(); // Reinicia la paginación
+        $this->search[$field] = '';
+        $this->resetPage();
     }
 
-    public function clearAllFilters()
-{
-    $this->search = []; // Borra todos los valores de búsqueda
-    $this->resetPage(); // Reinicia la paginación para mostrar todos los registros
-}
+
 
     public function render()
     {

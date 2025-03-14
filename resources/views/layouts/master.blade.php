@@ -26,6 +26,9 @@
 
 
         @include('layouts.components.styles')
+
+        <!-- LIVEWIRE STYLES -->
+        @livewireStyles
         
         <!-- MAIN JS -->
         <script src="{{asset('build/assets/main.js')}}"></script>
@@ -105,6 +108,9 @@
 
         <!-- CUSTOM-SWITCHER JS -->
         @vite('resources/assets/js/custom-switcher.js')
+
+        <!-- LIVEWIRE SCRIPTS -->
+        @livewireScripts
 
         
         <!-- END SCRIPTS -->

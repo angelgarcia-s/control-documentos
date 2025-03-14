@@ -30,7 +30,7 @@ Route::get('/test', function () {
 
 //PRODUCTOS//
 Route::get('/productos/test', [ProductosController::class, 'test'])->name('productos.test');
-Route::resource('/productos', ProductosController::class);
+Route::resource('productos', ProductosController::class);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
