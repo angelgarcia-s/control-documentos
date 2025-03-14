@@ -29,39 +29,17 @@
                             <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                         </div>
                     </div>
-                    <form method="GET" action="{{ route('productos.index') }}">
-                        <x-table :columns="$columns" route="productos.index" :paginated="$productos">
-                            @foreach ($productos as $producto)
-                                <tr>
-                                    <!-- Columna Acciones al principio -->
-                                    <td class="py-3 px-6 whitespace-nowrap">
-                                        <div class="flex items-center space-x-2">
-                                            <a href="{{ route('productos.show', $producto->id) }}" class="ti-btn ti-btn-outline-primary !py-1 !px-2 ti-btn-w-xs ti-btn-wave">
-                                                Ver
-                                            </a>
-                                            <select class="action-select inline-flex items-center px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300" data-producto-id="{{ $producto->id }}">
-                                                <option value="">Acción</option>
-                                                <option value="codigos">Códigos de barras</option>
-                                                <option value="print">PrintCards</option>
-                                                <option value="editar">Editar</option>
-                                                <option value="borrar">Borrar</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <!-- Otras columnas -->
-                                    <td class="py-3 px-6 text-left">{{ $producto->id }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->sku }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->familia->nombre ?? '-' }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->producto }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->colores->nombre ?? '-' }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->tamanos->nombre ?? '-' }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->multiplos_master ?? '-' }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->cupo_tarima ?? '-' }}</td>
-                                    <td class="py-3 px-6 text-left">{{ $producto->proveedor->nombre ?? '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </x-table>
-                    </form>
+                    <div class="flex justify-end mb-3">
+                        <button type="button"
+                                wire:click="clearAllFilters"
+                                class="ti-btn ti-btn-danger px-4 py-2 rounded">
+                            Limpiar Filtros
+                        </button>
+                    </div>
+                    
+                    <!-- Componente Livewire que maneja la tabla -->
+                    @livewire('productos-table')
+                    
                 </div>
             </div>
         </div>
