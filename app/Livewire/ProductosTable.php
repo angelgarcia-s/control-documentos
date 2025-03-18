@@ -18,7 +18,6 @@ class ProductosTable extends Component
 
     protected $queryString = [];
 
-    // Definir las columnas de la tabla
     public $columns = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
         ['name' => 'sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true],
@@ -30,6 +29,17 @@ class ProductosTable extends Component
         ['name' => 'cupo_tarima', 'label' => 'Cupo Tarima', 'sortable' => true, 'searchable' => true],
         ['name' => 'id_proveedor', 'label' => 'Proveedor', 'sortable' => true, 'searchable' => true],
     ];
+
+    public function executeAction($id, $action)
+    {
+        if ($action === 'editar') {
+            return redirect()->route('productos.edit', ['producto' => $id]);
+        }
+
+        if ($action === 'borrar') {
+            $this->confirmDelete($id);
+        }
+    }
 
     public function updatingSearch()
     {
@@ -49,15 +59,33 @@ class ProductosTable extends Component
     public function confirmDelete($productoId)
     {
         $this->confirmingDelete = $productoId;
+        $this->dispatch('open-modal', 'delete-producto');
     }
 
     public function deleteProducto()
     {
         if ($this->confirmingDelete) {
-            Producto::find($this->confirmingDelete)?->delete();
-            $this->confirmingDelete = null;
-            session()->flash('success', 'Producto eliminado correctamente.');
+            $producto = Producto::find($this->confirmingDelete);
+            if ($producto) {
+                $producto->delete();
+                $this->confirmingDelete = null;
+                $this->dispatch('close-modal', 'delete-producto');
+                session()->flash('success', 'Producto eliminado correctamente.');
+                $this->resetPage();
+                $this->dispatch('resetSelects');
+            } else {
+                session()->flash('error', 'Producto no encontrado.');
+                $this->confirmingDelete = null;
+                $this->dispatch('close-modal', 'delete-producto');
+            }
         }
+    }
+
+    public function cancelDelete()
+    {
+        $this->confirmingDelete = null;
+        $this->dispatch('close-modal', 'delete-producto');
+        $this->dispatch('resetSelects');
     }
 
     public function clearSearch($field)
@@ -65,8 +93,6 @@ class ProductosTable extends Component
         $this->search[$field] = '';
         $this->resetPage();
     }
-
-
 
     public function render()
     {
