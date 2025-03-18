@@ -19,6 +19,7 @@ use App\Http\Controllers\ChartsController;
 use App\Http\Controllers\MapsController;
 use App\Http\Controllers\IconsController;
 use App\Http\Controllers\ProductosController;
+use Illuminate\View\View;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +32,11 @@ Route::get('/test', function () {
 //PRODUCTOS//
 Route::get('/productos/test', [ProductosController::class, 'test'])->name('productos.test');
 Route::resource('productos', ProductosController::class);
+
+//PROVEEDORES//
+Route::get('/proveedores',function(){
+    return view('provedores.index');
+})->name('proveedores.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

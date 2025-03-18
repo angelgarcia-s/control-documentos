@@ -90,7 +90,7 @@
         <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres borrar este producto?</p>
         <div class="flex justify-end space-x-2">
             <button wire:click="cancelDelete" 
-                    class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
+                    class="ti-btn ti-btn-primary !py-1 !px-2 ti-btn-wave">
                 Cancelar
             </button>
             <button wire:click="deleteProducto" 
