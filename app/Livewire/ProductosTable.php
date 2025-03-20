@@ -6,11 +6,15 @@ use App\Models\Producto;
 
 class ProductosTable extends TablaGenerica
 {
-    public function mount()
+    public function mount($modelo = Producto::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
     {
+        // Reiniciamos confirmingDelete al montar para evitar valores residuales
+        $this->confirmingDelete = null;
+        $this->selectedActions = []; // Reiniciamos al montar
+        
         parent::mount(
-            modelo: Producto::class,
-            columnas: [
+            modelo: $modelo,
+            columnas: $columnas ?: [
                 ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
                 ['name' => 'sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true],
                 ['name' => 'id_familia', 'label' => 'Familia', 'sortable' => true, 'searchable' => true, 'relationship' => 'familia'],
@@ -21,14 +25,23 @@ class ProductosTable extends TablaGenerica
                 ['name' => 'cupo_tarima', 'label' => 'Cupo Tarima', 'sortable' => true, 'searchable' => true],
                 ['name' => 'id_proveedor', 'label' => 'Proveedor', 'sortable' => true, 'searchable' => true, 'relationship' => 'proveedor'],
             ],
-            acciones: [
+            acciones: $acciones ?: [
                 'codigos' => 'Códigos de barras',
                 'print' => 'PrintCards',
                 'editar' => 'Editar',
                 'borrar' => 'Borrar',
             ],
-            relaciones: ['familia', 'proveedor', 'tamanos', 'colores']
+            relaciones: $relaciones ?: ['familia', 'proveedor', 'tamanos', 'colores'],
+            botones: $botones ?: [
+                ['etiqueta' => 'Ver', 'ruta' => 'productos.show', 'parametro' => 'producto', 'estilo' => 'primary'],
+            ]
         );
+    }
+
+    public function borrar($id)
+    {
+        $this->confirmarEliminar($id);
+            
     }
 
     public function editar($id)

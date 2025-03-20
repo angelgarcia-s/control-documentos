@@ -18,12 +18,12 @@
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <h5 class="box-title">Productos</h5>
+                    <h5 class="box-title">Proveedores</h5>
                 </div>
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            <a href="{{ route('productos.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Producto</a>
+                            <a href="{{ route('proveedores.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Proveedor</a>
                         </div>
                         <div>
                             <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
@@ -32,7 +32,7 @@
                     
                     
                     <!-- Componente Livewire que maneja la tabla -->
-                    @livewire('productos-table')
+                    @livewire('proveedores-table')
                     
                 </div>
             </div>

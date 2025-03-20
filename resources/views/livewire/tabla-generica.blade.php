@@ -41,7 +41,16 @@
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-                                <select wire:change="ejecutarAccion({{ $elemento->id }}, $event.target.value)"
+                                @if(!empty($botones))
+                                    @foreach($botones as $boton)
+                                        <a href="{{ route($boton['ruta'], [$boton['parametro'] => $elemento->id]) }}"
+                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2 ti-btn-w-xs ti-btn-wave">
+                                            {{ $boton['etiqueta'] }}
+                                        </a>
+                                    @endforeach
+                                @endif
+                                <select wire:model.live="selectedActions.{{ $elemento->id }}"
+                                        wire:change="ejecutarAccion({{ $elemento->id }}, $event.target.value)"
                                         wire:key="select-{{ $elemento->id }}"
                                         class="action-select ti-form-select inline-flex items-center px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
                                     <option value="">Acción</option>
@@ -70,8 +79,10 @@
         {{ $elementos->links() }}
     </div>
 
-    <x-modal name="eliminar-elemento" :show="$confirmingDelete !== null" maxWidth="md">
-        <div class="p-6">
+    <!-- Modal basado en Livewire puro -->
+    @if($confirmingDelete !== null)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
             <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar este elemento?</p>
             <div class="flex justify-end space-x-2">
@@ -86,15 +97,8 @@
                 </button>
             </div>
         </div>
-    </x-modal>
+    </div>
+    @endif
+
 </div>
 
-<script>
-    document.addEventListener('livewire:initialized', function () {
-        Livewire.on('reiniciarSelects', () => {
-            document.querySelectorAll('.action-select').forEach(select => {
-                select.value = '';
-            });
-        });
-    });
-</script>

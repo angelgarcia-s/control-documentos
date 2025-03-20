@@ -83,24 +83,7 @@
         {{ $productos->links() }}
     </div>
 
-    <!-- Modal de Confirmación usando componente -->
-<x-modal name="delete-producto" :show="$confirmingDelete !== null" maxWidth="md">
-    <div class="p-6">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
-        <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres borrar este producto?</p>
-        <div class="flex justify-end space-x-2">
-            <button wire:click="cancelDelete" 
-                    class="ti-btn ti-btn-primary !py-1 !px-2 ti-btn-wave">
-                Cancelar
-            </button>
-            <button wire:click="deleteProducto" 
-                    wire:loading.attr="disabled" 
-                    class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
-                Confirmar
-            </button>
-        </div>
-    </div>
-</x-modal>
+
 
 <script>
     document.addEventListener('livewire:initialized', function () {
@@ -116,12 +99,5 @@
             });
         });
 
-        // Depuración de eventos
-        Livewire.on('open-modal', (name) => {
-            console.log('Evento open-modal disparado:', name);
-        });
-        Livewire.on('close-modal', (name) => {
-            console.log('Evento close-modal disparado:', name);
-        });
     });
 </script>

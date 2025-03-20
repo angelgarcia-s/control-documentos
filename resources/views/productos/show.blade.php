@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold mb-4">Detalles del Producto</h1>
         <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <p><strong>Código:</strong> {{ $producto->codigo }}</p>
+            <p><strong>Código:</strong> {{ $producto->sku }}</p>
             <p><strong>Descripción:</strong> {{ $producto->descripcion }}</p>
             <p><strong>Unidad de Medida de Ventas:</strong> {{ $producto->unidad_medida_ventas }}</p>
             <p><strong>Múltiplos Master:</strong> {{ $producto->multiplos_master }}</p>

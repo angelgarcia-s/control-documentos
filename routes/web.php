@@ -35,7 +35,7 @@ Route::resource('productos', ProductosController::class);
 
 //PROVEEDORES//
 Route::get('/proveedores',function(){
-    return view('provedores.index');
+    return view('proveedores.index');
 })->name('proveedores.index');
 
 Route::get('/dashboard', function () {

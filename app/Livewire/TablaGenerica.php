@@ -15,20 +15,26 @@ class TablaGenerica extends Component
     public $orderDirection = 'asc';
     public $perPage = 10;
     public $confirmingDelete = null;
+    public $selectedActions = []; // Controla los valores de los <select>
 
     public $modelo;
     public $columnas = [];
     public $acciones = [];
     public $relaciones = [];
+    public $botones = [];
 
     protected $queryString = [];
 
-    public function mount($modelo, $columnas, $acciones = [], $relaciones = [])
+    public function mount($modelo, $columnas, $acciones = [], $relaciones = [], $botones = [])
     {
         $this->modelo = $modelo;
         $this->columnas = $columnas;
         $this->acciones = $acciones;
         $this->relaciones = $relaciones;
+        $this->botones = $botones;
+        $this->confirmingDelete = null; // Aseguramos que sea null al montar
+        $this->selectedActions = []; // Reiniciamos al montar
+        
     }
 
     public function ejecutarAccion($id, $accion)
@@ -36,21 +42,7 @@ class TablaGenerica extends Component
         if ($accion && method_exists($this, $accion)) {
             $this->$accion($id);
         }
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function ordenarPor($campo)
-    {
-        if ($this->orderBy === $campo) {
-            $this->orderDirection = $this->orderDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->orderBy = $campo;
-            $this->orderDirection = 'asc';
-        }
+        $this->selectedActions[$id] = ''; // Reiniciamos el <select> específico después de la acción
     }
 
     public function confirmarEliminar($id)
@@ -66,39 +58,35 @@ class TablaGenerica extends Component
             if ($elemento) {
                 $elemento->delete();
                 $this->confirmingDelete = null;
-                $this->dispatch('cerrar-modal', 'eliminar-elemento');
                 session()->flash('success', 'Elemento eliminado correctamente.');
                 $this->resetPage();
                 $this->dispatch('reiniciarSelects');
             } else {
                 session()->flash('error', 'Elemento no encontrado.');
                 $this->confirmingDelete = null;
-                $this->dispatch('cerrar-modal', 'eliminar-elemento');
             }
+            $this->selectedActions = []; // Reiniciamos todos los <select>
         }
     }
 
     public function cancelarEliminar()
     {
         $this->confirmingDelete = null;
-        $this->dispatch('cerrar-modal', 'eliminar-elemento');
-        $this->dispatch('reiniciarSelects');
+        $this->selectedActions = []; // Reiniciamos todos los <select>
     }
 
     public function limpiarBusqueda($campo)
     {
-        $this->search[$campo] = '';
-        $this->resetPage();
+        $this->search[$campo] = ''; // Limpiamos el campo de búsqueda especificado
+        $this->resetPage(); // Reseteamos la paginación para mostrar todos los resultados
     }
-
+    
     public function render()
     {
         $query = $this->modelo::query();
-
         if (!empty($this->relaciones)) {
             $query->with($this->relaciones);
         }
-
         foreach ($this->search as $campo => $valor) {
             if (!empty($valor)) {
                 $columna = collect($this->columnas)->firstWhere('name', $campo);
@@ -111,13 +99,13 @@ class TablaGenerica extends Component
                 }
             }
         }
-
         $query->orderBy($this->orderBy, $this->orderDirection);
 
         return view('livewire.tabla-generica', [
             'elementos' => $query->paginate($this->perPage),
             'columnas' => $this->columnas,
             'acciones' => $this->acciones,
+            'botones' => $this->botones,
         ]);
     }
 }
