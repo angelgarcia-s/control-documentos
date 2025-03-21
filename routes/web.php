@@ -19,6 +19,7 @@ use App\Http\Controllers\ChartsController;
 use App\Http\Controllers\MapsController;
 use App\Http\Controllers\IconsController;
 use App\Http\Controllers\ProductosController;
+use App\Http\Controllers\ProveedoresController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
@@ -31,12 +32,10 @@ Route::get('/test', function () {
 
 //PRODUCTOS//
 Route::get('/productos/test', [ProductosController::class, 'test'])->name('productos.test');
-Route::resource('productos', ProductosController::class);
+Route::resource('productos', ProveedoresController::class, ['parameters' => ['productos' => 'producto']]);
 
 //PROVEEDORES//
-Route::get('/proveedores',function(){
-    return view('proveedores.index');
-})->name('proveedores.index');
+Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -3,31 +3,40 @@
 namespace App\Livewire;
 
 use App\Models\Proveedor;
+use App\Livewire\TablaGenerica;
+
 
 class ProveedoresTable extends TablaGenerica
 {
-    public function mount($modelo = Proveedor::class, $columnas = [], $acciones = [], $relaciones = [])
+
+    public function mount($modelo = Producto::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
     {
-        parent::mount(
-            modelo: $modelo,
-            columnas: $columnas ?: [
-                ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-                ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-                ['name' => 'contacto', 'label' => 'Contacto', 'sortable' => true, 'searchable' => true],
-            ],
-            acciones: $acciones ?: [
-                'editar' => 'Editar',
-                'borrar' => 'Borrar',
-            ],
-            relaciones: $relaciones,
-            botones: $botones ?: [
-                ['etiqueta' => 'Ver', 'ruta' => 'proveedores.show', 'parametro' => 'proveedor', 'estilo' => 'primary'],
-            ]
-        );
+        $modelo = Proveedor::class;
+        $columnas = [
+            ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+            ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+            ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false], // Opcional
+        ];
+        $acciones = [
+            'editar' => 'Editar',
+            'borrar' => 'Borrar',
+        ];
+        $relaciones = ['productos']; // Si no hay relaciones, déjarlo vacío
+        $botones = [
+            ['ruta' => 'proveedores.show', 'parametro' => 'proveedor', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
+        ];
+
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
     }
 
     public function editar($id)
     {
-        return redirect()->route('proveedores.edit', ['proveedor' => $id]);
+        return redirect()->route('proveedores.edit', $id);
     }
+
+    public function borrar($id)
+    {
+        $this->confirmingDelete = $id;
+    }
+
 }

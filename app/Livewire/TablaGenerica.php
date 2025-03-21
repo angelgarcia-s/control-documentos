@@ -106,9 +106,13 @@ class TablaGenerica extends Component
     public function render()
     {
         $query = $this->modelo::query();
+
+        // Cargar relaciones con conteo
         if (!empty($this->relaciones)) {
-            $query->with($this->relaciones);
+            $query->with($this->relaciones)->withCount($this->relaciones);
         }
+
+        // Lógica de búsqueda
         foreach ($this->search as $campo => $valor) {
             if (!empty($valor)) {
                 $columna = collect($this->columnas)->firstWhere('name', $campo);

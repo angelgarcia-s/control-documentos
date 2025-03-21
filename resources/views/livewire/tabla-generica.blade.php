@@ -62,9 +62,14 @@
                         </td>
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                @if(isset($columna['relationship']))
+                                @if(str_ends_with($columna['name'], '_count'))
+                                    <!-- Si el nombre de la columna termina en '_count', mostrar como conteo -->
+                                    {{ $elemento->{$columna['name']} ?? '0' }}
+                                @elseif(isset($columna['relationship']))
+                                    <!-- Para columnas con relaciones -->
                                     {{ $elemento->{$columna['relationship']}?->nombre ?? '-' }}
                                 @else
+                                    <!-- Para columnas normales -->
                                     {{ $elemento->{$columna['name']} ?? '-' }}
                                 @endif
                             </td>

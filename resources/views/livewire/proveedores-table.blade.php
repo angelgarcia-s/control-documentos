@@ -1,3 +1,3 @@
 <div>
-    {{-- Close your eyes. Count to one. That is how long forever feels. --}}
+    {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
 </div>
