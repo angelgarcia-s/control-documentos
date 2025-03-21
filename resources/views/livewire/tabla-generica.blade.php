@@ -44,7 +44,7 @@
                                 @if(!empty($botones))
                                     @foreach($botones as $boton)
                                         <a href="{{ route($boton['ruta'], [$boton['parametro'] => $elemento->id]) }}"
-                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2 ti-btn-w-xs ti-btn-wave">
+                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2  ti-btn-wave">
                                             {{ $boton['etiqueta'] }}
                                         </a>
                                     @endforeach
@@ -52,7 +52,7 @@
                                 <select wire:model.live="selectedActions.{{ $elemento->id }}"
                                         wire:change="ejecutarAccion({{ $elemento->id }}, $event.target.value)"
                                         wire:key="select-{{ $elemento->id }}"
-                                        class="action-select ti-form-select inline-flex items-center px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                                        class="action-select appearance-none w-24 bg-white border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-gray-500">
                                     <option value="">Acción</option>
                                     @foreach($acciones as $accion => $etiqueta)
                                         <option value="{{ $accion }}">{{ $etiqueta }}</option>
@@ -75,9 +75,24 @@
         </table>
     </div>
 
-    <div class="mt-3">
-        {{ $elementos->links() }}
-    </div>
+    <!-- Paginación con Livewire y <select> -->
+        <div class="mt-3 flex items-center justify-between">
+            <!-- Select para elementos por página -->
+            <div class="flex items-center space-x-2">
+                <label for="perPage" class="text-sm text-gray-700 dark:text-gray-300">Mostrar:</label>
+                <select wire:model.live="perPage" id="perPage"
+                        class="ti-form-select w-16 px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                    @foreach($perPageOptions as $option)
+                        <option value="{{ $option }}">{{ $option }}</option>
+                    @endforeach
+                </select>
+            </div>
+    
+            <!-- Paginación de Livewire con Tailwind -->
+            <div>
+                {{ $elementos->links('vendor.livewire.tailwind') }}
+            </div>
+        </div>
 
     <!-- Modal basado en Livewire puro -->
     @if($confirmingDelete !== null)

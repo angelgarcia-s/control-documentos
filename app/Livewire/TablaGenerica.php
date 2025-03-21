@@ -13,7 +13,8 @@ class TablaGenerica extends Component
     public $search = [];
     public $orderBy = 'id';
     public $orderDirection = 'asc';
-    public $perPage = 10;
+    public $perPage = 10; // Valor inicial de elementos por página
+    public $perPageOptions = [10, 25, 50, 100, 200]; // Opciones para el <select>
     public $confirmingDelete = null;
     public $selectedActions = []; // Controla los valores de los <select>
 
@@ -23,7 +24,12 @@ class TablaGenerica extends Component
     public $relaciones = [];
     public $botones = [];
 
-    protected $queryString = [];
+    protected $queryString = [
+        'search' => ['except' => []],
+        'orderBy' => ['except' => 'id'],
+        'orderDirection' => ['except' => 'asc'],
+        'perPage' => ['except' => 10],
+    ];
 
     public function mount($modelo, $columnas, $acciones = [], $relaciones = [], $botones = [])
     {
@@ -80,7 +86,23 @@ class TablaGenerica extends Component
         $this->search[$campo] = ''; // Limpiamos el campo de búsqueda especificado
         $this->resetPage(); // Reseteamos la paginación para mostrar todos los resultados
     }
-    
+
+    public function updatingPerPage()
+    {
+        $this->resetPage(); // Vuelve a la primera página al cambiar $perPage
+    }
+
+    public function ordenarPor($columna)
+    {
+        if ($this->orderBy === $columna) {
+            $this->orderDirection = $this->orderDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->orderBy = $columna;
+            $this->orderDirection = 'asc';
+        }
+        $this->resetPage(); // Volver a la primera página al ordenar
+    }
+
     public function render()
     {
         $query = $this->modelo::query();
@@ -100,6 +122,7 @@ class TablaGenerica extends Component
             }
         }
         $query->orderBy($this->orderBy, $this->orderDirection);
+        $elementos = $query->paginate($this->perPage);
 
         return view('livewire.tabla-generica', [
             'elementos' => $query->paginate($this->perPage),
