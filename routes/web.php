@@ -31,8 +31,8 @@ Route::get('/test', function () {
 });
 
 //PRODUCTOS//
-Route::get('/productos/test', [ProductosController::class, 'test'])->name('productos.test');
-Route::resource('productos', ProveedoresController::class, ['parameters' => ['productos' => 'producto']]);
+
+Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
 
 //PROVEEDORES//
 Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);
