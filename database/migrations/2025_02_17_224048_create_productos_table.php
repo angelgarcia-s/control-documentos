@@ -32,13 +32,13 @@ return new class extends Migration
             $table->unsignedBigInteger('id_unidad_medida')->nullable();
             $table->foreign('id_unidad_medida')->references('id')->on('unidad_medida')->onDelete('set null');
 
-            
             $table->integer('multiplos_master');
             $table->string('producto', 500); // Nombre como PLUS o CONFORT
             $table->string('nombre_corto', 500); // Producto + Color + Tamaño
             $table->integer('cupo_tarima');
             $table->enum('requiere_peso', ['SI', 'NO'])->default('NO');
-            $table->float('peso_gramos', 7, 2)->nullable();
+            $table->float('peso', 7, 2)->nullable();
+            $table->float('variacion_peso', 7, 2)->nullable();
             $table->timestamps();
         });
     }

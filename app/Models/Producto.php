@@ -24,7 +24,8 @@ class Producto extends Model
         'nombre_corto',
         'cupo_tarima',
         'requiere_peso',
-        'peso_gramos'
+        'peso',
+        'variacion_peso'
     ];
 
     // Relaciones
@@ -38,12 +39,12 @@ class Producto extends Model
         return $this->belongsTo(Proveedor::class, 'id_proveedor');
     }
 
-    public function tamanos()
+    public function tamano()
     {
         return $this->belongsTo(Tamano::class, 'id_tamano');
     }
 
-    public function colores()
+    public function color()
     {
         return $this->belongsTo(Color::class, 'id_color');
     }

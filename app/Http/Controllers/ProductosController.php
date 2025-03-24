@@ -55,7 +55,7 @@ class ProductosController extends Controller
      */
     public function show($id)
     {
-        $producto = Producto::with(['familia', 'proveedor', 'tamanos', 'colores', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
         return view('productos.show', compact('producto'));
     }
 
@@ -64,7 +64,7 @@ class ProductosController extends Controller
      */
     public function edit($id)
     {
-        $producto = Producto::with(['familia', 'proveedor', 'tamanos', 'colores', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
         return view('productos.edit', compact('producto'));
     }
 

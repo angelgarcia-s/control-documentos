@@ -39,7 +39,7 @@
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                     <div class="md:col-span-2 col-span-12 mb-4">
                         <label class="form-label">Código (SKU)</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->codigo }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->sku }}</p>
                     </div>
                     <div class="md:col-span-7 col-span-12 mb-4">
                         <label class="form-label">Descripción</label>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Unidad de medida de ventas</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->unidad_medida_ventas }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->unidadMedida->nombre }}</p>
                     </div>
                 </div>
             </div>
@@ -57,18 +57,24 @@
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
+                    <div class="md:col-span-10 col-span-10 mb-4">
+                        <label class="form-label">Nombre Corto</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->nombre_corto }}</p>
+                    </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Familia de producto</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->familia_producto }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->familia->nombre }}</p>
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Color</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->color }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->color->nombre }}</p>
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Tamaño</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->tamaño }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->tamano->nombre }}</p>
                     </div>
+
+                    
                 </div>
             </div>
 
