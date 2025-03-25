@@ -51,14 +51,15 @@ class ProductosController extends Controller
         ]);
 
         try {
-            $producto = Producto::create($validated);
-            $producto->nombre_corto = implode(' ', [
-                $producto->familia->nombre ?? 'Sin Familia',
-                $producto->color->nombre ?? 'Sin Color',
-                $producto->tamano->nombre ?? 'Sin Tamaño',
+            // Generar nombre_corto manualmente antes de crear
+            $nombre_corto = implode(' ', [
+                \App\Models\FamiliaProducto::find($validated['id_familia'])->nombre ?? 'Sin Familia',
+                \App\Models\Color::find($validated['id_color'])->nombre ?? 'Sin Color',
+                \App\Models\Tamano::find($validated['id_tamano'])->nombre ?? 'Sin Tamaño',
             ]);
-            $producto->save();
+            $validated['nombre_corto'] = $nombre_corto;
 
+            $producto = Producto::create($validated);
             return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Error al crear el producto: ' . $e->getMessage()])->withInput();
