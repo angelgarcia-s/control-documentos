@@ -69,19 +69,7 @@ class Producto extends Model
         return $this->hasMany(CodigoBarra::class, 'producto_id');
     }
 
-    // Evento saving para generar nombre_corto automáticamente
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($producto) {
-            $producto->nombre_corto = implode(' ', [
-                $producto->familia->nombre ?? 'Sin Familia',
-                $producto->color->nombre ?? 'Sin Color',
-                $producto->tamano->nombre ?? 'Sin Tamaño',
-            ]);
-        });
-    }
+    
 
 }
 

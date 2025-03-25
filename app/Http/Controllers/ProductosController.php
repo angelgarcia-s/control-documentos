@@ -108,14 +108,6 @@ class ProductosController extends Controller
             // Actualizar el producto con los datos validados
             $producto->update($validated);
 
-            // Regenerar nombre_corto
-            $producto->nombre_corto = implode(' ', [
-                $producto->familia->nombre ?? 'Sin Familia',
-                $producto->color->nombre ?? 'Sin Color',
-                $producto->tamano->nombre ?? 'Sin Tamaño',
-            ]);
-            $producto->save();
-
             return redirect()->route('productos.index', $producto)->with('success', 'Producto actualizado correctamente.');
         } catch (\Exception $e) {
             // Si algo falla, redirigir con el error y los datos ingresados

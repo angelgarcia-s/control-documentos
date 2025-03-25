@@ -88,7 +88,7 @@
                         </div>
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Nombre Corto</label>
-                            <input type="text" name="nombre_corto" value="{{ old('nombre_corto', $producto->nombre_corto) }}" class="form-control @error('nombre_corto') is-invalid @enderror" readonly>
+                            <input type="text" name="nombre_corto" value="{{ old('nombre_corto', $producto->nombre_corto) }}" class="form-control @error('nombre_corto') is-invalid @enderror">
                             @error('nombre_corto') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
 
