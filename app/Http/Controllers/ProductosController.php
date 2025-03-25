@@ -29,34 +29,47 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'sku' => 'required|unique:productos,sku|max:45',
-            'descripcion' => 'required',
+        $validated = $request->validate([
+            'sku' => 'required|string|max:45|unique:productos,sku',
+            'descripcion' => 'required|string|max:1000',
+            'id_unidad_medida' => 'required|exists:unidad_medida,id',
+            'id_categoria' => 'required|exists:categorias,id',
             'id_familia' => 'required|exists:familia_productos,id',
-            'id_tamano' => 'nullable|exists:tamanos,id',
-            'id_color' => 'nullable|exists:colores,id',
+            'id_color' => 'required|exists:colores,id',
+            'id_tamano' => 'required|exists:tamanos,id',
             'id_proveedor' => 'required|exists:proveedores,id',
-            'id_unidad_medida' => 'nullable|exists:unidad_medida,id',
-            'multiplos_master' => 'nullable|integer',
-            'producto' => 'required|max:500',
-            'nombre_corto' => 'required|max:500',
-            'cupo_tarima' => 'nullable|integer',
+            'multiplos_master' => 'required|integer|min:1',
+            'cupo_tarima' => 'required|integer|min:1',
             'requiere_peso' => 'required|in:SI,NO',
-            'peso' => 'nullable|numeric',
-            'variacion_peso' => 'nullable|numeric'
+            'peso' => 'nullable|numeric|min:0',
+            'variacion_peso' => 'nullable|numeric|min:0',
+            'codigo_barras_primario' => 'nullable|string|max:255',
+            'codigo_barras_secundario' => 'nullable|string|max:255',
+            'codigo_barras_terciario' => 'nullable|string|max:255',
+            'codigo_barras_cuaternario' => 'nullable|string|max:255',
+            'codigo_barras_master' => 'nullable|string|max:255',
         ]);
 
-        Producto::create($request->all());
+        try {
+            $producto = Producto::create($validated);
+            $producto->nombre_corto = implode(' ', [
+                $producto->familia->nombre ?? 'Sin Familia',
+                $producto->color->nombre ?? 'Sin Color',
+                $producto->tamano->nombre ?? 'Sin Tamaño',
+            ]);
+            $producto->save();
 
-        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
+            return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Error al crear el producto: ' . $e->getMessage()])->withInput();
+        }
     }
-
     /**
      * Muestra un producto específico.
      */
     public function show($id)
     {
-        $producto = Producto::with(['familia', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
         return view('productos.show', compact('producto'));
     }
 
@@ -65,36 +78,49 @@ class ProductosController extends Controller
      */
     public function edit($id)
     {
-        $producto = Producto::with(['familia', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
         return view('productos.edit', compact('producto'));
     }
 
     /**
      * Actualiza un producto en la base de datos.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Producto $producto)
     {
-        $request->validate([
-            'sku' => 'required|max:45|unique:productos,sku,' . $id,
+        $validated = $request->validate([
+            'sku' => 'required|max:45|unique:productos,sku,' . $producto->id,
             'descripcion' => 'required',
             'id_familia' => 'required|exists:familia_productos,id',
-            'id_tamano' => 'nullable|exists:tamanos,id',
-            'id_color' => 'nullable|exists:colores,id',
+            'id_categoria' => 'required|exists:categorias,id',
+            'id_tamano' => 'required|exists:tamanos,id',
+            'id_color' => 'required|exists:colores,id',
             'id_proveedor' => 'required|exists:proveedores,id',
-            'id_unidad_medida' => 'nullable|exists:unidad_medida,id',
-            'multiplos_master' => 'nullable|integer',
-            'producto' => 'required|max:500',
+            'id_unidad_medida' => 'required|exists:unidad_medida,id',
+            'multiplos_master' => 'required|integer',
             'nombre_corto' => 'required|max:500',
-            'cupo_tarima' => 'nullable|integer',
+            'cupo_tarima' => 'required|integer',
             'requiere_peso' => 'required|in:SI,NO',
             'peso' => 'nullable|numeric',
             'variacion_peso' => 'nullable|numeric'
         ]);
 
-        $producto = Producto::findOrFail($id);
-        $producto->update($request->all());
+        try {
+            // Actualizar el producto con los datos validados
+            $producto->update($validated);
 
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
+            // Regenerar nombre_corto
+            $producto->nombre_corto = implode(' ', [
+                $producto->familia->nombre ?? 'Sin Familia',
+                $producto->color->nombre ?? 'Sin Color',
+                $producto->tamano->nombre ?? 'Sin Tamaño',
+            ]);
+            $producto->save();
+
+            return redirect()->route('productos.index', $producto)->with('success', 'Producto actualizado correctamente.');
+        } catch (\Exception $e) {
+            // Si algo falla, redirigir con el error y los datos ingresados
+            return redirect()->back()->withErrors(['error' => 'Error al actualizar el producto: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**

@@ -57,9 +57,17 @@
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                    <div class="md:col-span-10 col-span-10 mb-4">
+                    <div class="md:col-span-3 col-span-12 mb-4">
+                        <label class="form-label">Categoria</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->categoria->nombre }}</p>
+                    </div>
+                    <div class="md:col-span-6 col-span-12 mb-4">
                         <label class="form-label">Nombre Corto</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $producto->nombre_corto }}</p>
+                    </div>
+                    <div class="md:col-span-3 col-span-12 mb-4">
+                        <label class="form-label">Proveedor</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->proveedor->nombre }}</p>
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Familia de producto</label>
@@ -123,9 +131,12 @@
                         <label class="form-label">Variación en el peso</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $producto->variacion_peso  }}</p>
                     </div>
+                    
                     <div class="flex justify-end md:col-span-12 col-span-12">
                         <a href="{{route('productos.index')}}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                     </div>
+
+                    
                 </div>
             </div>
         </div>
