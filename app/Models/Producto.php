@@ -14,13 +14,13 @@ class Producto extends Model
     protected $fillable = [
         'sku',
         'descripcion',
+        'id_categoria',
         'id_familia',
         'id_tamano',
         'id_color',
         'id_proveedor',
         'id_unidad_medida',
         'multiplos_master',
-        'producto',
         'nombre_corto',
         'cupo_tarima',
         'requiere_peso',
@@ -29,6 +29,11 @@ class Producto extends Model
     ];
 
     // Relaciones
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'id_categoria');
+    }
+
     public function familia()
     {
         return $this->belongsTo(FamiliaProducto::class, 'id_familia');
@@ -62,6 +67,20 @@ class Producto extends Model
     public function codigosBarras()
     {
         return $this->hasMany(CodigoBarra::class, 'producto_id');
+    }
+
+    // Evento saving para generar nombre_corto automáticamente
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($producto) {
+            $producto->nombre_corto = implode(' ', [
+                $producto->familia->nombre ?? 'Sin Familia',
+                $producto->color->nombre ?? 'Sin Color',
+                $producto->tamano->nombre ?? 'Sin Tamaño',
+            ]);
+        });
     }
 
 }

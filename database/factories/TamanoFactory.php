@@ -12,7 +12,7 @@ class TamanoFactory extends Factory
     public function definition()
     {
         return [
-            'nombre' => $this->faker->randomElement(['Pequeño', 'Mediano', 'Grande', 'Extra Grande', 'Mini',
+            'nombre' => $this->faker->randomElement(['Chico', 'Mediano', 'Grande', 'Extra Grande', 'Mini',
                 'Standard', 'Jumbo', 'Compacto', 'Regular', 'Maxi']),
         ];
     }

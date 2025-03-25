@@ -17,21 +17,21 @@ class ProductosTable extends TablaGenerica
             columnas: $columnas ?: [
                 ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
                 ['name' => 'sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true],
+                ['name' => 'nombre_corto', 'label' => 'Nombre Corto', 'sortable' => true, 'searchable' => true],
                 ['name' => 'id_familia', 'label' => 'Familia', 'sortable' => true, 'searchable' => true, 'relationship' => 'familia'],
-                ['name' => 'producto', 'label' => 'Producto', 'sortable' => true, 'searchable' => true],
-                ['name' => 'id_color', 'label' => 'Color', 'sortable' => true, 'searchable' => true, 'relationship' => 'colores'],
-                ['name' => 'id_tamano', 'label' => 'Tamaño', 'sortable' => true, 'searchable' => true, 'relationship' => 'tamanos'],
+                ['name' => 'id_color', 'label' => 'Color', 'sortable' => true, 'searchable' => true, 'relationship' => 'color'],
+                ['name' => 'id_tamano', 'label' => 'Tamaño', 'sortable' => true, 'searchable' => true, 'relationship' => 'tamano'],
                 ['name' => 'multiplos_master', 'label' => 'Múltiplos Master', 'sortable' => true, 'searchable' => true],
                 ['name' => 'cupo_tarima', 'label' => 'Cupo Tarima', 'sortable' => true, 'searchable' => true],
                 ['name' => 'id_proveedor', 'label' => 'Proveedor', 'sortable' => true, 'searchable' => true, 'relationship' => 'proveedor'],
             ],
             acciones: $acciones ?: [
                 'codigos' => 'Códigos de barras',
-                'print' => 'PrintCards',
+                'printcards' => 'PrintCards',
                 'editar' => 'Editar',
                 'borrar' => 'Borrar',
             ],
-            relaciones: $relaciones ?: ['familia', 'proveedor', 'tamanos', 'colores'],
+            relaciones: $relaciones ?: ['familia', 'proveedor', 'tamano', 'color'],
             botones: $botones ?: [
                 ['etiqueta' => 'Ver', 'ruta' => 'productos.show', 'parametro' => 'producto', 'estilo' => 'primary'],
             ]
@@ -54,7 +54,7 @@ class ProductosTable extends TablaGenerica
         // Lógica para "Códigos de barras" (por implementar)
     }
 
-    public function print($id)
+    public function printcards($id)
     {
         // Lógica para "PrintCards" (por implementar)
     }

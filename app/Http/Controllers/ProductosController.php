@@ -42,7 +42,8 @@ class ProductosController extends Controller
             'nombre_corto' => 'required|max:500',
             'cupo_tarima' => 'nullable|integer',
             'requiere_peso' => 'required|in:SI,NO',
-            'peso_gramos' => 'nullable|numeric'
+            'peso' => 'nullable|numeric',
+            'variacion_peso' => 'nullable|numeric'
         ]);
 
         Producto::create($request->all());
@@ -86,7 +87,8 @@ class ProductosController extends Controller
             'nombre_corto' => 'required|max:500',
             'cupo_tarima' => 'nullable|integer',
             'requiere_peso' => 'required|in:SI,NO',
-            'peso_gramos' => 'nullable|numeric'
+            'peso' => 'nullable|numeric',
+            'variacion_peso' => 'nullable|numeric'
         ]);
 
         $producto = Producto::findOrFail($id);

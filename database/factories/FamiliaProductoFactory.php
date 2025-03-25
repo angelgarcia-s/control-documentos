@@ -12,7 +12,7 @@ class FamiliaProductoFactory extends Factory
     public function definition()
     {
         return [
-            'nombre' => $this->faker->word(),
+            'nombre' => $this->faker->randomElement(['Plus', 'Confort', 'Extra', 'Nitrilo', 'Vinyl']),
         ];
     }
 }

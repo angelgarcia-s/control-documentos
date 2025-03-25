@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ColoresEmpaqueSeeder::class,
             ColoresSeeder::class,
             TamanosSeeder::class,
+            CategoriasSeeder::class,
             FamiliaProductosSeeder::class,
             MaterialesSeeder::class,
             ProveedoresSeeder::class,

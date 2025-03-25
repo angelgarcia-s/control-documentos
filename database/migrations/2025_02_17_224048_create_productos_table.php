@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('descripcion', 1000);
             
             // Claves foráneas corregidas (SIN constrained(), usando unsignedBigInteger())
+
+            $table->unsignedBigInteger('id_categoria')->nullable();
+            $table->foreign('id_categoria')->references('id')->on('categorias')->onDelete('set null');
+
             $table->unsignedBigInteger('id_familia')->nullable();
             $table->foreign('id_familia')->references('id')->on('familia_productos')->onDelete('set null');
 
@@ -33,7 +37,6 @@ return new class extends Migration
             $table->foreign('id_unidad_medida')->references('id')->on('unidad_medida')->onDelete('set null');
 
             $table->integer('multiplos_master');
-            $table->string('producto', 500); // Nombre como PLUS o CONFORT
             $table->string('nombre_corto', 500); // Producto + Color + Tamaño
             $table->integer('cupo_tarima');
             $table->enum('requiere_peso', ['SI', 'NO'])->default('NO');
