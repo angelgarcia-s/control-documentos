@@ -84,6 +84,10 @@ class ProveedoresController extends Controller
     public function destroy(Proveedor $proveedor)
     {
         try {
+            if ($proveedor->productos()->count() > 0) {
+                return redirect()->route('proveedores.index')->with('error', 'No se puede eliminar el proveedor porque tiene productos asociados.');
+            }
+            
             $proveedor->delete();
             return redirect()->route('proveedores.index')->with('success', 'Proveedor eliminado correctamente.');
         } catch (QueryException $e) {

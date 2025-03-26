@@ -17,7 +17,6 @@ class TablaGenerica extends Component
     public $perPageOptions = [10, 25, 50, 100, 200]; // Opciones para el <select>
     public $confirmingDelete = null;
     public $selectedActions = []; // Controla los valores de los <select>
-    public $errorMessage = '';
 
     public $modelo;
     public $columnas = [];
@@ -58,43 +57,21 @@ class TablaGenerica extends Component
         $this->dispatch('abrir-modal', 'eliminar-elemento');
     }
 
-    // Método público para limpiar el mensaje desde el frontend
-    public function clearErrorMessage()
-    {
-        $this->errorMessage = '';
-    }
-
     public function eliminarElemento()
     {
         if ($this->confirmingDelete) {
             $elemento = $this->modelo::find($this->confirmingDelete);
             if ($elemento) {
-                // Validar relaciones después de la confirmación
-                foreach ($this->relaciones as $relacion) {
-                    if ($elemento->$relacion()->count() > 0) {
-                        $this->errorMessage = "No se puede eliminar el elemento porque tiene {$relacion} asociados.";
-                        $this->confirmingDelete = null;
-                        $this->selectedActions = [];
-                        return;
-                    }
-                }
-    
-                try {
-                    $elemento->delete();
-                    session()->flash('success', 'Elemento eliminado correctamente.');
-                    $this->resetPage();
-                    $this->dispatch('reiniciarSelects');
-                } catch (\Exception $e) {
-                    $this->errorMessage = 'Error al eliminar el elemento: ' . $e->getMessage();
-                }
-                
+                $elemento->delete();
                 $this->confirmingDelete = null;
-                $this->selectedActions = []; // Reiniciamos todos los <select>
+                session()->flash('success', 'Elemento eliminado correctamente.');
+                $this->resetPage();
+                $this->dispatch('reiniciarSelects');
             } else {
-                $this->errorMessage = 'Elemento no encontrado.';
+                session()->flash('error', 'Elemento no encontrado.');
                 $this->confirmingDelete = null;
-                $this->selectedActions = [];
             }
+            $this->selectedActions = []; // Reiniciamos todos los <select>
         }
     }
 

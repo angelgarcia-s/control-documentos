@@ -20,6 +20,7 @@ use App\Http\Controllers\MapsController;
 use App\Http\Controllers\IconsController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\ProveedoresController;
+use App\Http\Controllers\FamiliasController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
@@ -36,6 +37,9 @@ Route::resource('productos', ProductosController::class, ['parameters' => ['prod
 
 //PROVEEDORES//
 Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);
+
+//FAMILIAS//
+Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
