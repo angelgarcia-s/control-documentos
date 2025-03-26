@@ -31,7 +31,7 @@ class ProductoFactory extends Factory
                 $familia = FamiliaProducto::find($attributes['id_familia']);
                 $color = Color::find($attributes['id_color']);
                 $tamano = Tamano::find($attributes['id_tamano']);
-                return implode('-', [
+                return implode(' ', [
                     $familia->nombre ?? 'Sin Familia',
                     $color->nombre ?? 'Sin Color',
                     $tamano->nombre ?? 'Sin Tamaño',

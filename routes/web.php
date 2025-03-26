@@ -21,6 +21,7 @@ use App\Http\Controllers\IconsController;
 use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\FamiliasController;
+use App\Http\Controllers\CategoriasController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
@@ -40,6 +41,9 @@ Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['
 
 //FAMILIAS//
 Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
+
+//CATEGORIAS//
+Route::resource('categorias', CategoriasController::class, ['parameters' => ['categorias' => 'categoria']]);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
