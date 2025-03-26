@@ -6,12 +6,12 @@
         <!-- META DATA -->
 		<meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="Author" content="Spruko Technologies Private Limited">
-        <meta name="Description" content="Laravel Tailwind CSS Responsive Admin Web Dashboard Template">
-        <meta name="keywords" content="admin panel in laravel, tailwind, tailwind template admin, laravel admin panel, tailwind css dashboard, admin dashboard template, admin template, tailwind laravel, template dashboard, admin panel tailwind, tailwind css admin template, laravel tailwind template, laravel tailwind, tailwind admin dashboard">
+        <meta name="Author" content="Angel Garcia">
+        <meta name="Description" content="Control de Documentos | PrintCards">
+        <meta name="keywords" content="">
         
         <!-- TITLE -->
-		<title> YNEX - Laravel Tailwind CSS Admin & Dashboard Template </title>
+		<title> Ambiderm | PrintCards </title>
 
         <!-- FAVICON -->
         <link rel="icon" href="{{asset('build/assets/images/brand-logos/favicon.ico')}}" type="image/x-icon">
@@ -42,7 +42,7 @@
 
         <!-- SWITCHER -->
 
-        @include('layouts.components.switcher')
+        {{-- @include('layouts.components.switcher') --}}
 
         <!-- END SWITCHER -->
 
@@ -57,7 +57,7 @@
 
             <!-- HEADER -->
 
-            @include('layouts.components.header')
+            @include('layouts.components.header1')
 
             <!-- END HEADER -->
 
