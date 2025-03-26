@@ -9,12 +9,13 @@ use App\Livewire\TablaGenerica;
 class ProveedoresTable extends TablaGenerica
 {
 
-    public function mount($modelo = Producto::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Proveedor::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
     {
         $modelo = Proveedor::class;
         $columnas = [
             ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
             ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+            ['name' => 'abreviacion', 'label' => 'Abreviación', 'sortable' => true, 'searchable' => true],
             ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false], // Opcional
         ];
         $acciones = [

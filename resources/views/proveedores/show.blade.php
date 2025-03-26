@@ -1,27 +1,43 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-2xl font-bold mb-4">Detalles del Producto</h1>
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <p><strong>Código:</strong> {{ $producto->sku }}</p>
-            <p><strong>Descripción:</strong> {{ $producto->descripcion }}</p>
-            <p><strong>Unidad de Medida de Ventas:</strong> {{ $producto->unidad_medida_ventas }}</p>
-            <p><strong>Múltiplos Master:</strong> {{ $producto->multiplos_master }}</p>
-            <p><strong>Código de Barras Primario:</strong> {{ $producto->codigo_barras_primario }}</p>
-            <p><strong>Código de Barras Secundario:</strong> {{ $producto->codigo_barras_secundario }}</p>
-            <p><strong>Código de Barras Terciario:</strong> {{ $producto->codigo_barras_terciario }}</p>
-            <p><strong>Código de Barras Cuaternario:</strong> {{ $producto->codigo_barras_cuaternario }}</p>
-            <p><strong>Código de Barras Master:</strong> {{ $producto->codigo_barras_master }}</p>
-            <p><strong>Nombre Corto:</strong> {{ $producto->nombre_corto }}</p>
-            <p><strong>Familia del Producto:</strong> {{ $producto->familia_producto }}</p>
-            <p><strong>Color:</strong> {{ $producto->color }}</p>
-            <p><strong>Tamaño:</strong> {{ $producto->tamaño }}</p>
-            <p><strong>Cupo de Tarima:</strong> {{ $producto->cupo_tarima }}</p>
-            <p><strong>Requiere Peso:</strong> {{ $producto->requiere_peso ? 'Sí' : 'No' }}</p>
-            <p><strong>Peso:</strong> {{ $producto->peso }}</p>
-            <p><strong>Variación de Peso:</strong> {{ $producto->variacion_peso }}</p>
-        </div>
-        <a href="{{ route('productos.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Volver a la lista de productos</a>
+<div class="block justify-between page-header md:flex">
+    <div>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Detalles del Proveedor</h3>
     </div>
+    <x-breadcrumbs />
+</div>
+<!-- Page Header Close -->
+
+<div class="grid grid-cols-12 gap-6">
+    <div class="col-span-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-title">Proveedor: {{ $proveedor->nombre }}</div>
+            </div>
+            <div class="box-body">
+                <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
+                    <div class="md:col-span-1 col-span-12 mb-4">
+                        <label class="form-label">ID</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $proveedor->id }}</p>
+                    </div>
+                    <div class="md:col-span-4 col-span-12 mb-4">
+                        <label class="form-label">Nombre</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{  $proveedor->nombre }}</p>
+                    </div>
+                    <div class="md:col-span-2 col-span-12 mb-4">
+                        <label class="form-label">Abreviación</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $proveedor->abreviacion ?? '-' }}</p>
+                    </div>
+                </div>
+                
+                
+                <div class="flex justify-end md:col-span-12 col-span-12">
+                    <a href="{{ route('proveedores.edit', $proveedor) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    <a href="{{ route('proveedores.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class ProveedoresController extends Controller
 {
@@ -12,7 +13,8 @@ class ProveedoresController extends Controller
      */
     public function index()
     {
-        return view('proveedores.index');
+        $proveedores = Proveedor::all();
+        return view('proveedores.index', compact('proveedores'));
     }
 
     /**
@@ -28,20 +30,17 @@ class ProveedoresController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre'=> ['required' , 'unique:proveedores' , 'string' , 'max:255',]
-        // Opcional: Descomentar para mensajes personalizados
-        // 'nombre.unique' => 'Ya existe un proveedor con ese nombre.',
-        // 'nombre.required' => 'El nombre del proveedor es obligatorio.',
-        // 'nombre.string' => 'El nombre debe ser texto.',
-        // 'nombre.max' => 'El nombre no puede superar los 255 caracteres.',
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:proveedores,nombre',
+            'abreviacion' => 'required|string|max:3|unique:proveedores,abreviacion',
         ]);
 
-        Proveedor::create([
-            'nombre' => $request->nombre,
-        ]);
-
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor creado correctamente.');
+        try {
+            Proveedor::create($validated);
+            return redirect()->route('proveedores.index')->with('success', 'Proveedor creado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Error al crear el proveedor: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -49,7 +48,8 @@ class ProveedoresController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        return view('proveedores.show' , compact('proveedor'));
+        $proveedor->load('productos'); // Cargar productos asociados si los hay
+        return view('proveedores.show', compact('proveedor'));
     }
 
     /**
@@ -65,15 +65,17 @@ class ProveedoresController extends Controller
      */
     public function update(Request $request, Proveedor $proveedor)
     {
-        $request->validate([
-           'nombre' => ['required' , "unique:proveedores,nombre,{$proveedor->id}", 'string' , 'max:255']
-    ]);
-
-        $proveedor->update([
-            'nombre' => $request->nombre,
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:proveedores,nombre,' . $proveedor->id,
+            'abreviacion' => 'required|string|max:3|unique:proveedores,abreviacion,' . $proveedor->id,
         ]);
 
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor actualizado correctamente.');
+        try {
+            $proveedor->update($validated);
+            return redirect()->route('proveedores.index')->with('success', 'Proveedor actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Error al actualizar el proveedor: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -81,7 +83,14 @@ class ProveedoresController extends Controller
      */
     public function destroy(Proveedor $proveedor)
     {
-        $proveedor->delete();
-        return redirect()->route('proveedores.index')->with('success', 'Proveedor eliminado correctamente.');
+        try {
+            $proveedor->delete();
+            return redirect()->route('proveedores.index')->with('success', 'Proveedor eliminado correctamente.');
+        } catch (QueryException $e) {
+            if ($e->getCode() == '23000') { // Violación de clave foránea
+                return redirect()->route('proveedores.index')->with('error', 'No se puede eliminar el proveedor porque tiene productos asociados.');
+            }
+            return redirect()->route('proveedores.index')->with('error', 'Error al eliminar el proveedor: ' . $e->getMessage());
+        }
     }
 }

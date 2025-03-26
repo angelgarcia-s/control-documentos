@@ -1,15 +1,5 @@
 @extends('layouts.master')
 
-@section('styles')
-
-        <!-- Choices Css -->
-        <link rel="stylesheet" href="{{asset('build/assets/libs/choices.js/public/assets/styles/choices.min.css')}}">
-
-        <!-- Prism CSS -->
-        <link rel="stylesheet" href="{{asset('build/assets/libs/prismjs/themes/prism-coy.min.css')}}">
-
-@endsection
-
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
@@ -123,6 +113,7 @@
                     </div>
                     
                     <div class="flex justify-end md:col-span-12 col-span-12">
+                        <a href="{{route('productos.edit',$producto)}}"class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
                         <a href="{{route('productos.index')}}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                     </div>
 
@@ -135,12 +126,5 @@
 
 
 
-
-@endsection
-
-@section('scripts')
-
-<!-- Modal JS -->
-@vite('resources/assets/js/modal.js')
 
 @endsection
