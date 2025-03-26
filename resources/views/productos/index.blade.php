@@ -3,14 +3,7 @@
 @section('content')
     <!-- Page Header -->
     <div class="block justify-between page-header md:flex">
-        <ol class="flex items-center whitespace-nowrap min-w-0">
-            <li class="text-[0.813rem] ps-[0.5rem]">
-                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate" href="javascript:void(0);">
-                    Inicio
-                    <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
-                </a>
-            </li>
-        </ol>
+        <x-breadcrumbs />
     </div>
     <!-- Page Header Close -->
 
