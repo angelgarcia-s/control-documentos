@@ -3,7 +3,7 @@
 
                 <!-- Start::main-sidebar-header -->
                 <div class="main-sidebar-header">
-                    <a href="{{url('index')}}" class="header-logo">
+                    <a href="{{route('dashboard')}}" class="header-logo">
                         <img src="{{asset('build/assets/images/brand-logos/desktop-logo.png')}}" alt="logo" class="desktop-logo">
                         <img src="{{asset('build/assets/images/brand-logos/toggle-logo.png')}}" alt="logo" class="toggle-logo">
                         <img src="{{asset('build/assets/images/brand-logos/desktop-dark.png')}}" alt="logo" class="desktop-dark">
@@ -64,9 +64,9 @@
                                     <i class="fe fe-chevron-right side-menu__angle"></i>
                                 </a>
                                 <ul class="slide-menu child1">
-                                    <li class="slide"><a href="{{ url('familias') }}" class="side-menu__item">Familias</a></li>
-                                    <li class="slide"><a href="{{ url('categorias') }}" class="side-menu__item">Categorías</a></li>
-                                    <li class="slide"><a href="{{ url('colores') }}" class="side-menu__item">Colores</a></li>
+                                    <li class="slide"><a href="{{ route('familias.index') }}" class="side-menu__item">Familias</a></li>
+                                    <li class="slide"><a href="{{ route('categorias.index') }}" class="side-menu__item">Categorías</a></li>
+                                    <li class="slide"><a href="{{ route('colores.index') }}" class="side-menu__item">Colores</a></li>
                                     <li class="slide"><a href="{{ url('tamanos') }}" class="side-menu__item">Tamaños</a></li>
                                     <li class="slide"><a href="{{ url('unidades') }}" class="side-menu__item">Unidades de Medida</a></li>
                                     <li class="slide"><a href="{{ url('tipos-empaque') }}" class="side-menu__item">Tipos de Empaque</a></li>

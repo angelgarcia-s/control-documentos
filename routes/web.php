@@ -22,28 +22,50 @@ use App\Http\Controllers\ProductosController;
 use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\FamiliasController;
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\ColoresController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
-Route::get('/test', function () {
-    return view('test/test');
-});
-
-//PRODUCTOS//
-
+// Productos
 Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
+Route::get('productos/codigos', [ProductosController::class, 'codigos'])->name('productos.codigos');
+Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards');
 
-//PROVEEDORES//
+// Empaques
+// Route::get('empaques/asignar-codigos', [EmpaquesController::class, 'asignarCodigos'])->name('empaques.asignar-codigos');
+// Route::get('empaques/asignar-printcards', [EmpaquesController::class, 'asignarPrintcards'])->name('empaques.asignar-printcards');
+
+// Catálogos
+Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
+Route::resource('categorias', CategoriasController::class, ['parameters' => ['categorias' => 'categoria']]);
+Route::resource('colores', ColoresController::class, ['parameters' => ['colores' => 'color']]);
+// Route::resource('tamanos', TamanosController::class, ['parameters' => ['tamanos' => 'tamano']]);
+// Route::resource('unidades', UnidadesController::class, ['parameters' => ['unidades' => 'unidad']]);
+// Route::resource('tipos-empaque', TiposEmpaqueController::class, ['parameters' => ['tipos-empaque' => 'tipo_empaque']]);
+// Route::resource('tipos-sello', TiposSelloController::class, ['parameters' => ['tipos-sello' => 'tipo_sello']]);
+// Route::resource('acabados', AcabadosController::class, ['parameters' => ['acabados' => 'acabado']]);
+// Route::resource('materiales', MaterialesController::class, ['parameters' => ['materiales' => 'material']]);
+// Route::resource('barnices', BarnicesController::class, ['parameters' => ['barnices' => 'barniz']]);
+
+// Proveedores
 Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);
 
-//FAMILIAS//
-Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
+// Revisiones
+// Route::get('revisiones/historial', [RevisionesController::class, 'historial'])->name('revisiones.historial');
+// Route::get('revisiones/printcards', [RevisionesController::class, 'printcards'])->name('revisiones.printcards');
 
-//CATEGORIAS//
-Route::resource('categorias', CategoriasController::class, ['parameters' => ['categorias' => 'categoria']]);
+// Reportes
+// Route::get('reportes/printcards', [ReportesController::class, 'printcards'])->name('reportes.printcards');
+// Route::get('reportes/codigos-barras', [ReportesController::class, 'codigosBarras'])->name('reportes.codigos-barras');
+// Route::get('reportes/productos', [ReportesController::class, 'productos'])->name('reportes.productos');
+
+// Administración
+// Route::resource('usuarios', UsuariosController::class, ['parameters' => ['usuarios' => 'usuario']]);
+// Route::resource('roles', RolesController::class, ['parameters' => ['roles' => 'rol']]);
+// Route::resource('configuracion', ConfiguracionController::class, ['parameters' => ['configuracion' => 'config']]);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
