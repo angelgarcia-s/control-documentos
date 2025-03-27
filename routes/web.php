@@ -23,11 +23,18 @@ use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\FamiliasController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\ColoresController;
+use App\Http\Controllers\TamanosController;
+use App\Http\Controllers\UnidadMedidaController;
+use App\Http\Controllers\TiposEmpaqueController;
+use App\Http\Controllers\TiposSelloController;
+use App\Http\Controllers\AcabadosController;
+use App\Http\Controllers\MaterialesController;
+use App\Http\Controllers\BarnicesController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
     return view('welcome');
-})->name('home');
+})->name('dashboard');
 
 // Productos
 Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
@@ -42,13 +49,13 @@ Route::get('productos/printcards', [ProductosController::class, 'printcards'])->
 Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
 Route::resource('categorias', CategoriasController::class, ['parameters' => ['categorias' => 'categoria']]);
 Route::resource('colores', ColoresController::class, ['parameters' => ['colores' => 'color']]);
-// Route::resource('tamanos', TamanosController::class, ['parameters' => ['tamanos' => 'tamano']]);
-// Route::resource('unidades', UnidadesController::class, ['parameters' => ['unidades' => 'unidad']]);
-// Route::resource('tipos-empaque', TiposEmpaqueController::class, ['parameters' => ['tipos-empaque' => 'tipo_empaque']]);
-// Route::resource('tipos-sello', TiposSelloController::class, ['parameters' => ['tipos-sello' => 'tipo_sello']]);
-// Route::resource('acabados', AcabadosController::class, ['parameters' => ['acabados' => 'acabado']]);
-// Route::resource('materiales', MaterialesController::class, ['parameters' => ['materiales' => 'material']]);
-// Route::resource('barnices', BarnicesController::class, ['parameters' => ['barnices' => 'barniz']]);
+Route::resource('tamanos', TamanosController::class, ['parameters' => ['tamanos' => 'tamano']]);
+Route::resource('unidades', UnidadMedidaController::class, ['parameters' => ['unidades' => 'unidad']]);
+Route::resource('tipos-empaque', TiposEmpaqueController::class, ['parameters' => ['tipos-empaque' => 'tipo_empaque']]);
+Route::resource('tipos-sello', TiposSelloController::class, ['parameters' => ['tipos-sello' => 'tipo_sello']]);
+Route::resource('acabados', AcabadosController::class, ['parameters' => ['acabados' => 'acabado']]);
+Route::resource('materiales', MaterialesController::class, ['parameters' => ['materiales' => 'material']]);
+Route::resource('barnices', BarnicesController::class, ['parameters' => ['barnices' => 'barniz']]);
 
 // Proveedores
 Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);

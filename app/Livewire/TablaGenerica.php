@@ -152,7 +152,7 @@ class TablaGenerica extends Component
         $elementos = $query->paginate($this->perPage);
 
         return view('livewire.tabla-generica', [
-            'elementos' => $query->paginate($this->perPage),
+            'elementos' => $elementos,
             'columnas' => $this->columnas,
             'acciones' => $this->acciones,
             'botones' => $this->botones,

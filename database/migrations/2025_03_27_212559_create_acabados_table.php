@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unidad_medida', function (Blueprint $table) {
+        Schema::create('acabados', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique(); // Nombre de la unidad de medida
+            $table->string('nombre')->unique(); // Nombre del acabado (ej. Mate, Brillante, etc.)
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unidad_medida');
+        Schema::dropIfExists('acabados');
     }
 };

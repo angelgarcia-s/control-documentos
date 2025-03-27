@@ -67,13 +67,13 @@
                                     <li class="slide"><a href="{{ route('familias.index') }}" class="side-menu__item">Familias</a></li>
                                     <li class="slide"><a href="{{ route('categorias.index') }}" class="side-menu__item">Categorías</a></li>
                                     <li class="slide"><a href="{{ route('colores.index') }}" class="side-menu__item">Colores</a></li>
-                                    <li class="slide"><a href="{{ url('tamanos') }}" class="side-menu__item">Tamaños</a></li>
-                                    <li class="slide"><a href="{{ url('unidades') }}" class="side-menu__item">Unidades de Medida</a></li>
-                                    <li class="slide"><a href="{{ url('tipos-empaque') }}" class="side-menu__item">Tipos de Empaque</a></li>
-                                    <li class="slide"><a href="{{ url('tipos-sello') }}" class="side-menu__item">Tipos de Sello</a></li>
-                                    <li class="slide"><a href="{{ url('acabados') }}" class="side-menu__item">Acabados</a></li>
-                                    <li class="slide"><a href="{{ url('materiales') }}" class="side-menu__item">Materiales</a></li>
-                                    <li class="slide"><a href="{{ url('barnices') }}" class="side-menu__item">Barnices</a></li>
+                                    <li class="slide"><a href="{{ route('tamanos.index') }}" class="side-menu__item">Tamaños</a></li>
+                                    <li class="slide"><a href="{{ route('unidades.index') }}" class="side-menu__item">Unidades de Medida</a></li>
+                                    <li class="slide"><a href="{{ route('tipos-empaque.index') }}" class="side-menu__item">Tipos de Empaque</a></li>
+                                    <li class="slide"><a href="{{ route('tipos-sello.index') }}" class="side-menu__item">Tipos de Sello</a></li>
+                                    <li class="slide"><a href="{{ route('acabados.index') }}" class="side-menu__item">Acabados</a></li>
+                                    <li class="slide"><a href="{{ route('materiales.index') }}" class="side-menu__item">Materiales</a></li>
+                                    <li class="slide"><a href="{{ route('barnices.index') }}" class="side-menu__item">Barnices</a></li>
                                 </ul>
                             </li>
 
