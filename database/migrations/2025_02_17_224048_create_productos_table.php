@@ -34,7 +34,7 @@ return new class extends Migration
             $table->foreign('id_proveedor')->references('id')->on('proveedores')->onDelete('set null');
 
             $table->unsignedBigInteger('id_unidad_medida')->nullable();
-            $table->foreign('id_unidad_medida')->references('id')->on('unidad_medida')->onDelete('set null');
+            $table->foreign('id_unidad_medida')->references('id')->on('unidades_medida')->onDelete('set null');
 
             $table->integer('multiplos_master');
             $table->string('nombre_corto', 500); // Producto + Color + Tamaño

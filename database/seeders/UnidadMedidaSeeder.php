@@ -13,7 +13,7 @@ class UnidadMedidaSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('unidad_medida')->insert([
+        DB::table('unidades_medida')->insert([
             ['nombre' => 'Caja'],
             ['nombre' => 'Bolsa'],
             ['nombre' => 'Junior'],
