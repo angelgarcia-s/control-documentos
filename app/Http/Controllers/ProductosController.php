@@ -32,7 +32,7 @@ class ProductosController extends Controller
         $validated = $request->validate([
             'sku' => 'required|string|max:45|unique:productos,sku',
             'descripcion' => 'required|string|max:1000',
-            'id_unidad_medida' => 'required|exists:unidad_medida,id',
+            'id_unidad_medida' => 'required|exists:unidades_medida,id',
             'id_categoria' => 'required|exists:categorias,id',
             'id_familia' => 'required|exists:familia_productos,id',
             'id_color' => 'required|exists:colores,id',
@@ -96,7 +96,7 @@ class ProductosController extends Controller
             'id_tamano' => 'required|exists:tamanos,id',
             'id_color' => 'required|exists:colores,id',
             'id_proveedor' => 'required|exists:proveedores,id',
-            'id_unidad_medida' => 'required|exists:unidad_medida,id',
+            'id_unidad_medida' => 'required|exists:unidades_medida,id',
             'multiplos_master' => 'required|integer',
             'nombre_corto' => 'required|max:500',
             'cupo_tarima' => 'required|integer',
