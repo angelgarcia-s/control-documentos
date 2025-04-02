@@ -19,16 +19,15 @@ class ProductosController extends Controller
     /**
      * Muestra el formulario para crear un nuevo producto.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('productos.create');
+        $skuGuardado = $request->query('skuGuardado');
+        return view('productos.create', compact('skuGuardado'));
     }
 
-    /**
-     * Guarda un nuevo producto en la base de datos.
-     */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'sku' => 'required|string|max:45|unique:productos,sku',
             'descripcion' => 'required|string|max:1000',
@@ -43,28 +42,23 @@ class ProductosController extends Controller
             'requiere_peso' => 'required|in:SI,NO',
             'peso' => 'nullable|numeric|min:0',
             'variacion_peso' => 'nullable|numeric|min:0',
-            'codigo_barras_primario' => 'nullable|string|max:255',
-            'codigo_barras_secundario' => 'nullable|string|max:255',
-            'codigo_barras_terciario' => 'nullable|string|max:255',
-            'codigo_barras_cuaternario' => 'nullable|string|max:255',
-            'codigo_barras_master' => 'nullable|string|max:255',
         ]);
 
-        try {
-            // Generar nombre_corto manualmente antes de crear
-            $nombre_corto = implode(' ', [
-                \App\Models\FamiliaProducto::find($validated['id_familia'])->nombre ?? 'Sin Familia',
-                \App\Models\Color::find($validated['id_color'])->nombre ?? 'Sin Color',
-                \App\Models\Tamano::find($validated['id_tamano'])->nombre ?? 'Sin Tamaño',
-            ]);
-            $validated['nombre_corto'] = $nombre_corto;
+        // Generar nombre_corto automáticamente ya que no se envía desde el formulario
+        $familia = \App\Models\FamiliaProducto::find($validated['id_familia'])->nombre;
+        $color = \App\Models\Color::find($validated['id_color'])->nombre;
+        $tamano = \App\Models\Tamano::find($validated['id_tamano'])->nombre;
+        $validated['nombre_corto'] = "$familia $color $tamano";
 
-            $producto = Producto::create($validated);
-            return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al crear el producto: ' . $e->getMessage()])->withInput();
-        }
+        $producto = Producto::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'sku' => $producto->sku,
+            'message' => 'Producto creado correctamente.'
+        ]);
     }
+    
     /**
      * Muestra un producto específico.
      */

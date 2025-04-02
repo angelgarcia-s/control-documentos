@@ -6,7 +6,7 @@ use App\Models\Categoria;
 
 class CategoriasTable extends TablaGenerica
 {
-    public function mount($modelo = Categoria::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Categoria::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Categoria::class;
         $columnas = [
@@ -19,11 +19,12 @@ class CategoriasTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = ['productos'];
+        $relacionesBloqueantes = ['productos'];
         $botones = [
             ['ruta' => 'categorias.show', 'parametro' => 'categoria', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

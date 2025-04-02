@@ -2,30 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CodigoBarra extends Model
 {
-    use HasFactory;
-
     protected $table = 'codigos_barras';
 
     protected $fillable = [
+        'codigo',
+        'nombre_corto',
+        'sku',
         'producto_id',
         'tipo_empaque_id',
-        'tipo_codigo',
-        'codigo_barra',
-        'estado'
+        'contenido',
     ];
 
-    public function producto()
+    // Relación con Producto
+    public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class);
     }
 
-    public function tipoEmpaque()
+    // Relación con Tipo de Empaque
+    public function tipoEmpaque(): BelongsTo
     {
-        return $this->belongsTo(TipoEmpaque::class, 'tipo_empaque_id');
+        return $this->belongsTo(TipoEmpaque::class);
     }
 }

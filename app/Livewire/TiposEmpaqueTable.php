@@ -6,7 +6,7 @@ use App\Models\TipoEmpaque;
 
 class TiposEmpaqueTable extends TablaGenerica
 {
-    public function mount($modelo = TipoEmpaque::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = TipoEmpaque::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = TipoEmpaque::class;
         $columnas = [
@@ -18,11 +18,12 @@ class TiposEmpaqueTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = [];
+        $relacionesBloqueantes = [];
         $botones = [
             ['ruta' => 'tipos-empaque.show', 'parametro' => 'tipo_empaque', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

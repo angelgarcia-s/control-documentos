@@ -6,7 +6,7 @@ use App\Models\Producto;
 
 class ProductosTable extends TablaGenerica
 {
-    public function mount($modelo = Producto::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Producto::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         // Reiniciamos confirmingDelete al montar para evitar valores residuales
         $this->confirmingDelete = null;
@@ -31,7 +31,8 @@ class ProductosTable extends TablaGenerica
                 'editar' => 'Editar',
                 'borrar' => 'Borrar',
             ],
-            relaciones: $relaciones ?: ['familia', 'proveedor', 'tamano', 'color'],
+            relaciones: $relaciones ?: ['familia', 'proveedor', 'tamano', 'color', 'codigosBarras'],
+            relacionesBloqueantes: $relacionesBloqueantes ?: ['codigosBarras'],
             botones: $botones ?: [
                 ['etiqueta' => 'Ver', 'ruta' => 'productos.show', 'parametro' => 'producto', 'estilo' => 'primary'],
             ]
@@ -51,7 +52,7 @@ class ProductosTable extends TablaGenerica
 
     public function codigos($id)
     {
-        // Lógica para "Códigos de barras" (por implementar)
+        return redirect()->route('codigos-barras.asignar', ['sku' => Producto::find($id)->sku]);
     }
 
     public function printcards($id)

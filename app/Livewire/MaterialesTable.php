@@ -6,7 +6,7 @@ use App\Models\Material;
 
 class MaterialesTable extends TablaGenerica
 {
-    public function mount($modelo = Material::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Material::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Material::class;
         $columnas = [
@@ -18,11 +18,12 @@ class MaterialesTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = [];
+        $relacionesBloqueantes = [];
         $botones = [
             ['ruta' => 'materiales.show', 'parametro' => 'material', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

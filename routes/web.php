@@ -30,6 +30,7 @@ use App\Http\Controllers\TiposSelloController;
 use App\Http\Controllers\AcabadosController;
 use App\Http\Controllers\MaterialesController;
 use App\Http\Controllers\BarnicesController;
+use App\Http\Controllers\CodigosBarrasController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
@@ -38,7 +39,10 @@ Route::get('/', function () {
 
 // Productos
 Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
-Route::get('productos/codigos', [ProductosController::class, 'codigos'])->name('productos.codigos');
+
+// Codigos de barras
+Route::resource('codigos-barras', CodigosBarrasController::class);
+Route::get('/codigos-barras/asignar/{sku}', [CodigosBarrasController::class, 'asignar'])->name('codigos-barras.asignar');
 Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards');
 
 // Empaques

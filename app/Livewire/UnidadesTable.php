@@ -6,7 +6,7 @@ use App\Models\UnidadMedida;
 
 class UnidadesTable extends TablaGenerica
 {
-    public function mount($modelo = UnidadMedida::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = UnidadMedida::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = UnidadMedida::class;
         $columnas = [
@@ -18,11 +18,12 @@ class UnidadesTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = ['productos'];
+        $relacionesBloqueantes = ['productos'];
         $botones = [
             ['ruta' => 'unidades.show', 'parametro' => 'unidad', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

@@ -23,6 +23,7 @@ class TablaGenerica extends Component
     public $columnas = [];
     public $acciones = [];
     public $relaciones = [];
+    public $relacionesBloqueantes = []; // Propiedad para relaciones que bloquean eliminación
     public $botones = [];
 
     protected $queryString = [
@@ -32,12 +33,13 @@ class TablaGenerica extends Component
         'perPage' => ['except' => 10],
     ];
 
-    public function mount($modelo, $columnas, $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo, $columnas, $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $this->modelo = $modelo;
         $this->columnas = $columnas;
         $this->acciones = $acciones;
         $this->relaciones = $relaciones;
+        $this->relacionesBloqueantes = $relacionesBloqueantes;
         $this->botones = $botones;
         $this->confirmingDelete = null; // Aseguramos que sea null al montar
         $this->selectedActions = []; // Reiniciamos al montar
@@ -70,12 +72,14 @@ class TablaGenerica extends Component
             $elemento = $this->modelo::find($this->confirmingDelete);
             if ($elemento) {
                 // Validar relaciones después de la confirmación
-                foreach ($this->relaciones as $relacion) {
-                    if ($elemento->$relacion()->count() > 0) {
-                        $this->errorMessage = "No se puede eliminar el elemento porque tiene {$relacion} asociados.";
-                        $this->confirmingDelete = null;
-                        $this->selectedActions = [];
-                        return;
+                foreach ($this->relacionesBloqueantes as $relacion) {
+                    if (method_exists($elemento, $relacion)) { // Si la relación no existe (ej. print_cards), simplemente la ignoramos
+                        if ($elemento->$relacion()->count() > 0) {
+                            $this->errorMessage = "No se puede eliminar el elemento porque tiene {$relacion} asociados.";
+                            $this->confirmingDelete = null;
+                            $this->selectedActions = [];
+                            return;
+                        }
                     }
                 }
     

@@ -6,7 +6,7 @@ use App\Models\Tamano;
 
 class TamanosTable extends TablaGenerica
 {
-    public function mount($modelo = Tamano::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Tamano::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Tamano::class;
         $columnas = [
@@ -19,11 +19,12 @@ class TamanosTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = ['productos'];
+        $relacionesBloqueantes = ['productos'];
         $botones = [
             ['ruta' => 'tamanos.show', 'parametro' => 'tamano', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

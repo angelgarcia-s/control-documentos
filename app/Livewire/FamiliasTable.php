@@ -7,7 +7,7 @@ use App\Livewire\TablaGenerica;
 
 class FamiliasTable extends TablaGenerica
 {
-    public function mount($modelo = FamiliaProducto::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = FamiliaProducto::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = FamiliaProducto::class;
         $columnas = [
@@ -20,11 +20,12 @@ class FamiliasTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = ['productos']; // Si no hay relaciones, déjarlo vacío
+        $relacionesBloqueantes = ['productos'];
         $botones = [
             ['ruta' => 'familias.show', 'parametro' => 'familia', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

@@ -6,7 +6,7 @@ use App\Models\Acabado;
 
 class AcabadosTable extends TablaGenerica
 {
-    public function mount($modelo = Acabado::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Acabado::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Acabado::class;
         $columnas = [
@@ -18,11 +18,12 @@ class AcabadosTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = [];
+        $relacionesBloqueantes = [];
         $botones = [
             ['ruta' => 'acabados.show', 'parametro' => 'acabado', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

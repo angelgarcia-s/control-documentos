@@ -6,7 +6,7 @@ use App\Models\TipoSello;
 
 class TiposSelloTable extends TablaGenerica
 {
-    public function mount($modelo = TipoSello::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = TipoSello::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = TipoSello::class;
         $columnas = [
@@ -18,11 +18,12 @@ class TiposSelloTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = [];
+        $relacionesBloqueantes = [];
         $botones = [
             ['ruta' => 'tipos-sello.show', 'parametro' => 'tipo_sello', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

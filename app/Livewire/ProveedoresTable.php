@@ -9,7 +9,7 @@ use App\Livewire\TablaGenerica;
 class ProveedoresTable extends TablaGenerica
 {
 
-    public function mount($modelo = Proveedor::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Proveedor::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Proveedor::class;
         $columnas = [
@@ -23,11 +23,12 @@ class ProveedoresTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = ['productos']; // Si no hay relaciones, déjarlo vacío
+        $relacionesBloqueantes = ['productos'];
         $botones = [
             ['ruta' => 'proveedores.show', 'parametro' => 'proveedor', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

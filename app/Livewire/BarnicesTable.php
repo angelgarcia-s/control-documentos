@@ -6,7 +6,7 @@ use App\Models\Barniz;
 
 class BarnicesTable extends TablaGenerica
 {
-    public function mount($modelo = Barniz::class, $columnas = [], $acciones = [], $relaciones = [], $botones = [])
+    public function mount($modelo = Barniz::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
     {
         $modelo = Barniz::class;
         $columnas = [
@@ -18,11 +18,12 @@ class BarnicesTable extends TablaGenerica
             'borrar' => 'Borrar',
         ];
         $relaciones = [];
+        $relacionesBloqueantes = [];
         $botones = [
             ['ruta' => 'barnices.show', 'parametro' => 'barniz', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
         ];
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $botones);
+        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
     }
 
     public function editar($id)

@@ -28,7 +28,7 @@
     </div>
 @endif
 
-<form action="{{ route('productos.store') }}" method="POST">
+<form action="{{ route('productos.store') }}" method="POST" id="crearProductoForm">
     @csrf
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
@@ -67,7 +67,7 @@
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Categoria</label>
+                            <label class="form-label">Categoría</label>
                             <select name="id_categoria" class="form-control @error('id_categoria') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
                                 @foreach (\App\Models\Categoria::all() as $categoria)
@@ -129,29 +129,29 @@
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="md:col-span-3 col-span-12 mb-4">
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Código de barras Primario</label>
-                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario') }}" class="form-control @error('codigo_barras_primario') is-invalid @enderror">
+                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras secundario</label>
-                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario') }}" class="form-control @error('codigo_barras_secundario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Secundario</label>
+                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras terciario</label>
-                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario') }}" class="form-control @error('codigo_barras_terciario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Terciario</label>
+                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras cuaternario</label>
-                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario') }}" class="form-control @error('codigo_barras_cuaternario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Cuaternario</label>
+                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Código de barras master</label>
-                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master') }}" class="form-control @error('codigo_barras_master') is-invalid @enderror">
+                            <label class="form-label">Código de barras Master</label>
+                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
@@ -166,21 +166,20 @@
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Requiere peso</label>
-                            <select name="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
-                                <option value="">Seleccione</option>
+                            <select name="requiere_peso" id="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
+                                <option value="NO" {{ old('requiere_peso', 'NO') == 'NO' ? 'selected' : '' }}>No</option>
                                 <option value="SI" {{ old('requiere_peso') == 'SI' ? 'selected' : '' }}>Sí</option>
-                                <option value="NO" {{ old('requiere_peso') == 'NO' ? 'selected' : '' }}>No</option>
                             </select>
                             @error('requiere_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Peso</label>
-                            <input type="number" step="0.01" name="peso" value="{{ old('peso') }}" class="form-control @error('peso') is-invalid @enderror">
+                            <input type="number" step="0.01" name="peso" value="{{ old('peso') }}" class="form-control @error('peso') is-invalid @enderror" id="peso" disabled>
                             @error('peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Variación en el peso</label>
-                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso') }}" class="form-control @error('variacion_peso') is-invalid @enderror">
+                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso') }}" class="form-control @error('variacion_peso') is-invalid @enderror" id="variacion_peso" disabled>
                             @error('variacion_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="flex justify-end md:col-span-12 col-span-12">
@@ -193,8 +192,96 @@
         </div>
     </div>
 </form>
+
+<!-- Modal basado en Livewire puro -->
+@if(isset($skuGuardado))
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar asignación</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-6">El producto se ha guardado correctamente. ¿Estás seguro de que quieres asignar los códigos de barras ahora?</p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="window.location.href='{{ route('productos.index') }}'" 
+                        class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
+                    Cancelar
+                </button>
+                <a href="{{ route('codigos-barras.asignar', $skuGuardado) }}" 
+                   class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
+                    Confirmar
+                </a>
+            </div>
+        </div>
+    </div>
+@endif
+
 @endsection
 
 @section('scripts')
     @vite('resources/assets/js/modal.js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('crearProductoForm');
+            const requierePeso = document.getElementById('requiere_peso');
+            const peso = document.getElementById('peso');
+            const variacionPeso = document.getElementById('variacion_peso');
+
+            // Función para habilitar/deshabilitar campos
+            function togglePesoFields() {
+                if (requierePeso.value === 'SI') {
+                    peso.disabled = false;
+                    variacionPeso.disabled = false;
+                    peso.required = true;
+                    variacionPeso.required = true;
+                } else {
+                    peso.disabled = true;
+                    variacionPeso.disabled = true;
+                    peso.required = false;
+                    variacionPeso.required = false;
+                    peso.value = ''; // Limpiar valores si se deshabilitan
+                    variacionPeso.value = '';
+                }
+            }
+
+            // Estado inicial
+            togglePesoFields();
+
+            // Escuchar cambios en el select
+            requierePeso.addEventListener('change', togglePesoFields);
+
+            // Manejo del formulario
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    if (data.success) {
+                        window.location.href = '{{ route('productos.create') }}?skuGuardado=' + encodeURIComponent(data.sku);
+                    } else {
+                        const errorContainer = document.querySelector('.alert-danger');
+                        if (errorContainer) {
+                            errorContainer.remove();
+                        }
+                        const errors = data.errors;
+                        let errorHtml = '<div class="alert alert-danger" role="alert"><ul>';
+                        for (let field in errors) {
+                            errors[field].forEach(error => {
+                                errorHtml += `<li>${error}</li>`;
+                            });
+                        }
+                        errorHtml += '</ul></div>';
+                        document.querySelector('.page-header').insertAdjacentHTML('afterend', errorHtml);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
 @endsection
