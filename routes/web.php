@@ -41,7 +41,7 @@ Route::get('/', function () {
 Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
 
 // Codigos de barras
-Route::resource('codigos-barras', CodigosBarrasController::class);
+Route::resource('codigos-barras', CodigosBarrasController::class, ['parameters' => ['codigos-barras' => 'codigoBarra']]);
 Route::get('/codigos-barras/asignar/{sku}', [CodigosBarrasController::class, 'asignar'])->name('codigos-barras.asignar');
 Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards');
 

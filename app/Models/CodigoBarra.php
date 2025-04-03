@@ -3,30 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CodigoBarra extends Model
 {
     protected $table = 'codigos_barras';
+    protected $fillable = ['codigo', 'nombre', 'tipo_empaque', 'contenido', 'tipo'];
 
-    protected $fillable = [
-        'codigo',
-        'nombre_corto',
-        'sku',
-        'producto_id',
-        'tipo_empaque_id',
-        'contenido',
-    ];
-
-    // Relación con Producto
-    public function producto(): BelongsTo
+    public function productos()
     {
-        return $this->belongsTo(Producto::class);
-    }
-
-    // Relación con Tipo de Empaque
-    public function tipoEmpaque(): BelongsTo
-    {
-        return $this->belongsTo(TipoEmpaque::class);
+        return $this->belongsToMany(Producto::class, 'producto_codigos_barras', 'codigo_barra_id', 'producto_id')
+                    ->withPivot('tipo_empaque', 'contenido');
     }
 }

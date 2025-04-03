@@ -3,7 +3,7 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar Color</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar Código de Barra</h3>
     </div>
     <x-breadcrumbs />
 </div>
@@ -23,26 +23,55 @@
     </div>
 @endif
 
-<form action="{{ route('colores.update', $color) }}" method="POST">
+<form action="{{ route('codigos-barras.update', $codigoBarra) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <div class="box-title">Editar Color</div>
+                    <div class="box-title">Editar Código de Barra</div>
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-6 col-span-12 mb-4">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" value="{{ old('nombre', $color->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror">
+                            <label class="form-label">Código</label>
+                            <input type="text" name="codigo" value="{{ old('codigo', $codigoBarra->codigo) }}" required class="form-control @error('codigo') is-invalid @enderror">
+                            @error('codigo') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-6 col-span-12 mb-4">
+                            <label class="form-label">Nombre (Referencia)</label>
+                            <input type="text" name="nombre" value="{{ old('nombre', $codigoBarra->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror" placeholder="Ej. Plus Azul Chico">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-6 col-span-12 mb-4">
+                            <label class="form-label">Tipo de Empaque</label>
+                            <select name="tipo_empaque" class="form-control @error('tipo_empaque') is-invalid @enderror" required>
+                                <option value="">Seleccione</option>
+                                @foreach ($tiposEmpaque as $tipo)
+                                    <option value="{{ $tipo->nombre }}" {{ old('tipo_empaque', $codigoBarra->tipo_empaque) == $tipo->nombre ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('tipo_empaque') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-6 col-span-12 mb-4">
+                            <label class="form-label">Contenido</label>
+                            <input type="text" name="contenido" value="{{ old('contenido', $codigoBarra->contenido) }}" class="form-control @error('contenido') is-invalid @enderror" placeholder="Ej. 10 unidades">
+                            @error('contenido') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-6 col-span-12 mb-4">
+                            <label class="form-label">Tipo</label>
+                            <select name="tipo" class="form-control @error('tipo') is-invalid @enderror" required>
+                                <option value="">Seleccione</option>
+                                <option value="EAN13" {{ old('tipo', $codigoBarra->tipo) == 'EAN13' ? 'selected' : '' }}>EAN13</option>
+                                <option value="ITF14" {{ old('tipo', $codigoBarra->tipo) == 'ITF14' ? 'selected' : '' }}>ITF14</option>
+                            </select>
+                            @error('tipo') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                     </div>
                 </div>
                 <div class="box-footer text-right">
-                    <a href="{{ route('colores.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                    <a href="{{ route('codigos-barras.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
                     <button type="submit" class="ti-btn ti-btn-primary-full">Actualizar</button>
                 </div>
             </div>

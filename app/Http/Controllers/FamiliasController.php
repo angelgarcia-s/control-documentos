@@ -13,8 +13,8 @@ class FamiliasController extends Controller
      */
     public function index()
     {
-        $familias = FamiliaProducto::paginate(10);
-        return view('familias.index', compact('familias'));
+        
+        return view('familias.index');
     }
 
     /**
