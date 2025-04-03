@@ -34,17 +34,26 @@
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="md:col-span-6 col-span-12 mb-4">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Tipo</label>
+                            <select name="tipo" class="form-control @error('tipo') is-invalid @enderror" required>
+                                <option value="">Seleccione</option>
+                                <option value="EAN13" {{ old('tipo', $codigoBarra->tipo) == 'EAN13' ? 'selected' : '' }}>EAN13</option>
+                                <option value="ITF14" {{ old('tipo', $codigoBarra->tipo) == 'ITF14' ? 'selected' : '' }}>ITF14</option>
+                            </select>
+                            @error('tipo') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Código</label>
                             <input type="text" name="codigo" value="{{ old('codigo', $codigoBarra->codigo) }}" required class="form-control @error('codigo') is-invalid @enderror">
                             @error('codigo') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-6 col-span-12 mb-4">
-                            <label class="form-label">Nombre (Referencia)</label>
+                            <label class="form-label">Producto</label>
                             <input type="text" name="nombre" value="{{ old('nombre', $codigoBarra->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror" placeholder="Ej. Plus Azul Chico">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-6 col-span-12 mb-4">
+                        <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Tipo de Empaque</label>
                             <select name="tipo_empaque" class="form-control @error('tipo_empaque') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
@@ -54,20 +63,22 @@
                             </select>
                             @error('tipo_empaque') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-6 col-span-12 mb-4">
+                        <div class="md:col-span-4 col-span-12 mb-4">
+                            <label class="form-label">Empaque</label>
+                            <select name="empaque" class="form-control @error('empaque') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($empaques as $empaque)
+                                    <option value="{{ $empaque->nombre }}" {{ old('empaque', $codigoBarra->empaque) == $empaque->nombre ? 'selected' : '' }}>{{ $empaque->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('empaque') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Contenido</label>
                             <input type="text" name="contenido" value="{{ old('contenido', $codigoBarra->contenido) }}" class="form-control @error('contenido') is-invalid @enderror" placeholder="Ej. 10 unidades">
                             @error('contenido') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-6 col-span-12 mb-4">
-                            <label class="form-label">Tipo</label>
-                            <select name="tipo" class="form-control @error('tipo') is-invalid @enderror" required>
-                                <option value="">Seleccione</option>
-                                <option value="EAN13" {{ old('tipo', $codigoBarra->tipo) == 'EAN13' ? 'selected' : '' }}>EAN13</option>
-                                <option value="ITF14" {{ old('tipo', $codigoBarra->tipo) == 'ITF14' ? 'selected' : '' }}>ITF14</option>
-                            </select>
-                            @error('tipo') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="box-footer text-right">

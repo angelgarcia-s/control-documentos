@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CodigoBarra;
 use App\Models\TipoEmpaque;
+use App\Models\Empaque;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 
@@ -17,7 +18,8 @@ class CodigosBarrasController extends Controller
     public function create()
     {
         $tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
-        return view('codigos-barras.create', compact('tiposEmpaque'));
+        $empaques = Empaque::all(['id', 'nombre']);
+        return view('codigos-barras.create', compact('tiposEmpaque', 'empaques'));
     }
 
     public function store(Request $request)
@@ -26,6 +28,7 @@ class CodigosBarrasController extends Controller
             'codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
             'nombre' => 'required|string|max:255',
             'tipo_empaque' => 'required|string|max:50',
+            'empaque' => 'nullable|string|max:50',
             'contenido' => 'nullable|string|max:255',
             'tipo' => 'required|in:EAN13,ITF14',
         ]);
@@ -47,7 +50,8 @@ class CodigosBarrasController extends Controller
     public function edit(CodigoBarra $codigoBarra)
     {
         $tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
-        return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque'));
+        $empaques = Empaque::all(['id', 'nombre']);
+        return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque', 'empaques'));
     }
 
     public function update(Request $request, CodigoBarra $codigoBarra)
@@ -56,6 +60,7 @@ class CodigosBarrasController extends Controller
             'codigo' => 'required|string|max:50|unique:codigos_barras,codigo,' . $codigoBarra->id,
             'nombre' => 'required|string|max:255',
             'tipo_empaque' => 'required|string|max:50',
+            'empaque' => 'nullable|string|max:50',
             'contenido' => 'nullable|string|max:255',
             'tipo' => 'required|in:EAN13,ITF14',
         ]);

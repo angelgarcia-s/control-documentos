@@ -19,6 +19,7 @@ class CodigosBarrasTable extends TablaGenerica
                 ['name' => 'codigo', 'label' => 'Código', 'sortable' => true, 'searchable' => true],
                 ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
                 ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
+                ['name' => 'empaque', 'label' => 'Empaque', 'sortable' => true, 'searchable' => true],
                 ['name' => 'contenido', 'label' => 'Contenido', 'sortable' => true, 'searchable' => true],
                 ['name' => 'tipo', 'label' => 'Tipo', 'sortable' => true, 'searchable' => true],
                 ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false],
@@ -42,6 +43,7 @@ class CodigosBarrasTable extends TablaGenerica
 
     public function borrar($id)
     {
-        $this->confirmingDelete($id);
+        //$this->confirmingDelete($id);
+        $this->confirmingDelete = $id;
     }
 }

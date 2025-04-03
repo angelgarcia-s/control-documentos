@@ -26,6 +26,7 @@ use App\Http\Controllers\ColoresController;
 use App\Http\Controllers\TamanosController;
 use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\TiposEmpaqueController;
+use App\Http\Controllers\EmpaquesController;
 use App\Http\Controllers\TiposSelloController;
 use App\Http\Controllers\AcabadosController;
 use App\Http\Controllers\MaterialesController;
@@ -56,6 +57,7 @@ Route::resource('colores', ColoresController::class, ['parameters' => ['colores'
 Route::resource('tamanos', TamanosController::class, ['parameters' => ['tamanos' => 'tamano']]);
 Route::resource('unidades', UnidadMedidaController::class, ['parameters' => ['unidades' => 'unidad']]);
 Route::resource('tipos-empaque', TiposEmpaqueController::class, ['parameters' => ['tipos-empaque' => 'tipo_empaque']]);
+Route::resource('empaques', EmpaquesController::class, ['parameters' => ['empaques' => 'empaque']]);
 Route::resource('tipos-sello', TiposSelloController::class, ['parameters' => ['tipos-sello' => 'tipo_sello']]);
 Route::resource('acabados', AcabadosController::class, ['parameters' => ['acabados' => 'acabado']]);
 Route::resource('materiales', MaterialesController::class, ['parameters' => ['materiales' => 'material']]);

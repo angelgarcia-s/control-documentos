@@ -20,26 +20,31 @@
                         <label class="form-label">ID</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->id }}</p>
                     </div>
+                    <div class="md:col-span-1 col-span-12 mb-4">
+                        <label class="form-label">Tipo</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->tipo }}</p>
+                    </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Código</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->codigo }}</p>
                     </div>
-                    <div class="md:col-span-4 col-span-12 mb-4">
-                        <label class="form-label">Nombre</label>
+                    <div class="md:col-span-6 col-span-12 mb-4">
+                        <label class="form-label">Producto</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->nombre }}</p>
                     </div>
-                    <div class="md:col-span-3 col-span-12 mb-4">
+                    <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Tipo de Empaque</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->tipo_empaque }}</p>
                     </div>
-                    <div class="md:col-span-3 col-span-12 mb-4">
+                    <div class="md:col-span-4 col-span-12 mb-4">
+                        <label class="form-label">Empaque</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->empaque ?? 'N/A' }}</p>
+                    </div>
+                    <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Contenido</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->contenido ?? 'N/A' }}</p>
                     </div>
-                    <div class="md:col-span-3 col-span-12 mb-4">
-                        <label class="form-label">Tipo</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $codigoBarra->tipo }}</p>
-                    </div>
+                    
                 </div>
                 
                 <div class="flex justify-end md:col-span-12 col-span-12">
