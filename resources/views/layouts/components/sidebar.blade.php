@@ -43,16 +43,17 @@
                                 </ul>
                             </li>
 
-                            <!-- Empaques -->
+                            <!-- Codigos de barras -->
                             <li class="slide has-sub">
                                 <a href="javascript:void(0);" class="side-menu__item">
                                     <i class="bx bx-package side-menu__icon"></i>
-                                    <span class="side-menu__label">Empaques</span>
+                                    <span class="side-menu__label">Codigos de Barras</span>
                                     <i class="fe fe-chevron-right side-menu__angle"></i>
                                 </a>
                                 <ul class="slide-menu child1">
-                                    <li class="slide"><a href="{{ url('empaques/asignar-codigos') }}" class="side-menu__item">Asignar Códigos</a></li>
-                                    <li class="slide"><a href="{{ url('empaques/asignar-printcards') }}" class="side-menu__item">Asignar Print Cards</a></li>
+                                    <li class="slide"><a href="{{ route('codigos-barras.index') }}" class="side-menu__item">Asignar Códigos</a></li>
+                                    <li class="slide"><a href="{{ url('asignar-codigos') }}" class="side-menu__item">Asignar Códigos</a></li>
+                                    <li class="slide"><a href="{{ url('asignar-printcards') }}" class="side-menu__item">Asignar Print Cards</a></li>
                                 </ul>
                             </li>
 
