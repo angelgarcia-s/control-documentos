@@ -32,6 +32,7 @@ use App\Http\Controllers\AcabadosController;
 use App\Http\Controllers\MaterialesController;
 use App\Http\Controllers\BarnicesController;
 use App\Http\Controllers\CodigosBarrasController;
+use App\Http\Controllers\ProductoCodigosBarrasController;
 use Illuminate\View\View;
 
 Route::get('/', function () {
@@ -43,7 +44,11 @@ Route::resource('productos', ProductosController::class, ['parameters' => ['prod
 
 // Codigos de barras
 Route::resource('codigos-barras', CodigosBarrasController::class, ['parameters' => ['codigos-barras' => 'codigoBarra']]);
-Route::get('/codigos-barras/asignar/{sku}', [CodigosBarrasController::class, 'asignar'])->name('codigos-barras.asignar');
+Route::get('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar');
+Route::post('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'store'])->name('codigos-barras.asignar.store');
+Route::resource('producto-codigos-barras', ProductoCodigosBarrasController::class, ['parameters' => ['producto-codigos-barras' => 'productoCodigosBarra']]);
+
+
 Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards');
 
 // Empaques

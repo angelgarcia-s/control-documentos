@@ -14,7 +14,7 @@ class ProductoCodigosBarras extends Model
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
-    public function codigoBarras()
+    public function codigoBarra()
     {
         return $this->belongsTo(CodigoBarra::class, 'codigo_barra_id');
     }

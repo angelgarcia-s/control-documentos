@@ -70,18 +70,23 @@
                         </td>
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                @if(str_ends_with($columna['name'], '_count'))
-                                    <!-- Si el nombre de la columna termina en '_count', mostrar como conteo -->
-                                    {{ $elemento->{$columna['name']} ?? '0' }}
-                                @elseif(isset($columna['relationship']))
-                                    <!-- Para columnas con relaciones -->
+                                @if(isset($columna['relationship']))
                                     {{ $elemento->{$columna['relationship']}?->nombre ?? '-' }}
                                 @else
-                                    <!-- Para columnas normales -->
                                     {{ $elemento->{$columna['name']} ?? '-' }}
                                 @endif
                             </td>
                         @endforeach
+
+                        {{-- @foreach($columnas as $columna)
+                            <td class="py-3 px-6 border">
+                                @if(isset($columna['relationship']))
+                                    {{ $elemento->{$columna['relationship']}?->nombre ?? '-' }}
+                                @else
+                                    {{ $elemento->{$columna['name']} ?? '-' }}
+                                @endif
+                            </td>
+                        @endforeach --}}
                     </tr>
                 @endforeach
             </tbody>
@@ -103,7 +108,7 @@
     
             <!-- Paginación de Livewire con Tailwind -->
             <div>
-                {{ $elementos->links('vendor.livewire.tailwind') }}
+                {{ $elementos->links('vendor.pagination.tailwind') }}
             </div>
         </div>
 

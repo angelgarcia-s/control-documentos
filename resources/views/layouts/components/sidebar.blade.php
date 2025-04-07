@@ -38,11 +38,11 @@
                                 <ul class="slide-menu child1">
                                     <li class="slide"><a href="{{ route('productos.index') }}" class="side-menu__item">Lista de Productos</a></li>
                                     <li class="slide"><a href="{{ route('productos.create') }}" class="side-menu__item">Agregar Producto</a></li>
-                                    <li class="slide"><a href="{{ url('productos/codigos') }}" class="side-menu__item">Códigos de Barras</a></li>
+                                    <li class="slide"><a href="{{ route('producto-codigos-barras.index') }}" class="side-menu__item">Productos con codigos de barras</a></li>
                                     <li class="slide"><a href="{{ url('productos/printcards') }}" class="side-menu__item">Print Cards</a></li>
                                 </ul>
                             </li>
-
+                            
                             <!-- Codigos de barras -->
                             <li class="slide has-sub">
                                 <a href="javascript:void(0);" class="side-menu__item">
@@ -51,8 +51,9 @@
                                     <i class="fe fe-chevron-right side-menu__angle"></i>
                                 </a>
                                 <ul class="slide-menu child1">
-                                    <li class="slide"><a href="{{ route('codigos-barras.index') }}" class="side-menu__item">Asignar Códigos</a></li>
-                                    <li class="slide"><a href="{{ url('asignar-codigos') }}" class="side-menu__item">Asignar Códigos</a></li>
+                                    <li class="slide"><a href="{{ route('codigos-barras.index') }}" class="side-menu__item">Códigos de barras</a></li>
+                                    <li class="slide"><a href="{{ route('codigos-barras.create') }}" class="side-menu__item">Agregar Códigos</a></li>
+                                    <li class="slide"><a href="{{ url('asignar-codigos') }}" class="side-menu__item">Pro</a></li>
                                     <li class="slide"><a href="{{ url('asignar-printcards') }}" class="side-menu__item">Asignar Print Cards</a></li>
                                 </ul>
                             </li>

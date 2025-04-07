@@ -52,7 +52,8 @@ class ProductosTable extends TablaGenerica
 
     public function codigos($id)
     {
-        return redirect()->route('codigos-barras.asignar', ['sku' => Producto::find($id)->sku]);
+        $producto = Producto::find($id);
+        return redirect()->route('codigos-barras.asignar', $producto->sku);
     }
 
     public function printcards($id)

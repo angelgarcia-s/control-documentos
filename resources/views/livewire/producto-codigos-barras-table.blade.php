@@ -1,7 +1,6 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
         
-        <!-- Mostrar el mensaje de error de Livewire -->
         @if ($errorMessage)
             <div class="alert alert-danger mb-4" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => @this.call('clearErrorMessage'), 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                 {{ $errorMessage }}
@@ -24,23 +23,23 @@
                 <tr>
                     <th class="border px-4 py-2"></th>
                     @foreach($columnas as $columna)
-                    <th class="border px-4 py-2 relative">
-                        @if($columna['searchable'])
-                            <div class="relative">
-                                <input type="text"
-                                       wire:model.live="search.{{ $columna['name'] }}"
-                                       class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
-                                       placeholder="Buscar {{ $columna['label'] }}'">
-                                @if(!empty($search[$columna['name']]))
-                                    <button type="button"
-                                            wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
-                                            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                        <i class="ti ti-x text-sm"></i>
-                                    </button>
-                                @endif
-                            </div>
-                        @endif
-                    </th>
+                        <th class="border px-4 py-2 relative">
+                            @if($columna['searchable'])
+                                <div class="relative">
+                                    <input type="text"
+                                           wire:model.live="search.{{ $columna['name'] }}"
+                                           class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
+                                           placeholder="Buscar {{ $columna['label'] }}'">
+                                    @if(!empty($search[$columna['name']]))
+                                        <button type="button"
+                                                wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
+                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i class="ti ti-x text-sm"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            @endif
+                        </th>
                     @endforeach
                 </tr>
             </thead>
@@ -52,7 +51,7 @@
                                 @if(!empty($botones))
                                     @foreach($botones as $boton)
                                         <a href="{{ route($boton['ruta'], [$boton['parametro'] => $elemento->id]) }}"
-                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2  ti-btn-wave">
+                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2 ti-btn-wave">
                                             {{ $boton['etiqueta'] }}
                                         </a>
                                     @endforeach
@@ -71,13 +70,15 @@
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
                                 @if(str_ends_with($columna['name'], '_count'))
-                                    <!-- Si el nombre de la columna termina en '_count', mostrar como conteo -->
                                     {{ $elemento->{$columna['name']} ?? '0' }}
                                 @elseif(isset($columna['relationship']))
-                                    <!-- Para columnas con relaciones -->
-                                    {{ $elemento->{$columna['relationship']}?->nombre ?? '-' }}
+                                    @php
+                                        $parts = explode('.', $columna['name']);
+                                        $field = count($parts) > 1 ? $parts[1] : $parts[0];
+                                        $value = $elemento->{$columna['relationship']} ? $elemento->{$columna['relationship']}->$field : '-';
+                                    @endphp
+                                    {{ $value }}
                                 @else
-                                    <!-- Para columnas normales -->
                                     {{ $elemento->{$columna['name']} ?? '-' }}
                                 @endif
                             </td>
@@ -86,11 +87,8 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
 
-    <!-- Paginación con Livewire y <select> -->
         <div class="mt-3 flex items-center justify-between">
-            <!-- Select para elementos por página -->
             <div class="flex items-center space-x-2">
                 <label for="perPage" class="text-sm text-gray-700 dark:text-gray-300">Mostrar:</label>
                 <select wire:model.live="perPage" id="perPage"
@@ -100,33 +98,29 @@
                     @endforeach
                 </select>
             </div>
-    
-            <!-- Paginación de Livewire con Tailwind -->
             <div>
-                {{ $elementos->links('vendor.pagination.tailwind') }}
+                {!! $elementos->links('vendor.pagination.tailwind') !!}
             </div>
         </div>
 
-    <!-- Modal basado en Livewire puro -->
-    @if($confirmingDelete !== null)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
-            <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar este elemento?</p>
-            <div class="flex justify-end space-x-2">
-                <button wire:click="cancelarEliminar" 
-                        class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
-                    Cancelar
-                </button>
-                <button wire:click="eliminarElemento" 
-                        wire:loading.attr="disabled" 
-                        class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
-                    Confirmar
-                </button>
+        @if($confirmingDelete !== null)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
+                    <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar esta asignación?</p>
+                    <div class="flex justify-end space-x-2">
+                        <button wire:click="cancelarEliminar" 
+                                class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
+                            Cancelar
+                        </button>
+                        <button wire:click="eliminarElemento" 
+                                wire:loading.attr="disabled" 
+                                class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endif
     </div>
-    @endif
-
 </div>
-
