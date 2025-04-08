@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\ProductoCodigosBarras;
-use Illuminate\Database\QueryException;
 
 class ProductoCodigosBarrasTable extends Component
 {
@@ -94,7 +93,13 @@ class ProductoCodigosBarrasTable extends Component
 
     public function limpiarBusqueda($campo)
     {
-        $this->search[$campo] = '';
+        // Manejar claves anidadas
+        if (str_contains($campo, '.')) {
+            [$relacion, $subcampo] = explode('.', $campo);
+            $this->search[$relacion][$subcampo] = '';
+        } else {
+            $this->search[$campo] = '';
+        }
         $this->resetPage();
     }
 
@@ -127,23 +132,39 @@ class ProductoCodigosBarrasTable extends Component
     public function render()
     {
         $query = ProductoCodigosBarras::query()
-            ->with(['producto', 'codigoBarra']);
+            ->with(['producto', 'codigoBarra'])
+            ->join('productos', 'producto_codigos_barras.producto_id', '=', 'productos.id')
+            ->join('codigos_barras', 'producto_codigos_barras.codigo_barra_id', '=', 'codigos_barras.id')
+            ->select('producto_codigos_barras.*');
 
-        foreach ($this->search as $campo => $valor) {
-            if (!empty($valor)) {
-                $columna = collect($this->columnas)->firstWhere('name', $campo);
-                if ($columna && $columna['searchable']) {
-                    if (isset($columna['relationship'])) {
-                        $field = explode('.', $columna['name'])[1];
-                        $query->whereHas($columna['relationship'], fn ($q) => $q->where($field, 'like', "%{$valor}%"));
-                    } else {
-                        $query->where($campo, 'like', "%{$valor}%");
-                    }
+        // Manejar búsqueda con claves anidadas
+        foreach ($this->columnas as $columna) {
+            $campo = $columna['name'];
+            if (isset($columna['relationship'])) {
+                [$relacion, $subcampo] = explode('.', $campo);
+                if (!empty($this->search[$relacion][$subcampo])) {
+                    $valor = $this->search[$relacion][$subcampo];
+                    $table = $relacion === 'producto' ? 'productos' : 'codigos_barras';
+                    $query->where("{$table}.{$subcampo}", 'like', "%{$valor}%");
+                }
+            } else {
+                if (!empty($this->search[$campo])) {
+                    $valor = $this->search[$campo];
+                    $query->where("producto_codigos_barras.{$campo}", 'like', "%{$valor}%");
                 }
             }
         }
 
-        $query->orderBy($this->orderBy, $this->orderDirection);
+        if (str_contains($this->orderBy, 'producto.')) {
+            $field = explode('.', $this->orderBy)[1];
+            $query->orderBy("productos.{$field}", $this->orderDirection);
+        } elseif (str_contains($this->orderBy, 'codigoBarra.')) {
+            $field = explode('.', $this->orderBy)[1];
+            $query->orderBy("codigos_barras.{$field}", $this->orderDirection);
+        } else {
+            $query->orderBy("producto_codigos_barras.{$this->orderBy}", $this->orderDirection);
+        }
+
         $elementos = $query->paginate($this->perPage);
 
         return view('livewire.producto-codigos-barras-table', [

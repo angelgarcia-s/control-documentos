@@ -30,13 +30,23 @@
                                            wire:model.live="search.{{ $columna['name'] }}"
                                            class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
                                            placeholder="Buscar {{ $columna['label'] }}'">
-                                    @if(!empty($search[$columna['name']]))
-                                        <button type="button"
-                                                wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
-                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                            <i class="ti ti-x text-sm"></i>
-                                        </button>
-                                    @endif
+                                           @php
+                                           // Manejar claves anidadas para columnas con relaciones
+                                           $hasValue = false;
+                                           if (str_contains($columna['name'], '.')) {
+                                               [$relacion, $subcampo] = explode('.', $columna['name']);
+                                               $hasValue = !empty($search[$relacion][$subcampo]);
+                                           } else {
+                                               $hasValue = !empty($search[$columna['name']]);
+                                           }
+                                       @endphp
+                                       @if($hasValue)
+                                           <button type="button"
+                                                   wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
+                                                   class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                               <i class="ti ti-x text-sm"></i>
+                                           </button>
+                                       @endif
                                 </div>
                             @endif
                         </th>

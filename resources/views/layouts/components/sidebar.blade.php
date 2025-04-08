@@ -71,6 +71,7 @@
                                     <li class="slide"><a href="{{ route('colores.index') }}" class="side-menu__item">Colores</a></li>
                                     <li class="slide"><a href="{{ route('tamanos.index') }}" class="side-menu__item">Tamaños</a></li>
                                     <li class="slide"><a href="{{ route('unidades.index') }}" class="side-menu__item">Unidades de Medida</a></li>
+                                    <li class="slide"><a href="{{ route('empaques.index') }}" class="side-menu__item">Empaques</a></li>
                                     <li class="slide"><a href="{{ route('tipos-empaque.index') }}" class="side-menu__item">Tipos de Empaque</a></li>
                                     <li class="slide"><a href="{{ route('tipos-sello.index') }}" class="side-menu__item">Tipos de Sello</a></li>
                                     <li class="slide"><a href="{{ route('acabados.index') }}" class="side-menu__item">Acabados</a></li>
