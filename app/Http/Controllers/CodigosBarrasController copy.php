@@ -24,31 +24,20 @@ class CodigosBarrasController extends Controller
 
     public function store(Request $request)
     {
-        $codigos = $request->input('codigos', []);
-
-        $request->validate([
-            'codigos.*.tipo' => 'required|in:EAN13,ITF14',
-            'codigos.*.codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
-            'codigos.*.nombre' => 'required|string|max:255',
-            'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
-            'codigos.*.empaque' => 'nullable|string|max:50|exists:empaques,nombre',
-            'codigos.*.contenido' => 'nullable|string|max:255',
+        $validated = $request->validate([
+            'codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
+            'nombre' => 'required|string|max:255',
+            'tipo_empaque' => 'required|string|max:50',
+            'empaque' => 'nullable|string|max:50',
+            'contenido' => 'nullable|string|max:255',
+            'tipo' => 'required|in:EAN13,ITF14',
         ]);
 
         try {
-            foreach ($codigos as $codigoData) {
-                CodigoBarra::create([
-                    'tipo' => $codigoData['tipo'],
-                    'codigo' => $codigoData['codigo'],
-                    'nombre' => $codigoData['nombre'],
-                    'tipo_empaque' => $codigoData['tipo_empaque'],
-                    'empaque' => $codigoData['empaque'],
-                    'contenido' => $codigoData['contenido'],
-                ]);
-            }
-            return redirect()->route('codigos-barras.index')->with('success', 'Códigos de barra creados correctamente.');
+            CodigoBarra::create($validated);
+            return redirect()->route('codigos-barras.index')->with('success', 'Código de barra creado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al crear los códigos de barra: ' . $e->getMessage()])->withInput();
+            return redirect()->back()->withErrors(['error' => 'Error al crear el código de barra: ' . $e->getMessage()])->withInput();
         }
     }
 
