@@ -29,6 +29,16 @@ class CrearCodigosBarras extends Component
         $this->agregarFila();
     }
 
+    // Personalizar nombres de los campos para los mensajes de error
+    protected $validationAttributes = [
+        'codigos.*.tipo' => 'Tipo',
+        'codigos.*.codigo' => 'Código',
+        'codigos.*.nombre' => 'Producto',
+        'codigos.*.tipo_empaque' => 'Tipo de Empaque',
+        'codigos.*.empaque' => 'Empaque',
+        'codigos.*.contenido' => 'Contenido',
+    ];
+
     public function agregarFila()
     {
         if (count($this->codigos) < 5) {
