@@ -33,7 +33,10 @@ use App\Http\Controllers\MaterialesController;
 use App\Http\Controllers\BarnicesController;
 use App\Http\Controllers\CodigosBarrasController;
 use App\Http\Controllers\ProductoCodigosBarrasController;
+use App\Http\Controllers\TestController;
 use Illuminate\View\View;
+
+Route::get('/test', [TestController::class, 'index']);
 
 Route::get('/', function () {
     return view('welcome');

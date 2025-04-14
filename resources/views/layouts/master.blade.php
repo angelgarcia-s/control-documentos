@@ -9,7 +9,7 @@
         <meta name="Author" content="Angel Garcia">
         <meta name="Description" content="Control de Documentos | PrintCards">
         <meta name="keywords" content="">
-        
+
         <!-- TITLE -->
 		<title> Ambiderm | PrintCards </title>
 
@@ -18,9 +18,9 @@
 
         <!-- ICONS CSS -->
         <link href="{{asset('build/assets/iconfonts/icons.css')}}" rel="stylesheet">
-        
+
         <!-- APP SCSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
+
         <script src="https://kit.fontawesome.com/7a3f062316.js" crossorigin="anonymous"></script>
         @vite(['resources/css/app.css', 'resources/sass/app.scss'])
 
@@ -29,13 +29,13 @@
 
         <!-- LIVEWIRE STYLES -->
         @livewireStyles
-        
+
         <!-- MAIN JS -->
         <script src="{{asset('build/assets/main.js')}}"></script>
 
         @yield('styles')
 
-        
+
 	</head>
 
 	<body>
@@ -70,7 +70,7 @@
             <!-- MAIN-CONTENT -->
             <div class="content">
                 <div class="main-content">
-            
+
                     @yield('content')
 
                 </div>
@@ -85,7 +85,7 @@
             <!-- END SEARCH-MODAL -->
 
             <!-- FOOTER -->
-            
+
             @include('layouts.components.footer')
 
             <!-- END FOOTER -->
@@ -112,7 +112,7 @@
         <!-- LIVEWIRE SCRIPTS -->
         @livewireScripts
 
-        
+
         <!-- END SCRIPTS -->
 
 	</body>
