@@ -16,6 +16,7 @@ class AsignarCodigosBarras extends Component
     public $confirmingAssign = false;
     public $focusedInputIndex = null;
     public $filas = [];
+    public $userMessage = null; //pers
 
     public function mount($sku)
     {
@@ -26,7 +27,7 @@ class AsignarCodigosBarras extends Component
             'contenido' => '',
             'tipo_empaque' => '',
         ];
-        $this->addUserMessage("Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.");
+        $this->userMessage ="Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.";
     }
 
     public function agregarFila()
@@ -37,13 +38,13 @@ class AsignarCodigosBarras extends Component
                 'contenido' => '',
                 'tipo_empaque' => '',
             ];
-            $this->addUserMessage("Nueva fila añadida. Ahora tienes " . count($this->filas) . " filas.");
+            $this->userMessage =("Nueva fila añadida. Ahora tienes " . count($this->filas) . " filas.");
             // Restaurar el foco si había una fila enfocada
             if ($this->focusedInputIndex !== null) {
                 $this->dispatch('focus-row', index: $this->focusedInputIndex);
             }
         } else {
-            $this->addUserMessage("No puedes agregar más filas. Límite máximo alcanzado (5).");
+            $this->userMessage =("No puedes agregar más filas. Límite máximo alcanzado (5).");
         }
     }
 
@@ -54,10 +55,10 @@ class AsignarCodigosBarras extends Component
             $this->filas = array_values($this->filas);
             if ($this->focusedInputIndex == $index) {
                 $this->focusedInputIndex = null;
-                $this->addUserMessage("Fila " . ($index + 1) . " eliminada. Se ha limpiado el foco.");
+                $this->userMessage =("Fila " . ($index + 1) . " eliminada. No tienes niguna fila seleccionada.");
                 $this->dispatch('clear-focus');
             } else {
-                $this->addUserMessage("Fila " . ($index + 1) . " eliminada.");
+                $this->userMessage =("Fila " . ($index + 1) . " eliminada.");
                 // Restaurar el foco si había otra fila enfocada
                 if ($this->focusedInputIndex !== null) {
                     $this->dispatch('focus-row', index: $this->focusedInputIndex);
@@ -69,7 +70,7 @@ class AsignarCodigosBarras extends Component
     public function setFocus($index)
     {
         $this->focusedInputIndex = $index;
-        $this->addUserMessage("Foco establecido en la fila " . ($index + 1) . ".");
+        $this->userMessage =("Seleccionaste el campo de la fila " . ($index + 1) . ", ahora selecciona un codigo de barras.");
         $this->dispatch('focus-row', index: $index);
     }
 
@@ -77,13 +78,13 @@ class AsignarCodigosBarras extends Component
     {
         $this->focusedInputIndex = null;
         $this->dispatch('clear-focus');
-        $this->addUserMessage("Foco limpiado.");
+        $this->userMessage =("Agrega otra fila para asignar un codigo a otro empaque ó da click en Guardar para finalizar.");
     }
 
     public function selectCode($value)
     {
         $this->selectedCode = $value;
-        $this->addUserMessage("Código seleccionado: " . $value);
+        $this->userMessage =("Código de barras seleccionado con id: " . $value . ". Para continuar da click en el boton Asignar");
         if ($this->focusedInputIndex !== null) {
             $this->dispatch('focus-row', index: $this->focusedInputIndex);
         }
@@ -92,14 +93,33 @@ class AsignarCodigosBarras extends Component
     public function asignar()
     {
         if (!$this->selectedCode || $this->focusedInputIndex === null) {
-            $this->addUserMessage("Por favor, selecciona un código y establece el foco en una fila antes de asignar.");
+            $this->addErrorMessage("Por favor, selecciona un código y un campo de código en una fila antes de asignar.");
             return;
         }
 
         $codigo = CodigoBarra::find($this->selectedCode);
         if (!$codigo) {
-            $this->addUserMessage("El código seleccionado (" . $this->selectedCode . ") no se encuentra en la base de datos.");
+            $this->addErrorMessage("El código seleccionado (" . $this->selectedCode . ") no se encuentra en la base de datos.");
             return;
+        }
+
+        // Validar que el código no esté ya asignado en otra fila
+        foreach ($this->filas as $index => $fila) {
+            if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
+                $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
+                return;
+            }
+        }
+
+        // Validar que el tipo de empaque no esté repetido en otra fila
+        $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
+        if ($tipoEmpaqueSeleccionado) {
+            foreach ($this->filas as $index => $fila) {
+                if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
+                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                    return;
+                }
+            }
         }
 
         $nombreCorto = $this->producto->nombre_corto;
@@ -109,12 +129,12 @@ class AsignarCodigosBarras extends Component
         if (!$coincide) {
             $this->confirmingAssign = true;
             $this->dispatch('abrir-modal', 'confirmar-asignacion');
-            $this->addUserMessage("Los nombres no coinciden. Por favor, confirma la asignación.");
+            $this->addErrorMessage("Los nombres no coinciden. Por favor, confirma la asignación.");
             return;
         }
 
         $this->asignarCodigo($this->focusedInputIndex, $codigo);
-        $this->addUserMessage("Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
+        $this->addSuccessMessage("Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
         $this->selectedCode = null;
         $this->clearFocus();
     }
@@ -123,8 +143,31 @@ class AsignarCodigosBarras extends Component
     {
         $codigo = CodigoBarra::find($this->selectedCode);
         if ($codigo && $this->focusedInputIndex !== null) {
+            // Validar que el código no esté ya asignado en otra fila
+            foreach ($this->filas as $index => $fila) {
+                if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
+                    $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
+                    $this->confirmingAssign = false;
+                    $this->selectedCode = null;
+                    return;
+                }
+            }
+
+            // Validar que el tipo de empaque no esté repetido en otra fila
+            $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
+            if ($tipoEmpaqueSeleccionado) {
+                foreach ($this->filas as $index => $fila) {
+                    if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
+                        $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                        $this->confirmingAssign = false;
+                        $this->selectedCode = null;
+                        return;
+                    }
+                }
+            }
+
             $this->asignarCodigo($this->focusedInputIndex, $codigo);
-            $this->addUserMessage("Asignación confirmada: Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
+            $this->addSuccessMessage("Asignación confirmada: Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
         }
         $this->confirmingAssign = false;
         $this->selectedCode = null;
@@ -135,7 +178,7 @@ class AsignarCodigosBarras extends Component
     {
         $this->confirmingAssign = false;
         $this->selectedCode = null;
-        $this->addUserMessage("Asignación cancelada.");
+        $this->userMessage =("Asignación cancelada.");
         if ($this->focusedInputIndex !== null) {
             $this->dispatch('focus-row', index: $this->focusedInputIndex);
         }
@@ -162,6 +205,16 @@ class AsignarCodigosBarras extends Component
         session()->flash('user_message', $message);
     }
 
+    private function addErrorMessage($message)
+    {
+        session()->flash('error', $message);
+    }
+
+    private function addSuccessMessage($message)
+    {
+        session()->flash('success', $message);
+    }
+
     public function guardar()
     {
         $this->validate([
@@ -178,7 +231,7 @@ class AsignarCodigosBarras extends Component
         if ($response->successful()) {
             return redirect()->route('codigos-barras.asignar', $this->sku)->with('success', 'Códigos asignados correctamente.');
         } else {
-            $this->addUserMessage("Error al asignar los códigos: " . $response->body());
+            $this->userMessage =("Error al asignar los códigos: " . $response->body());
         }
     }
 

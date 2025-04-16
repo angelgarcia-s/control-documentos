@@ -5,24 +5,41 @@
                 <h5 class="box-title">Asignar Códigos al Producto {{ $sku }}</h5>
             </div>
             <div class="box-body">
-                @if (session('user_message'))
+                {{-- ALERTAS --}}
+                @if ($userMessage)
                     <div class="alert alert-info" role="alert">
-                        {{ session('user_message') }}
+                        {{-- {{ session('user_message') }} --}}
+                        {{ $userMessage }}
                     </div>
                 @endif
+
                 @if (session('success'))
-                    <div class="alert alert-success" role="alert">
+                    <div
+                        x-data="{ show: true }"
+                        x-init="setTimeout(() => show = false, 2000)"
+                        x-show="show"
+                        class="alert alert-success mt-2"
+                        role="alert"
+                    >
                         {{ session('success') }}
                     </div>
                 @endif
+
                 @if (session('error'))
-                    <div class="alert alert-danger" role="alert">
+                    <div
+                        x-data="{ show: true }"
+                        x-init="setTimeout(() => show = false, 2000)"
+                        x-show="show"
+                        class="alert alert-danger mt-2"
+                        role="alert"
+                    >
                         {{ session('error') }}
                     </div>
                 @endif
+
                 @if ($errors->any())
-                    <div class="alert alert-danger" role="alert">
-                        <ul>
+                    <div class="alert alert-danger mt-2" role="alert">
+                        <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -95,7 +112,6 @@
     @push('scripts')
         <script>
             document.addEventListener('livewire:initialized', () => {
-                // No necesitamos JavaScript para añadir la clase focused, ya que se aplica directamente en el HTML
                 @this.on('clear-focus', () => {
                     document.querySelectorAll('input.focused').forEach(input => {
                         input.classList.remove('focused');
