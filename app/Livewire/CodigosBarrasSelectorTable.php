@@ -51,6 +51,13 @@ class CodigosBarrasSelectorTable extends Component
         $this->resetPage();
     }
 
+    public function selectCode($value)
+    {
+        $this->selectedCode = $value;
+        $this->dispatch('code-selected', $value);
+    }
+
+
     public function render()
     {
         $query = CodigoBarra::query();

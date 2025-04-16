@@ -2,43 +2,26 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <h5 class="box-title">Asignar Códigos al Producto {{ $sku }}</h5>
+                <h5 class="box-title">Asignar Códigos de barras al Producto:   {{ $sku }} - {{$producto -> nombre_corto}}</h5>
             </div>
             <div class="box-body">
-                {{-- ALERTAS --}}
                 @if ($userMessage)
-                    <div class="alert alert-info" role="alert">
-                        {{-- {{ session('user_message') }} --}}
+                    <div class="alert alert-info" role="alert" style="position: relative; z-index: 0;">
                         {{ $userMessage }}
                     </div>
                 @endif
-
                 @if (session('success'))
-                    <div
-                        x-data="{ show: true }"
-                        x-init="setTimeout(() => show = false, 2000)"
-                        x-show="show"
-                        class="alert alert-success mt-2"
-                        role="alert"
-                    >
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show" class="alert alert-success mt-2" role="alert">
                         {{ session('success') }}
                     </div>
                 @endif
-
                 @if (session('error'))
-                    <div
-                        x-data="{ show: true }"
-                        x-init="setTimeout(() => show = false, 2000)"
-                        x-show="show"
-                        class="alert alert-danger mt-2"
-                        role="alert"
-                    >
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show" class="alert alert-danger mt-2" role="alert">
                         {{ session('error') }}
                     </div>
                 @endif
-
                 @if ($errors->any())
-                    <div class="alert alert-danger mt-2" role="alert">
+                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show" class="alert alert-danger mt-2" role="alert">
                         <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -46,6 +29,7 @@
                         </ul>
                     </div>
                 @endif
+
 
                 @foreach ($filas as $index => $fila)
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row">
@@ -90,7 +74,9 @@
                     </div>
                 </div>
 
-                @livewire('codigos-barras-selector-table', ['selectedCode' => $selectedCode])
+                <livewire:codigos-barras-selector-table
+                    :selectedCode="$selectedCode"
+                    :key="$selectorKey" />
             </div>
         </div>
     </div>
@@ -100,7 +86,9 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div class="bg-white rounded-lg p-6 max-w-md w-full">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Confirmar asignación</h2>
-                <p class="text-gray-700 mb-6">Los productos no coinciden: el nombre del producto ('{{ $producto->nombre_corto }}') no coincide con el nombre del código ('{{ CodigoBarra::find($selectedCode)->nombre ?? '' }}'). ¿Desea asignar de todos modos?</p>
+                <p class="text-gray-700 mb-6">
+                    Los productos no coinciden: el nombre del producto ('{{ $producto->nombre_corto }}') no coincide con el nombre del código ('{{ $codigoNombre ?? '' }}'). ¿Desea asignar de todos modos?
+                </p>
                 <div class="flex justify-end space-x-2">
                     <button wire:click="cancelarAsignacion" class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">Cancelar</button>
                     <button wire:click="confirmarAsignacion" class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">Confirmar</button>
@@ -118,6 +106,7 @@
                     });
                 });
             });
+
         </script>
     @endpush
 </div>

@@ -42,10 +42,12 @@
                                 @if($columna['name'] === 'check')
                                     <input type="radio"
                                            name="code_selection"
-                                           wire:change="$parent.selectCode({{ $elemento->id }})"
                                            value="{{ $elemento->id }}"
+                                           wire:change="$parent.selectCode({{ $elemento->id }})"
+                                           {{ $selectedCode == $elemento->id ? 'checked' : '' }}
                                            class="ti-form-radio"
-                                           {{ $selectedCode == $elemento->id ? 'checked' : '' }}>
+                                           :key="'codigo-'.$elemento->id.'-'.$selectedCode"
+                                           >
                                 @else
                                     {{ $elemento->{$columna['name']} ?? '-' }}
                                 @endif

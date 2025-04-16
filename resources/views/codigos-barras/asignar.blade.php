@@ -3,7 +3,7 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Asignacion de Códigos de Barras a un producto</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Asignar Códigos de Barras a un Producto</h3>
     </div>
     <x-breadcrumbs />
 </div>
@@ -33,7 +33,7 @@
         <div class="box">
 
             <div class="box-body space-y-3">
-                @livewire('asignar-codigos-barras', ['sku' => $sku])
+                @livewire('asignar-codigos-barras', ['sku' => $sku, 'Nombre_corto' => $producto])
             </div>
 
             <div class="box-header">
