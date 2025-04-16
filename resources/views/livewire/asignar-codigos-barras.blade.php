@@ -35,8 +35,9 @@
                         <div class="md:col-span-4 col-span-12 mb-4 relative">
                             <label class="form-label">Código</label>
                             <input type="text"
+                                   id="codigo-input-{{ $index }}"
                                    wire:model="filas.{{ $index }}.codigo"
-                                   class="form-control focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm custom-input-focus {{ $focusedInputIndex === $index ? 'focused' : '' }}"
                                    readonly
                                    wire:focus="setFocus({{ $index }})">
                             <x-validation-error field="filas.{{ $index }}.codigo" />
@@ -90,4 +91,17 @@
             </div>
         </div>
     @endif
+
+    @push('scripts')
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+                // No necesitamos JavaScript para añadir la clase focused, ya que se aplica directamente en el HTML
+                @this.on('clear-focus', () => {
+                    document.querySelectorAll('input.focused').forEach(input => {
+                        input.classList.remove('focused');
+                    });
+                });
+            });
+        </script>
+    @endpush
 </div>
