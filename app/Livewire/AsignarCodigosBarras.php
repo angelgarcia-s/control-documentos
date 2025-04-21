@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\Producto;
 use App\Models\CodigoBarra;
 use App\Models\TipoEmpaque;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 class AsignarCodigosBarras extends Component
 {
@@ -94,7 +94,7 @@ class AsignarCodigosBarras extends Component
     public function asignar()
     {
         if (!$this->selectedCode || $this->focusedInputIndex === null) {
-            $this->addErrorMessage("Por favor, selecciona un código y un campo de código en una fila antes de asignar.");
+            $this->addErrorMessage("Por favor, selecciona un campo de código y un código en una fila antes de asignar.");
             return;
         }
 
@@ -129,7 +129,7 @@ class AsignarCodigosBarras extends Component
 
         if (!$coincide) {
             $this->confirmingAssign = true;
-            $this->codigoNombre = $codigo->nombre; // Almacenar el nombre del código para el modal
+            $this->codigoNombre = $codigo->nombre;
             $this->dispatch('abrir-modal', 'confirmar-asignacion');
             $this->addErrorMessage("Los nombres no coinciden. Por favor, confirma la asignación.");
             return;
@@ -152,7 +152,7 @@ class AsignarCodigosBarras extends Component
                     $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
                     $this->confirmingAssign = false;
                     $this->selectedCode = null;
-                    $this->codigoNombre = null; // Limpiar el nombre del código
+                    $this->codigoNombre = null;
                     return;
                 }
             }
@@ -165,7 +165,7 @@ class AsignarCodigosBarras extends Component
                         $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                         $this->confirmingAssign = false;
                         $this->selectedCode = null;
-                        $this->codigoNombre = null; // Limpiar el nombre del código
+                        $this->codigoNombre = null;
                         return;
                     }
                 }
@@ -176,19 +176,17 @@ class AsignarCodigosBarras extends Component
         }
         $this->confirmingAssign = false;
         $this->selectedCode = null;
-        $this->codigoNombre = null; // Limpiar el nombre del código
+        $this->codigoNombre = null;
         $this->clearFocus();
         $this->selectorKey = uniqid();
-
     }
 
     public function cancelarAsignacion()
     {
         $this->confirmingAssign = false;
         $this->selectedCode = null;
-        $this->codigoNombre = null; // Limpiar el nombre del código
-
-        $this->addErrorMessage("Asignación cancelada.");
+        $this->codigoNombre = null;
+        $this->addErrorMessage("La asignación del código ha sido cancelada.");
         if ($this->focusedInputIndex !== null) {
             $this->dispatch('focus-row', index: $this->focusedInputIndex);
         }
@@ -231,18 +229,31 @@ class AsignarCodigosBarras extends Component
         $this->validate([
             'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
             'filas.*.tipo_empaque' => 'required|string|max:50',
-            'filas.*.contenido' => 'nullable|string|max:255',
+            'filas.*.contenido' => 'required|string|max:255',
         ]);
 
-        $response = Http::post(route('codigos-barras.asignar.store', $this->sku), [
-            'filas' => $this->filas,
-            '_token' => csrf_token(),
-        ]);
+        try {
+            // Crear una solicitud simulada para pasar al controlador
+            $request = new Request();
+            $request->replace([
+                'filas' => $this->filas,
+                '_token' => csrf_token(),
+            ]);
 
-        if ($response->successful()) {
-            return redirect()->route('codigos-barras.asignar', $this->sku)->with('success', 'Códigos asignados correctamente.');
-        } else {
-            $this->addErrorMessage("Error al asignar los códigos: " . $response->body());
+            // Invocar directamente el controlador
+            $controller = new \App\Http\Controllers\ProductoCodigosBarrasController();
+            $response = $controller->store($request, $this->sku);
+
+            $responseData = $response->getData(true);
+
+            if (isset($responseData['success']) && $responseData['success']) {
+                return redirect()->route('codigos-barras.asignar', $this->sku)->with('success', 'Códigos asignados correctamente.');
+            } else {
+                $errorMessage = $responseData['message'] ?? 'Ocurrió un error desconocido al intentar guardar los códigos.';
+                $this->addErrorMessage($errorMessage);
+            }
+        } catch (\Exception $e) {
+            $this->addErrorMessage("Error al guardar los códigos: " . $e->getMessage());
         }
     }
 

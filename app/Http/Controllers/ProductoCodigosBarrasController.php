@@ -25,35 +25,63 @@ class ProductoCodigosBarrasController extends Controller
 
     public function store(Request $request, $sku)
     {
-        $producto = Producto::where('sku', $sku)->firstOrFail();
-
-        $validated = $request->validate([
-            'filas' => 'required|array',
-            'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
-            'filas.*.tipo_empaque' => 'required|string|max:50',
-            'filas.*.contenido' => 'nullable|string|max:255',
-        ]);
-
         try {
-            foreach ($validated['filas'] as $fila) {
-                // Verificar si el tipo de empaque ya está asignado para este producto
-                if ($producto->codigosBarras()->wherePivot('tipo_empaque', $fila['tipo_empaque'])->exists()) {
-                    return redirect()->back()->withErrors(['error' => "El tipo de empaque '{$fila['tipo_empaque']}' ya está asignado a otro código para este producto."]);
-                }
+            // Validar los datos de entrada
+            $validated = $request->validate([
+                'filas' => 'required|array',
+                'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
+                'filas.*.tipo_empaque' => 'required|string|max:50',
+                'filas.*.contenido' => 'nullable|string|max:255',
+            ]);
 
-                // Buscar el código de barras por su código
-                $codigoBarra = CodigoBarra::where('codigo', $fila['codigo'])->first();
-                if ($codigoBarra) {
-                    $producto->codigosBarras()->attach($codigoBarra->id, [
-                        'tipo_empaque' => $fila['tipo_empaque'],
-                        'contenido' => $fila['contenido'],
-                    ]);
+            // Obtener el producto por SKU
+            $producto = Producto::where('sku', $sku)->firstOrFail();
+
+            // Obtener los códigos de barras existentes en una sola consulta
+            $codigos = CodigoBarra::whereIn('codigo', array_column($validated['filas'], 'codigo'))->pluck('id', 'codigo');
+
+            // Obtener los tipos de empaque ya asignados al producto en una sola consulta
+            $tiposEmpaqueExistentes = $producto->codigosBarras()
+                ->wherePivotIn('tipo_empaque', array_column($validated['filas'], 'tipo_empaque'))
+                ->pluck('producto_codigos_barras.tipo_empaque')
+                ->toArray();
+
+            // Validar tipos de empaque duplicados
+            foreach ($validated['filas'] as $fila) {
+                if (in_array($fila['tipo_empaque'], $tiposEmpaqueExistentes)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "El tipo de empaque '{$fila['tipo_empaque']}' ya está asignado a otro código para este producto."
+                    ], 422);
                 }
             }
 
-            return redirect()->route('codigos-barras.asignar', $sku)->with('success', 'Códigos asignados correctamente.');
-        } catch (QueryException $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al asignar los códigos: ' . $e->getMessage()]);
+            // Preparar datos para una inserción masiva
+            $pivotData = [];
+            foreach ($validated['filas'] as $fila) {
+                $codigoId = $codigos[$fila['codigo']] ?? null;
+                if ($codigoId) {
+                    $pivotData[$codigoId] = [
+                        'tipo_empaque' => $fila['tipo_empaque'],
+                        'contenido' => $fila['contenido'],
+                    ];
+                }
+            }
+
+            // Insertar todas las relaciones de una sola vez
+            if (!empty($pivotData)) {
+                $producto->codigosBarras()->syncWithoutDetaching($pivotData);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Códigos asignados correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al asignar los códigos: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -99,7 +127,7 @@ class ProductoCodigosBarrasController extends Controller
     public function destroy($id)
     {
         $asignacion = ProductoCodigosBarras::findOrFail($id);
-        
+
         try {
             $asignacion->delete();
             return redirect()->route('producto-codigos-barras.index')->with('success', 'Asignación eliminada correctamente.');

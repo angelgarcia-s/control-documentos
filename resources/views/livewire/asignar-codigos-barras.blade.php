@@ -2,7 +2,7 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <h5 class="box-title">Asignar Códigos de barras al Producto:   {{ $sku }} - {{$producto -> nombre_corto}}</h5>
+                <h5 class="box-title">Asignar Códigos de barras al Producto: {{ $sku }} - {{$producto->nombre_corto}}</h5>
             </div>
             <div class="box-body">
                 @if ($userMessage)
@@ -30,7 +30,6 @@
                     </div>
                 @endif
 
-
                 @foreach ($filas as $index => $fila)
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row">
                         <div class="md:col-span-4 col-span-12 mb-4 relative">
@@ -38,15 +37,14 @@
                             <input type="text"
                                    id="codigo-input-{{ $index }}"
                                    wire:model="filas.{{ $index }}.codigo"
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm custom-input-focus {{ $focusedInputIndex === $index ? 'focused' : '' }}"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm custom-input-focus {{ $focusedInputIndex === $index ? 'focused' : '' }} @error('filas.' . $index . '.codigo') is-invalid @enderror"
                                    readonly
                                    wire:focus="setFocus({{ $index }})">
-                            <x-validation-error field="filas.{{ $index }}.codigo" />
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4 relative">
                             <label class="form-label">Contenido</label>
-                            <input type="text" wire:model="filas.{{ $index }}.contenido" class="form-control">
-                            <x-validation-error field="filas.{{ $index }}.contenido" />
+                            <input type="text" wire:model="filas.{{ $index }}.contenido" class="form-control @error('filas.' . $index . '.contenido') is-invalid @enderror">
+
                         </div>
                         <div class="md:col-span-3 col-span-12 mb-4 relative">
                             <label class="form-label">Tipo de Empaque</label>
@@ -55,7 +53,7 @@
                                     <option value="{{ $tipo->nombre }}">{{ $tipo->nombre }}</option>
                                 @endforeach
                             </select>
-                            <x-validation-error field="filas.{{ $index }}.tipo_empaque" />
+
                         </div>
                         <div class="md:col-span-1 col-span-12 mb-4 flex items-end">
                             @if (count($filas) > 1)
@@ -106,7 +104,6 @@
                     });
                 });
             });
-
         </script>
     @endpush
 </div>

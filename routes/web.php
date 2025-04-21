@@ -36,7 +36,11 @@ use App\Http\Controllers\ProductoCodigosBarrasController;
 use App\Http\Controllers\TestController;
 use Illuminate\View\View;
 
-Route::get('/test', [TestController::class, 'index']);
+//Route::get('/test', [TestController::class, 'index']);
+Route::get('/test', function () {
+    \Log::info('Ruta de prueba accedida');
+    return response()->json(['success' => true, 'message' => 'Prueba exitosa']);
+});
 
 Route::get('/', function () {
     return view('welcome');
