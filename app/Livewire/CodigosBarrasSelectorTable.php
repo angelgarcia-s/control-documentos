@@ -16,6 +16,7 @@ class CodigosBarrasSelectorTable extends Component
     public $perPage = 10;
     public $perPageOptions = [10, 25, 50, 100, 200];
     public $selectedCode;
+    public $key;
 
     protected $queryString = [
         'search' => ['except' => []],
@@ -24,9 +25,10 @@ class CodigosBarrasSelectorTable extends Component
         'perPage' => ['except' => 10],
     ];
 
-    public function mount($selectedCode = null)
+    public function mount($selectedCode = null, $key = null)
     {
         $this->selectedCode = $selectedCode;
+        $this->key = $key;
     }
 
     public function updatingPerPage()
@@ -50,13 +52,6 @@ class CodigosBarrasSelectorTable extends Component
         $this->search[$campo] = '';
         $this->resetPage();
     }
-
-    public function selectCode($value)
-    {
-        $this->selectedCode = $value;
-        $this->dispatch('code-selected', $value);
-    }
-
 
     public function render()
     {

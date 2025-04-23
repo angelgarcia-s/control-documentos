@@ -28,45 +28,9 @@
     </div>
 @endif
 
-<div class="grid grid-cols-12 gap-6">
-    <div class="col-span-12">
-        <div class="box">
 
-            <div class="box-body space-y-3">
+            <div >
                 @livewire('asignar-codigos-barras', ['sku' => $sku, 'Nombre_corto' => $producto])
             </div>
 
-            <div class="box-header">
-                <div class="box-title">Códigos Asignados</div>
-            </div>
-            <div class="box-body">
-                @php
-                    $producto = \App\Models\Producto::where('sku', $sku)->with('codigosBarras')->first();
-                @endphp
-                @if ($producto->codigosBarras->isEmpty())
-                    <p>No hay códigos asignados a este producto.</p>
-                @else
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Tipo de Empaque</th>
-                                <th>Contenido</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($producto->codigosBarras as $asignacion)
-                                <tr>
-                                    <td>{{ $asignacion->codigo }}</td>
-                                    <td>{{ $asignacion->pivot->tipo_empaque }}</td>
-                                    <td>{{ $asignacion->pivot->contenido ?? 'N/A' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
 @endsection

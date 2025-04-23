@@ -19,11 +19,16 @@ class AsignarCodigosBarras extends Component
     public $userMessage = null;
     public $codigoNombre = null;
     public $selectorKey = null;
+    public $codigosAsignados = [];
+    public $confirmingUnassign = null;
+    public $codigoDesasignar;
+    public $codigoDesasignarId;
 
     public function mount($sku)
     {
         $this->sku = $sku;
-        $this->producto = Producto::where('sku', $sku)->firstOrFail();
+        $this->loadProductoAndCodigos();
+
         $this->filas[] = [
             'codigo' => '',
             'contenido' => '',
@@ -31,6 +36,17 @@ class AsignarCodigosBarras extends Component
         ];
         $this->userMessage = "Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.";
         $this->selectorKey = uniqid();
+
+        $this->confirmingAssign = false;
+        $this->confirmingUnassign = null;
+        $this->codigoDesasignar = null;
+        $this->codigoDesasignarId = null;
+    }
+
+    private function loadProductoAndCodigos()
+    {
+        $this->producto = Producto::where('sku', $this->sku)->with('codigosBarras')->firstOrFail();
+        $this->codigosAsignados = $this->producto->codigosBarras;
     }
 
     public function agregarFila()
@@ -82,6 +98,47 @@ class AsignarCodigosBarras extends Component
         $this->userMessage = "Agrega otra fila para asignar un código a otro empaque ó da click en Guardar para finalizar.";
     }
 
+    public function confirmarDesasignacion($codigoBarraId)
+    {
+        try {
+            $this->codigoDesasignar = CodigoBarra::findOrFail($codigoBarraId);
+            $this->codigoDesasignarId = $codigoBarraId;
+
+            $this->confirmingAssign = false;
+            $this->confirmingUnassign = $codigoBarraId;
+
+            $this->dispatch('refresh');
+        } catch (\Exception $e) {
+            session()->flash('error', "Error al intentar abrir el modal de desasignación: " . $e->getMessage());
+        }
+    }
+
+    public function cancelarDesasignacion()
+    {
+        $this->confirmingAssign = false;
+        $this->confirmingUnassign = null;
+        $this->codigoDesasignar = null;
+        $this->codigoDesasignarId = null;
+    }
+
+    public function desasignar()
+    {
+        try {
+            $this->producto->codigosBarras()->detach($this->codigoDesasignarId);
+            $this->loadProductoAndCodigos();
+
+            session()->flash('success', 'Código de barras desasignado correctamente.');
+
+            $this->confirmingUnassign = null;
+            $this->codigoDesasignar = null;
+            $this->codigoDesasignarId = null;
+
+            $this->selectorKey = uniqid();
+        } catch (\Exception $e) {
+            session()->flash('error', "Error al desasignar el código de barras: " . $e->getMessage());
+        }
+    }
+
     public function selectCode($value)
     {
         $this->selectedCode = $value;
@@ -100,11 +157,18 @@ class AsignarCodigosBarras extends Component
 
         $codigo = CodigoBarra::find($this->selectedCode);
         if (!$codigo) {
-            $this->addErrorMessage("El código seleccionado (" . $this->selectedCode . ") no se encuentra en la base de datos.");
+            $this->addErrorMessage("El código seleccionado (" . $this->selectedCode . ") no se encuentra en la base of datos.");
             return;
         }
 
-        // Validar que el código no esté ya asignado en otra fila
+        if ($this->focusedInputIndex !== null) {
+            $this->filas[$this->focusedInputIndex]['codigo'] = $codigo->codigo;
+            $this->filas[$this->focusedInputIndex]['contenido'] = $codigo->contenido ?? 'N/A';
+            $this->filas[$this->focusedInputIndex]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
+        }
+
+        $this->resetErrorBag('filas.' . $this->focusedInputIndex . '.codigo');
+
         foreach ($this->filas as $index => $fila) {
             if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
                 $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
@@ -112,7 +176,11 @@ class AsignarCodigosBarras extends Component
             }
         }
 
-        // Validar que el tipo de empaque no esté repetido en otra fila
+        if ($this->codigosAsignados->contains('codigo', $codigo->codigo)) {
+            $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado a este producto.");
+            return;
+        }
+
         $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
         if ($tipoEmpaqueSeleccionado) {
             foreach ($this->filas as $index => $fila) {
@@ -120,6 +188,11 @@ class AsignarCodigosBarras extends Component
                     $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                     return;
                 }
+            }
+
+            if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
+                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+                return;
             }
         }
 
@@ -130,7 +203,6 @@ class AsignarCodigosBarras extends Component
         if (!$coincide) {
             $this->confirmingAssign = true;
             $this->codigoNombre = $codigo->nombre;
-            $this->dispatch('abrir-modal', 'confirmar-asignacion');
             $this->addErrorMessage("Los nombres no coinciden. Por favor, confirma la asignación.");
             return;
         }
@@ -146,7 +218,6 @@ class AsignarCodigosBarras extends Component
     {
         $codigo = CodigoBarra::find($this->selectedCode);
         if ($codigo && $this->focusedInputIndex !== null) {
-            // Validar que el código no esté ya asignado en otra fila
             foreach ($this->filas as $index => $fila) {
                 if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
                     $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
@@ -157,7 +228,14 @@ class AsignarCodigosBarras extends Component
                 }
             }
 
-            // Validar que el tipo de empaque no esté repetido en otra fila
+            if ($this->codigosAsignados->contains('codigo', $codigo->codigo)) {
+                $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado a este producto.");
+                $this->confirmingAssign = false;
+                $this->selectedCode = null;
+                $this->codigoNombre = null;
+                return;
+            }
+
             $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
             if ($tipoEmpaqueSeleccionado) {
                 foreach ($this->filas as $index => $fila) {
@@ -168,6 +246,14 @@ class AsignarCodigosBarras extends Component
                         $this->codigoNombre = null;
                         return;
                     }
+                }
+
+                if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
+                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+                    $this->confirmingAssign = false;
+                    $this->selectedCode = null;
+                    $this->codigoNombre = null;
+                    return;
                 }
             }
 
@@ -197,8 +283,8 @@ class AsignarCodigosBarras extends Component
     {
         if (isset($this->filas[$index])) {
             $this->filas[$index]['codigo'] = $codigo->codigo;
-            $this->filas[$index]['contenido'] = $codigo->contenido ?? '';
-            $this->filas[$index]['tipo_empaque'] = $codigo->tipo_empaque ?? '';
+            $this->filas[$index]['contenido'] = $codigo->contenido ?? 'N/A';
+            $this->filas[$index]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
         }
     }
 
@@ -228,25 +314,44 @@ class AsignarCodigosBarras extends Component
     {
         $this->validate([
             'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
-            'filas.*.tipo_empaque' => 'required|string|max:50',
-            'filas.*.contenido' => 'required|string|max:255',
         ]);
 
         try {
-            // Crear una solicitud simulada para pasar al controlador
+            $codigosAsignadosCodigos = $this->codigosAsignados->pluck('codigo')->toArray();
+            $codigosAsignadosTiposEmpaque = $this->codigosAsignados->pluck('tipo_empaque')->toArray();
+
+            foreach ($this->filas as $fila) {
+                $codigoBarra = CodigoBarra::where('codigo', $fila['codigo'])->first();
+                if ($codigoBarra) {
+                    if (in_array($fila['codigo'], $codigosAsignadosCodigos)) {
+                        $this->addErrorMessage("El código " . $fila['codigo'] . " ya está asignado a este producto.");
+                        return;
+                    }
+
+                    $tipoEmpaque = $codigoBarra->tipo_empaque ?? '-';
+                    if (in_array($tipoEmpaque, $codigosAsignadosTiposEmpaque)) {
+                        $this->addErrorMessage("El tipo de empaque " . $tipoEmpaque . " ya está asignado a otro código para este producto.");
+                        return;
+                    }
+
+                    $codigosAsignadosCodigos[] = $fila['codigo'];
+                    $codigosAsignadosTiposEmpaque[] = $tipoEmpaque;
+                }
+            }
+
             $request = new Request();
             $request->replace([
                 'filas' => $this->filas,
                 '_token' => csrf_token(),
             ]);
 
-            // Invocar directamente el controlador
             $controller = new \App\Http\Controllers\ProductoCodigosBarrasController();
             $response = $controller->store($request, $this->sku);
 
             $responseData = $response->getData(true);
 
             if (isset($responseData['success']) && $responseData['success']) {
+                $this->loadProductoAndCodigos();
                 return redirect()->route('codigos-barras.asignar', $this->sku)->with('success', 'Códigos asignados correctamente.');
             } else {
                 $errorMessage = $responseData['message'] ?? 'Ocurrió un error desconocido al intentar guardar los códigos.';
