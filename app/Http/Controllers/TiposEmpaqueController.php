@@ -21,7 +21,7 @@ class TiposEmpaqueController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'orden' => 'required|integer',
+            'orden' => 'required|integer|min:0',
             'nombre' => 'required|string|max:255|unique:tipos_empaque,nombre',
         ]);
 
@@ -46,7 +46,7 @@ class TiposEmpaqueController extends Controller
     public function update(Request $request, TipoEmpaque $tipo_empaque)
     {
         $validated = $request->validate([
-            'orden' => 'required|integer' . $tipo_empaque->id,
+            'orden' => 'required|integer|min:0',
             'nombre' => 'required|string|max:255|unique:tipos_empaque,nombre,' . $tipo_empaque->id,
         ]);
 
