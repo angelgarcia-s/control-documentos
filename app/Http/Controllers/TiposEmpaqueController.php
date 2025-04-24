@@ -21,6 +21,7 @@ class TiposEmpaqueController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'orden' => 'required|integer',
             'nombre' => 'required|string|max:255|unique:tipos_empaque,nombre',
         ]);
 
@@ -45,6 +46,7 @@ class TiposEmpaqueController extends Controller
     public function update(Request $request, TipoEmpaque $tipo_empaque)
     {
         $validated = $request->validate([
+            'orden' => 'required|integer' . $tipo_empaque->id,
             'nombre' => 'required|string|max:255|unique:tipos_empaque,nombre,' . $tipo_empaque->id,
         ]);
 
@@ -59,7 +61,7 @@ class TiposEmpaqueController extends Controller
     public function destroy(TipoEmpaque $tipo_empaque)
     {
         try {
-           
+
 
             $tipo_empaque->delete();
             return redirect()->route('tipos-empaque.index')->with('success', 'Tipo de empaque eliminado correctamente.');

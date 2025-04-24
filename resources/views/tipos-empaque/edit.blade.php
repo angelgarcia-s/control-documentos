@@ -35,6 +35,11 @@
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-6 col-span-12 mb-4">
+                            <label class="form-label">Orden</label>
+                            <input type="text" name="orden" value="{{ old('orden', $tipo_empaque->orden) }}" required class="form-control @error('orden') is-invalid @enderror">
+                            @error('orden') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Nombre</label>
                             <input type="text" name="nombre" value="{{ old('nombre', $tipo_empaque->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror

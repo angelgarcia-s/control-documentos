@@ -22,6 +22,10 @@
                         <p class="form-control border border-slate-200 min-h-9">{{ $tipo_empaque->id }}</p>
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
+                        <label class="form-label">Orden</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $tipo_empaque->orden }}</p>
+                    </div>
+                    <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Nombre</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $tipo_empaque->nombre }}</p>
                     </div>

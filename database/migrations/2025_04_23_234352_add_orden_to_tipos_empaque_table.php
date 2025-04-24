@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tipos_empaque', function (Blueprint $table) {
-            $table->integer('orden')->default(0)->after('id');
+            $table->integer('orden')->nullable()->after('id');
         });
     }
 

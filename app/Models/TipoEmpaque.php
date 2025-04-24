@@ -11,8 +11,8 @@ class TipoEmpaque extends Model
 
     protected $table = 'tipos_empaque';
 
-    protected $fillable = ['nombre'];
+    protected $fillable = ['orden','nombre'];
 
-    
-    
+
+
 }

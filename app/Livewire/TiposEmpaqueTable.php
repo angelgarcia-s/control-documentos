@@ -11,6 +11,7 @@ class TiposEmpaqueTable extends TablaGenerica
         $modelo = TipoEmpaque::class;
         $columnas = [
             ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+            ['name' => 'orden', 'label' => 'Orden', 'sortable' => true, 'searchable' => true],
             ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
         ];
         $acciones = [
