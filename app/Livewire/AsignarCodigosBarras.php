@@ -46,7 +46,16 @@ class AsignarCodigosBarras extends Component
     private function loadProductoAndCodigos()
     {
         $this->producto = Producto::where('sku', $this->sku)->with('codigosBarras')->firstOrFail();
-        $this->codigosAsignados = $this->producto->codigosBarras;
+        $codigosAsignados = $this->producto->codigosBarras;
+
+        // Cargar los tipos de empaque con su orden
+        $tiposEmpaqueOrden = TipoEmpaque::pluck('orden', 'nombre')->toArray();
+
+        // Ordenar los códigos asignados primero por "nombre" y luego por "tipo_empaque" usando el orden de tipos_empaque
+        $this->codigosAsignados = $codigosAsignados->sortBy([
+            ['nombre', 'asc'], // Ordenar por nombre alfabéticamente ascendente
+            fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999, // Ordenar por tipo_empaque usando el campo orden, NULL va al final
+        ]);
     }
 
     public function agregarFila()
