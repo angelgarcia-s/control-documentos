@@ -66,10 +66,11 @@ class CodigosBarrasController extends Controller
 
     public function edit(CodigoBarra $codigoBarra)
     {
-        $tiposEmpaque = TipoEmpaque::all();
-        $empaques = Empaque::all();
-        $colores = Color::all();
-        $tamanos = Tamano::all();
+        // Cargar los catálogos con ordenamiento específico
+        $tiposEmpaque = TipoEmpaque::orderBy('orden', 'asc')->get();
+        $empaques = Empaque::orderBy('nombre', 'asc')->get();
+        $colores = Color::orderBy('nombre', 'asc')->get();
+        $tamanos = Tamano::orderBy('nombre', 'asc')->get();
 
         return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque', 'empaques', 'colores', 'tamanos'));
     }

@@ -11,7 +11,7 @@ class CodigosBarrasTable extends TablaGenerica
     {
         $this->confirmingDelete = null;
         $this->selectedActions = [];
-        
+
         parent::mount(
             modelo: $modelo,
             columnas: $columnas ?: [
@@ -34,6 +34,9 @@ class CodigosBarrasTable extends TablaGenerica
                 ['ruta' => 'codigos-barras.show', 'parametro' => 'codigoBarra', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
             ]
         );
+
+        // Establecemos el ordenamiento por defecto a descendente para el campo 'id'
+        $this->orderDirection = 'desc';
     }
 
     public function editar($id)

@@ -30,10 +30,11 @@ class CrearCodigosBarras extends Component
 
     public function mount()
     {
-        $this->tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
-        $this->empaques = Empaque::all(['id', 'nombre']);
-        $this->colores = Color::all(['id', 'nombre']);
-        $this->tamanos = Tamano::all(['id', 'nombre']);
+        // Cargar los catálogos para los selects, ordenando alfabéticamente por nombre (excepto tiposEmpaque que usa 'orden')
+        $this->tiposEmpaque = TipoEmpaque::orderBy('orden', 'asc')->get(['id', 'nombre']);
+        $this->empaques = Empaque::orderBy('nombre', 'asc')->get(['id', 'nombre']);
+        $this->colores = Color::orderBy('nombre', 'asc')->get(['id', 'nombre']);
+        $this->tamanos = Tamano::orderBy('nombre', 'asc')->get(['id', 'nombre']);
         $this->agregarFila();
     }
 
