@@ -34,10 +34,10 @@ class ProductoCodigosBarrasTable extends Component
         $this->search = [];
         $this->columnas = [
             ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-            ['name' => 'producto.sku', 'label' => 'SKU Producto', 'sortable' => true, 'searchable' => true, 'relationship' => 'producto'],
-            ['name' => 'producto.descripcion', 'label' => 'Producto', 'sortable' => true, 'searchable' => true, 'relationship' => 'producto'],
-            ['name' => 'codigoBarra.codigo', 'label' => 'Código', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
-            ['name' => 'codigoBarra.nombre', 'label' => 'Nombre Código', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
+            ['name' => 'producto.sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true, 'relationship' => 'producto'],
+            ['name' => 'producto.nombre_corto', 'label' => 'Producto', 'sortable' => true, 'searchable' => true, 'relationship' => 'producto'],
+            ['name' => 'codigoBarra.codigo', 'label' => 'Código de barras', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
+            ['name' => 'codigoBarra.nombre_corto', 'label' => 'Nombre Código', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
             ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
             ['name' => 'contenido', 'label' => 'Contenido', 'sortable' => true, 'searchable' => true],
         ];

@@ -15,7 +15,7 @@
                             <thead>
                                 <tr class="border-b border-defaultborder">
                                     <th scope="col" class="text-start">Código</th>
-                                    <th scope="col" class="text-start">Nombre</th>
+                                    <th scope="col" class="text-start">Nombre Corto</th>
                                     <th scope="col" class="text-start">Empaque</th>
                                     <th scope="col" class="text-start">Contenido</th>
                                     <th scope="col" class="text-start">Tipo de Empaque</th>
@@ -26,7 +26,7 @@
                                 @foreach ($codigosAsignados as $codigo)
                                     <tr class="border-b border-defaultborder">
                                         <td class="text-start">{{ $codigo->codigo }}</td>
-                                        <td class="text-start">{{ $codigo->nombre }}</td>
+                                        <td class="text-start">{{ $codigo->nombre_corto ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->empaque ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->contenido ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->tipo_empaque ?? '-' }}</td>
@@ -53,7 +53,6 @@
                 <a href="{{ route('codigos-barras.create') }}" class="ti-btn ti-btn-primary">Crear nuevo código</a>
             </div>
             <div class="box-body p-4">
-
                 <!-- Notificaciones -->
                 @if ($userMessage)
                     <div class="alert alert-info" role="alert" style="position: relative; z-index: 0;">
@@ -82,7 +81,7 @@
 
                 <!-- Formulario de asignación -->
                 @foreach ($filas as $index => $fila)
-                    <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row">
+                    <div class="box grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row pt-4 {{ !$loop->last ? 'border-b-2 border-slate-300 pb-2' : '' }}">
                         <div class="md:col-span-4 col-span-12 mb-4 relative">
                             <label class="form-label">Código</label>
                             <input type="text"
@@ -118,7 +117,6 @@
                     <button wire:click="agregarFila" class="ti-btn ti-btn-secondary" {{ count($filas) >= 5 ? 'disabled' : '' }}>Agregar otra fila</button>
                     <div class="flex space-x-2">
                         <button wire:click="asignar" class="ti-btn ti-btn-primary">Asignar</button>
-
                         <button wire:click="guardar" class="ti-btn ti-btn-primary-full">Guardar</button>
                     </div>
                 </div>
@@ -136,7 +134,7 @@
                             </div>
                             <div class="modal-body">
                                 <p class="text-gray-700 dark:text-gray-300">
-                                    Los productos no coinciden: el nombre del producto ('{{ $producto->nombre_corto }}') no coincide con el nombre del código ('{{ $codigoNombre ?? '' }}'). ¿Desea asignar de todos modos?
+                                    Los productos no coinciden: la familia del producto ('{{ $producto->familia ? $producto->familia->nombre : 'Desconocido' }}') no coincide con el nombre del código ('{{ $codigoNombre ?? '' }}'). ¿Desea asignar de todos modos?
                                 </p>
                             </div>
                             <div class="modal-footer flex justify-end space-x-2">
@@ -149,7 +147,7 @@
 
                 <!-- Modal de confirmación para desasignar -->
                 @if ($confirmingUnassign !== null)
-                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                    <div class="fixed inset-0 z-50 flex items.center justify-center bg-gray-800 bg-opacity-50">
                         <div class="modal-content bg-white rounded-lg p-6 max-w-md w-full">
                             <div class="modal-header">
                                 <h5 class="modal-title text-lg font-bold text-gray-900 dark:text-gray-100">Confirmar Desasignación</h5>

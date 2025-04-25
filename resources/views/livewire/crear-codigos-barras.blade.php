@@ -2,41 +2,88 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <div class="box-title">Códigos de Barra</div>
+                <h5 class="box-title">Crear Códigos de Barras</h5>
             </div>
             <div class="box-body">
+                @if (session('success'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @foreach ($codigos as $index => $codigo)
-                    <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row">
-                        <div class="md:col-span-2 col-span-12 mb-4 relative">
+                    <div class="box grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row pt-4 {{ !$loop->last ? 'border-b-2 border-slate-300 pb-2' : '' }}">
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Tipo</label>
-                            <select wire:model="codigos.{{ $index }}.tipo" class="form-control @error('codigos.' . $index . '.tipo') is-invalid @enderror" required>
-                                <option value="">Seleccione</option>
+                            <select wire:model="codigos.{{ $index }}.tipo" class="form-control @error('codigos.' . $index . '.tipo') is-invalid @enderror">
+                                <option value="">Selecciona</option>
                                 <option value="EAN13">EAN13</option>
                                 <option value="ITF14">ITF14</option>
                             </select>
-                            <x-validation-error field="codigos.{{ $index }}.tipo" />
+                            @error('codigos.' . $index . '.tipo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4 relative">
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Código</label>
-                            <input type="text" wire:model="codigos.{{ $index }}.codigo" class="form-control @error('codigos.' . $index . '.codigo') is-invalid @enderror" required>
-                            <x-validation-error field="codigos.{{ $index }}.codigo" />
+                            <input type="text" wire:model="codigos.{{ $index }}.codigo" class="form-control @error('codigos.' . $index . '.codigo') is-invalid @enderror">
+                            @error('codigos.' . $index . '.codigo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4 relative">
+                        <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Producto</label>
-                            <input type="text" wire:model="codigos.{{ $index }}.nombre" class="form-control @error('codigos.' . $index . '.nombre') is-invalid @enderror" placeholder="Ej. Plus Azul Chico" required>
-                            <x-validation-error field="codigos.{{ $index }}.nombre" />
+                            <input type="text" wire:model="codigos.{{ $index }}.nombre" class="form-control @error('codigos.' . $index . '.nombre') is-invalid @enderror" placeholder="Nombre del producto">
+                            @error('codigos.' . $index . '.nombre')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4 relative">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Color</label>
+                            <select wire:model="codigos.{{ $index }}.color_id" class="form-control @error('codigos.' . $index . '.color_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($colores as $color)
+                                    <option value="{{ $color->id }}">{{ $color->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('codigos.' . $index . '.color_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Tamaño</label>
+                            <select wire:model="codigos.{{ $index }}.tamano_id" class="form-control @error('codigos.' . $index . '.tamano_id') is-invalid @enderror">
+                                <option value="">Seleccione</option>
+                                @foreach ($tamanos as $tamano)
+                                    <option value="{{ $tamano->id }}">{{ $tamano->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('codigos.' . $index . '.tamano_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Tipo de Empaque</label>
-                            <select wire:model="codigos.{{ $index }}.tipo_empaque" class="form-control @error('codigos.' . $index . '.tipo_empaque') is-invalid @enderror" required>
+                            <select wire:model="codigos.{{ $index }}.tipo_empaque" class="form-control @error('codigos.' . $index . '.tipo_empaque') is-invalid @enderror">
                                 <option value="">Seleccione</option>
                                 @foreach ($tiposEmpaque as $tipo)
                                     <option value="{{ $tipo->nombre }}">{{ $tipo->nombre }}</option>
                                 @endforeach
                             </select>
-                            <x-validation-error field="codigos.{{ $index }}.tipo_empaque" />
+                            @error('codigos.' . $index . '.tipo_empaque')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4 relative">
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Empaque</label>
                             <select wire:model="codigos.{{ $index }}.empaque" class="form-control @error('codigos.' . $index . '.empaque') is-invalid @enderror">
                                 <option value="">Seleccione</option>
@@ -44,29 +91,29 @@
                                     <option value="{{ $empaque->nombre }}">{{ $empaque->nombre }}</option>
                                 @endforeach
                             </select>
-                            <x-validation-error field="codigos.{{ $index }}.empaque" />
+                            @error('codigos.' . $index . '.empaque')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4 flex items-end relative">
-                            <div class="flex-1">
-                                <label class="form-label">Contenido</label>
-                                <input type="text" wire:model="codigos.{{ $index }}.contenido" class="form-control @error('codigos.' . $index . '.contenido') is-invalid @enderror" placeholder="Ej. 10 unidades">
-                                <x-validation-error field="codigos.{{ $index }}.contenido" />
-                            </div>
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Contenido</label>
+                            <input type="text" wire:model="codigos.{{ $index }}.contenido" class="form-control @error('codigos.' . $index . '.contenido') is-invalid @enderror" placeholder="Ej. 10 unidades">
+                            @error('codigos.' . $index . '.contenido')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="md:col-span-1 col-span-12 mb-4 flex items-end">
                             @if (count($codigos) > 1)
-                                <button type="button" wire:click="eliminarFila({{ $index }})" class="ti-btn ti-btn-danger ml-2">Eliminar</button>
+                                <button type="button" wire:click="eliminarFila({{ $index }})" class="ti-btn ti-btn-danger">Eliminar</button>
                             @endif
                         </div>
                     </div>
                 @endforeach
-                
-                <button type="button" wire:click="agregarFila" class="ti-btn ti-btn-primary mb-4" {{ count($codigos) >= 5 ? 'disabled' : '' }}>Agregar otro código</button>
-            </div>
-            <div class="box-body">
-                <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                    <div class="flex justify-end md:col-span-12 col-span-12">
-                        <a href="{{ route('codigos-barras.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
-                        <button wire:click="guardar" class="ti-btn ti-btn-primary-full">Guardar</button>
-                    </div>
+
+                <div class="flex justify-between mb-4">
+                    <button wire:click="agregarFila" class="ti-btn ti-btn-secondary" {{ count($codigos) >= 5 ? 'disabled' : '' }}>Agregar otra fila</button>
+                    <button wire:click="guardar" class="ti-btn ti-btn-primary-full">Guardar</button>
                 </div>
             </div>
         </div>

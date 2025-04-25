@@ -28,9 +28,8 @@
     </div>
 @endif
 
-
-            <div >
-                @livewire('asignar-codigos-barras', ['sku' => $sku, 'Nombre_corto' => $producto])
-            </div>
+<div>
+    @livewire('asignar-codigos-barras', ['sku' => $sku, 'Nombre_corto' => $producto])
+</div>
 
 @endsection

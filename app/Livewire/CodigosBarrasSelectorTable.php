@@ -61,7 +61,7 @@ class CodigosBarrasSelectorTable extends Component
             ['name' => 'check', 'label' => '', 'sortable' => false, 'searchable' => false],
             ['name' => 'id', 'label' => 'ID', 'sortable' => false, 'searchable' => false],
             ['name' => 'codigo', 'label' => 'Código', 'sortable' => true, 'searchable' => true],
-            ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+            ['name' => 'nombre_corto', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
             ['name' => 'contenido', 'label' => 'Contenido', 'sortable' => true, 'searchable' => true],
             ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
         ];

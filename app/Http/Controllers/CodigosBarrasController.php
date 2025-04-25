@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CodigoBarra;
 use App\Models\TipoEmpaque;
 use App\Models\Empaque;
+use App\Models\Color;
+use App\Models\Tamano;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
 
 class CodigosBarrasController extends Controller
 {
@@ -17,87 +18,100 @@ class CodigosBarrasController extends Controller
 
     public function create()
     {
-        $tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
-        $empaques = Empaque::all(['id', 'nombre']);
-        return view('codigos-barras.create', compact('tiposEmpaque', 'empaques'));
+        return view('codigos-barras.create');
     }
 
     public function store(Request $request)
     {
-        $codigos = $request->input('codigos', []);
-
-        $request->validate([
+        $validated = $request->validate([
+            'codigos' => 'required|array',
             'codigos.*.tipo' => 'required|in:EAN13,ITF14',
             'codigos.*.codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
             'codigos.*.nombre' => 'required|string|max:255',
             'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
-            'codigos.*.empaque' => 'nullable|string|max:50|exists:empaques,nombre',
-            'codigos.*.contenido' => 'nullable|string|max:255',
+            'codigos.*.empaque' => 'required|string|max:50|exists:empaques,nombre',
+            'codigos.*.contenido' => 'required|string|max:255',
+            'codigos.*.color_id' => 'nullable|exists:colores,id',
+            'codigos.*.tamano_id' => 'nullable|exists:tamanos,id',
         ]);
 
-        try {
-            foreach ($codigos as $codigoData) {
-                CodigoBarra::create([
-                    'tipo' => $codigoData['tipo'],
-                    'codigo' => $codigoData['codigo'],
-                    'nombre' => $codigoData['nombre'],
-                    'tipo_empaque' => $codigoData['tipo_empaque'],
-                    'empaque' => $codigoData['empaque'],
-                    'contenido' => $codigoData['contenido'],
-                ]);
-            }
-            return redirect()->route('codigos-barras.index')->with('success', 'Códigos de barra creados correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al crear los códigos de barra: ' . $e->getMessage()])->withInput();
+        // Las validaciones de longitud y duplicados ya se manejan en CrearCodigosBarras
+        foreach ($validated['codigos'] as $codigoData) {
+            // Generar nombre_corto
+            $color = $codigoData['color_id'] ? Color::find($codigoData['color_id'])->nombre : '';
+            $tamano = $codigoData['tamano_id'] ? Tamano::find($codigoData['tamano_id'])->nombre : '';
+            $nombreCorto = trim(implode(' ', array_filter([$codigoData['nombre'], $color, $tamano])));
+
+            CodigoBarra::create([
+                'tipo' => $codigoData['tipo'],
+                'codigo' => $codigoData['codigo'],
+                'nombre' => $codigoData['nombre'],
+                'tipo_empaque' => $codigoData['tipo_empaque'],
+                'empaque' => $codigoData['empaque'],
+                'contenido' => $codigoData['contenido'],
+                'color_id' => $codigoData['color_id'],
+                'tamano_id' => $codigoData['tamano_id'],
+                'nombre_corto' => $nombreCorto,
+            ]);
         }
+
+        return redirect()->route('codigos-barras.index')->with('success', 'Códigos de barra creados correctamente.');
     }
 
     public function show(CodigoBarra $codigoBarra)
     {
-        $codigoBarra->load('productos');
+        $codigoBarra->load('color', 'tamano');
         return view('codigos-barras.show', compact('codigoBarra'));
     }
 
     public function edit(CodigoBarra $codigoBarra)
     {
-        $tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
-        $empaques = Empaque::all(['id', 'nombre']);
-        return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque', 'empaques'));
+        $tiposEmpaque = TipoEmpaque::all();
+        $empaques = Empaque::all();
+        $colores = Color::all();
+        $tamanos = Tamano::all();
+
+        return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque', 'empaques', 'colores', 'tamanos'));
     }
 
     public function update(Request $request, CodigoBarra $codigoBarra)
     {
         $validated = $request->validate([
+            'tipo' => 'required|in:EAN13,ITF14',
             'codigo' => 'required|string|max:50|unique:codigos_barras,codigo,' . $codigoBarra->id,
             'nombre' => 'required|string|max:255',
-            'tipo_empaque' => 'required|string|max:50',
-            'empaque' => 'nullable|string|max:50',
+            'tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
+            'empaque' => 'nullable|string|max:50|exists:empaques,nombre',
             'contenido' => 'nullable|string|max:255',
-            'tipo' => 'required|in:EAN13,ITF14',
+            'color_id' => 'nullable|exists:colores,id',
+            'tamano_id' => 'nullable|exists:tamanos,id',
         ]);
 
-        try {
-            $codigoBarra->update($validated);
-            return redirect()->route('codigos-barras.index')->with('success', 'Código de barra actualizado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al actualizar el código de barra: ' . $e->getMessage()])->withInput();
+        // Validar longitud según tipo
+        $longitud = strlen($validated['codigo']);
+        if ($validated['tipo'] === 'EAN13' && $longitud !== 13) {
+            return redirect()->back()->withErrors(['codigo' => "El código EAN13 debe tener exactamente 13 dígitos."]);
+        } elseif ($validated['tipo'] === 'ITF14' && $longitud !== 14) {
+            return redirect()->back()->withErrors(['codigo' => "El código ITF14 debe tener exactamente 14 dígitos."]);
         }
+
+        // Generar nombre_corto
+        $color = $validated['color_id'] ? Color::find($validated['color_id'])->nombre : '';
+        $tamano = $validated['tamano_id'] ? Tamano::find($validated['tamano_id'])->nombre : '';
+        $validated['nombre_corto'] = trim(implode(' ', array_filter([$validated['nombre'], $color, $tamano])));
+
+        $codigoBarra->update($validated);
+
+        return redirect()->route('codigos-barras.index')->with('success', 'Código de barras actualizado correctamente.');
     }
 
     public function destroy(CodigoBarra $codigoBarra)
     {
-        try {
-            if ($codigoBarra->productos()->count() > 0) {
-                return redirect()->route('codigos-barras.index')->with('error', 'No se puede eliminar el código de barra porque tiene productos asociados.');
-            }
-
-            $codigoBarra->delete();
-            return redirect()->route('codigos-barras.index')->with('success', 'Código de barra eliminado correctamente.');
-        } catch (QueryException $e) {
-            if ($e->getCode() == '23000') {
-                return redirect()->route('codigos-barras.index')->with('error', 'No se puede eliminar el código de barra porque tiene productos asociados.');
-            }
-            return redirect()->route('codigos-barras.index')->with('error', 'Error al eliminar el código de barra: ' . $e->getMessage());
+        if ($codigoBarra->productos()->exists()) {
+            return redirect()->route('codigos-barras.index')->with('error', 'No se puede eliminar el código de barras porque está asignado a productos.');
         }
+
+        $codigoBarra->delete();
+        return redirect()->route('codigos-barras.index')->with('success', 'Código de barras eliminado correctamente.');
     }
 }

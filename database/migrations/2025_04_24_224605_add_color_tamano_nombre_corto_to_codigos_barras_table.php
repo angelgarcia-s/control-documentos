@@ -9,14 +9,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Eliminar registros existentes para simplificar la migración
-        CodigoBarra::truncate();
-
         Schema::table('codigos_barras', function (Blueprint $table) {
             $table->unsignedBigInteger('color_id')->nullable()->after('nombre');
             $table->foreign('color_id')->references('id')->on('colores')->onDelete('set null');
-            $table->unsignedBigInteger('tamano_id')->nullable()->after('color_id'); // Cambiado de 'talla_id' a 'tamano_id'
-            $table->foreign('tamano_id')->references('id')->on('tamanos')->onDelete('set null');
+            $table->unsignedBigInteger('tamano_id')->nullable()->after('color_id');
+            $table->foreign('tamano_id')->references('id')->on('tamanos')->onDelete('set null'); // Cambiado de 'tallas' a 'tamanos'
             $table->string('nombre_corto')->nullable()->after('tamano_id');
         });
     }
@@ -26,11 +23,11 @@ return new class extends Migration
         Schema::table('codigos_barras', function (Blueprint $table) {
             // Eliminar las claves foráneas explícitamente
             $table->dropForeign('codigos_barras_color_id_foreign');
-            $table->dropForeign('codigos_barras_tamano_id_foreign'); // Cambiado de 'talla_id' a 'tamano_id'
+            $table->dropForeign('codigos_barras_tamano_id_foreign');
 
             // Ahora eliminar las columnas
             $table->dropColumn('color_id');
-            $table->dropColumn('tamano_id'); // Cambiado de 'talla_id' a 'tamano_id'
+            $table->dropColumn('tamano_id');
             $table->dropColumn('nombre_corto');
         });
     }

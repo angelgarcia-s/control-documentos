@@ -3,15 +3,19 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\CodigoBarra;
 use App\Models\TipoEmpaque;
 use App\Models\Empaque;
+use App\Models\Color;
+use App\Models\Tamano;
+use Illuminate\Http\Request;
 
 class CrearCodigosBarras extends Component
 {
     public $codigos = [];
     public $tiposEmpaque;
     public $empaques;
+    public $colores;
+    public $tamanos;
 
     protected $rules = [
         'codigos.*.tipo' => 'required|in:EAN13,ITF14',
@@ -20,16 +24,19 @@ class CrearCodigosBarras extends Component
         'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
         'codigos.*.empaque' => 'required|string|max:50|exists:empaques,nombre',
         'codigos.*.contenido' => 'required|string|max:255',
+        'codigos.*.color_id' => 'nullable|exists:colores,id',
+        'codigos.*.tamano_id' => 'nullable|exists:tamanos,id',
     ];
 
     public function mount()
     {
         $this->tiposEmpaque = TipoEmpaque::all(['id', 'nombre']);
         $this->empaques = Empaque::all(['id', 'nombre']);
+        $this->colores = Color::all(['id', 'nombre']);
+        $this->tamanos = Tamano::all(['id', 'nombre']);
         $this->agregarFila();
     }
 
-    // Personalizar nombres de los campos para los mensajes de error
     protected $validationAttributes = [
         'codigos.*.tipo' => 'Tipo',
         'codigos.*.codigo' => 'Código',
@@ -37,6 +44,8 @@ class CrearCodigosBarras extends Component
         'codigos.*.tipo_empaque' => 'Tipo de Empaque',
         'codigos.*.empaque' => 'Empaque',
         'codigos.*.contenido' => 'Contenido',
+        'codigos.*.color_id' => 'Color',
+        'codigos.*.tamano_id' => 'Tamaño',
     ];
 
     public function agregarFila()
@@ -49,6 +58,8 @@ class CrearCodigosBarras extends Component
                 'tipo_empaque' => '',
                 'empaque' => '',
                 'contenido' => '',
+                'color_id' => '',
+                'tamano_id' => '',
             ];
             $this->codigos[] = $nuevaFila;
         }
@@ -116,22 +127,22 @@ class CrearCodigosBarras extends Component
                     $this->addError("codigos.$index.codigo", "El código ITF14 debe tener exactamente 14 dígitos.");
                     return;
                 }
-                // Permitimos múltiples ITF14, solo validamos longitud y unicidad del código
             }
         }
 
         try {
-            foreach ($this->codigos as $codigoData) {
-                CodigoBarra::create([
-                    'tipo' => $codigoData['tipo'],
-                    'codigo' => $codigoData['codigo'],
-                    'nombre' => $codigoData['nombre'],
-                    'tipo_empaque' => $codigoData['tipo_empaque'],
-                    'empaque' => $codigoData['empaque'],
-                    'contenido' => $codigoData['contenido'],
-                ]);
-            }
-            return redirect()->route('codigos-barras.index')->with('success', 'Códigos de barra creados correctamente.');
+            // Enviar los datos al controlador mediante una solicitud HTTP
+            $request = new Request();
+            $request->replace([
+                'codigos' => $this->codigos,
+                '_token' => csrf_token(),
+            ]);
+
+            $controller = new \App\Http\Controllers\CodigosBarrasController();
+            $response = $controller->store($request);
+
+            // Si el controlador redirige correctamente, seguimos la redirección
+            return $response;
         } catch (\Exception $e) {
             $this->addError('general', 'Error al crear los códigos de barra: ' . $e->getMessage());
         }

@@ -23,6 +23,5 @@
     </div>
 @endif
 
-
 @livewire('crear-codigos-barras')
 @endsection

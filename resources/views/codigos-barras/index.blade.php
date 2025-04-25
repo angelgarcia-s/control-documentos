@@ -20,7 +20,7 @@
                         <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                     </div>
                 </div>
-                
+
                 @livewire('codigos-barras-table')
             </div>
         </div>

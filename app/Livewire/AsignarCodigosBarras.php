@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\CodigoBarra;
 use App\Models\TipoEmpaque;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AsignarCodigosBarras extends Component
 {
@@ -48,13 +49,11 @@ class AsignarCodigosBarras extends Component
         $this->producto = Producto::where('sku', $this->sku)->with('codigosBarras')->firstOrFail();
         $codigosAsignados = $this->producto->codigosBarras;
 
-        // Cargar los tipos de empaque con su orden
         $tiposEmpaqueOrden = TipoEmpaque::pluck('orden', 'nombre')->toArray();
 
-        // Ordenar los códigos asignados primero por "nombre" y luego por "tipo_empaque" usando el orden de tipos_empaque
         $this->codigosAsignados = $codigosAsignados->sortBy([
-            ['nombre', 'asc'], // Ordenar por nombre alfabéticamente ascendente
-            fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999, // Ordenar por tipo_empaque usando el campo orden, NULL va al final
+            ['nombre', 'asc'],
+            fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999,
         ]);
     }
 
@@ -170,12 +169,6 @@ class AsignarCodigosBarras extends Component
             return;
         }
 
-        if ($this->focusedInputIndex !== null) {
-            $this->filas[$this->focusedInputIndex]['codigo'] = $codigo->codigo;
-            $this->filas[$this->focusedInputIndex]['contenido'] = $codigo->contenido ?? 'N/A';
-            $this->filas[$this->focusedInputIndex]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
-        }
-
         $this->resetErrorBag('filas.' . $this->focusedInputIndex . '.codigo');
 
         foreach ($this->filas as $index => $fila) {
@@ -205,9 +198,10 @@ class AsignarCodigosBarras extends Component
             }
         }
 
-        $nombreCorto = $this->producto->nombre_corto;
+        $familiaProducto = $this->producto->familia ? $this->producto->familia->nombre : 'Desconocido';
         $nombreCodigo = $codigo->nombre;
-        $coincide = $this->coincidenNombres($nombreCorto, $nombreCodigo);
+
+        $coincide = $this->coincidenNombres($familiaProducto, $nombreCodigo);
 
         if (!$coincide) {
             $this->confirmingAssign = true;
@@ -297,11 +291,9 @@ class AsignarCodigosBarras extends Component
         }
     }
 
-    private function coincidenNombres($nombreCorto, $nombreCodigo)
+    private function coincidenNombres($familiaProducto, $nombreCodigo)
     {
-        $palabrasCorto = explode(' ', strtolower($nombreCorto));
-        $palabrasCodigo = explode(' ', strtolower($nombreCodigo));
-        return count(array_intersect($palabrasCorto, $palabrasCodigo)) > 0;
+        return trim(strtolower($familiaProducto)) === trim(strtolower($nombreCodigo));
     }
 
     private function addUserMessage($message)
