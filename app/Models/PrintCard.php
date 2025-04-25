@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PrintCard extends Model
 {
@@ -20,6 +21,18 @@ class PrintCard extends Model
         'revision',
         'estado'
     ];
+
+    // Mutador para guardar estado en minúsculas
+    public function setEstadoAttribute($value)
+    {
+        $this->attributes['estado'] = strtolower($value);
+    }
+
+    // Accesor para mostrar estado con la primera letra de cada palabra en mayúsculas
+    public function getEstadoAttribute($value)
+    {
+        return Str::title($value);
+    }
 
     public function producto()
     {

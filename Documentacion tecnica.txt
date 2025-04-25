@@ -279,3 +279,590 @@ Crea el archivo resources/views/proveedores/index.blade.php:
 -----------------------------------------------------------------------
 
 la sentencia  -- @livewire('proveedores-table'): -- Inserta el componente ProveedoresTable, que usa TablaGenerica internamente.
+
+
+
+**************************************************************************
+
+Documentación: Asignación y Validaciones de Códigos de Barras
+Objetivo
+
+Esta documentación describe la funcionalidad de asignación de códigos de barras a productos en una aplicación Laravel, implementada mediante el componente Livewire AsignarCodigosBarras. La funcionalidad permite a los usuarios asignar códigos de barras a un producto específico, con validaciones para evitar duplicados y un mecanismo de confirmación para nombres no coincidentes. También incluye un formulario dinámico para manejar múltiples códigos y una interfaz de usuario optimizada para mejorar la experiencia del usuario.
+
+Estructura del Sistema
+
+Modelos
+
+Modelo Producto:
+Tabla: productos.
+Campos relevantes:
+sku: Identificador único del producto (string).
+nombre_corto: Nombre corto del producto (string).
+id_familia: Clave foránea que referencia a la tabla familias_productos (integer).
+Relaciones:
+codigosBarras: Relación muchos a muchos con CodigoBarra a través de la tabla pivote producto_codigos_barras, que incluye los campos adicionales tipo_empaque y contenido.
+php
+
+Copiar
+public function codigosBarras()
+{
+    return $this->belongsToMany(CodigoBarra::class, 'producto_codigos_barras', 'producto_id', 'codigo_barra_id')
+                ->withPivot('tipo_empaque', 'contenido');
+}
+familia: Relación belongsTo con el modelo FamiliaProducto, usando el campo id_familia.
+php
+
+Copiar
+public function familia()
+{
+    return $this->belongsTo(FamiliaProducto::class, 'id_familia');
+}
+Modelo CodigoBarra:
+Tabla: codigos_barras.
+Campos relevantes:
+codigo: Código de barras único (string).
+nombre: Nombre del código de barras, que representa la familia a la que pertenece (string).
+tipo_empaque: Tipo de empaque asociado al código (string).
+contenido: Contenido del código, como cantidad o descripción (string).
+Modelo FamiliaProducto:
+Tabla: familias_productos.
+Campos relevantes:
+id: Identificador único de la familia (integer).
+nombre: Nombre de la familia (string), usado para comparaciones con el nombre del código de barras.
+Componente Livewire
+
+Componente: AsignarCodigosBarras.
+Ubicación: app/Livewire/AsignarCodigosBarras.php.
+Vista asociada: resources/views/livewire/asignar-codigos-barras.blade.php.
+Propósito: Gestiona la asignación de códigos de barras a un producto específico, identificado por su sku.
+Vistas
+
+Vista codigos-barras.asignar.blade.php:
+Renderiza el componente AsignarCodigosBarras y pasa el sku del producto.
+php
+
+Copiar
+@extends('layouts.master')
+
+@section('content')
+<div class="block justify-between page-header md:flex">
+    <div>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Asignar Códigos de Barras a un Producto</h3>
+    </div>
+    <x-breadcrumbs />
+</div>
+
+@if (session('success'))
+    <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger" role="alert">
+        {{ session('error') }}
+    </div>
+@endif
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<div>
+    @livewire('asignar-codigos-barras', ['sku' => $sku, 'Nombre_corto' => $producto])
+</div>
+
+@endsection
+Vista asignar-codigos-barras.blade.php:
+Muestra una tabla de códigos ya asignados al producto.
+Proporciona un formulario dinámico para agregar nuevos códigos, con campos para codigo, contenido, y tipo_empaque.
+Incluye un modal de confirmación para nombres no coincidentes y un modal para desasignar códigos.
+Funcionalidad
+
+1. Carga Inicial
+
+Método mount:
+Inicializa el componente con el sku del producto.
+Llama a loadProductoAndCodigos para cargar el producto y sus relaciones.
+Crea una fila inicial vacía en el formulario.
+Establece un mensaje inicial para guiar al usuario.
+php
+
+Copiar
+public function mount($sku)
+{
+    $this->sku = $sku;
+    $this->loadProductoAndCodigos();
+
+    $this->filas[] = [
+        'codigo' => '',
+        'contenido' => '',
+        'tipo_empaque' => '',
+    ];
+    $this->userMessage = "Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.";
+    $this->selectorKey = uniqid();
+
+    $this->confirmingAssign = false;
+    $this->confirmingUnassign = null;
+    $this->codigoDesasignar = null;
+    $this->codigoDesasignarId = null;
+}
+Método loadProductoAndCodigos:
+Carga el producto con sus relaciones codigosBarras y familia para evitar problemas de rendimiento.
+Ordena los códigos asignados por nombre y tipo de empaque.
+php
+
+Copiar
+private function loadProductoAndCodigos()
+{
+    $this->producto = Producto::where('sku', $this->sku)->with(['codigosBarras', 'familia'])->firstOrFail();
+    $codigosAsignados = $this->producto->codigosBarras;
+
+    $tiposEmpaqueOrden = TipoEmpaque::pluck('orden', 'nombre')->toArray();
+
+    $this->codigosAsignados = $codigosAsignados->sortBy([
+        ['nombre', 'asc'],
+        fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999,
+    ]);
+}
+2. Formulario Dinámico
+
+Propiedad $filas:
+Almacena las filas del formulario, cada una con los campos codigo, contenido, y tipo_empaque.
+Método agregarFila:
+Permite agregar hasta 5 filas al formulario.
+Muestra un mensaje de error si se alcanza el límite.
+php
+
+Copiar
+public function agregarFila()
+{
+    if (count($this->filas) < 5) {
+        $this->filas[] = [
+            'codigo' => '',
+            'contenido' => '',
+            'tipo_empaque' => '',
+        ];
+        $this->userMessage = "Nueva fila añadida. Ahora tienes " . count($this->filas) . " filas.";
+        if ($this->focusedInputIndex !== null) {
+            $this->dispatch('focus-row', index: $this->focusedInputIndex);
+        }
+    } else {
+        $this->addErrorMessage("No puedes agregar más filas. Límite máximo alcanzado (5).");
+    }
+}
+Método eliminarFila:
+Permite eliminar una fila, asegurando que siempre quede al menos una fila.
+php
+
+Copiar
+public function eliminarFila($index)
+{
+    if (count($this->filas) > 1) {
+        unset($this->filas[$index]);
+        $this->filas = array_values($this->filas);
+        if ($this->focusedInputIndex == $index) {
+            $this->focusedInputIndex = null;
+            $this->userMessage = "Fila " . ($index + 1) . " eliminada. No tienes ninguna fila seleccionada.";
+            $this->dispatch('clear-focus');
+        } else {
+            $this->userMessage = "Fila " . ($index + 1) . " eliminada.";
+            if ($this->focusedInputIndex !== null) {
+                $this->dispatch('focus-row', index: $this->focusedInputIndex);
+            }
+        }
+    }
+}
+Interfaz de usuario:
+Las filas del formulario se renderizan con campos de solo lectura (readonly) para codigo, contenido, y tipo_empaque.
+Cada fila, excepto la última, tiene un borde inferior (border-b-2 border-slate-300 pb-2) para separar visualmente las filas.
+php
+
+Copiar
+@foreach ($filas as $index => $fila)
+    <div class="box grid grid-cols-12 sm:gap-x-6 sm:gap-y-4 codigo-row pt-4 {{ !$loop->last ? 'border-b-2 border-slate-300 pb-2' : '' }}">
+        <div class="md:col-span-4 col-span-12 mb-4 relative">
+            <label class="form-label">Código</label>
+            <input type="text"
+                   id="codigo-input-{{ $index }}"
+                   wire:model="filas.{{ $index }}.codigo"
+                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm custom-input-focus {{ $focusedInputIndex === $index ? 'focused' : '' }} @error('filas.' . $index . '.codigo') is-invalid @enderror"
+                   readonly
+                   wire:focus="setFocus({{ $index }})">
+        </div>
+        <div class="md:col-span-4 col-span-12 mb-4 relative">
+            <label class="form-label">Contenido</label>
+            <input type="text"
+                   wire:model="filas.{{ $index }}.contenido"
+                   class="form-control @error('filas.' . $index . '.contenido') is-invalid @enderror"
+                   readonly>
+        </div>
+        <div class="md:col-span-3 col-span-12 mb-4 relative">
+            <label class="form-label">Tipo de Empaque</label>
+            <input type="text"
+                   wire:model="filas.{{ $index }}.tipo_empaque"
+                   class="form-control @error('filas.' . $index . '.tipo_empaque') is-invalid @enderror"
+                   readonly>
+        </div>
+        <div class="md:col-span-1 col-span-12 mb-4 flex items-end">
+            @if (count($filas) > 1)
+                <button type="button" wire:click="eliminarFila({{ $index }})" class="ti-btn ti-btn-danger">Eliminar</button>
+            @endif
+        </div>
+    </div>
+@endforeach
+3. Selección y Asignación de Códigos
+
+Selección de códigos:
+El componente utiliza CodigosBarrasSelectorTable para mostrar una lista de códigos disponibles.
+
+El método selectCode captura el código seleccionado por el usuario:
+
+php
+
+Copiar
+public function selectCode($value)
+{
+    $this->selectedCode = $value;
+    $this->userMessage = "Código de barras seleccionado con id: " . $value . ". Para continuar da click en el botón Asignar";
+    if ($this->focusedInputIndex !== null) {
+        $this->dispatch('focus-row', index: $this->focusedInputIndex);
+    }
+}
+Asignación de códigos:
+El método asignar gestiona el proceso de asignación, aplicando varias validaciones antes de llenar los inputs de la fila seleccionada.
+php
+
+Copiar
+public function asignar()
+{
+    if (!$this->selectedCode || $this->focusedInputIndex === null) {
+        $this->addErrorMessage("Por favor, selecciona un campo de código y un código en una fila antes de asignar.");
+        return;
+    }
+
+    $codigo = CodigoBarra::find($this->selectedCode);
+    if (!$codigo) {
+        $this->addErrorMessage("El código seleccionado (" . $this->selectedCode . ") no se encuentra en la base of datos.");
+        return;
+    }
+
+    $this->resetErrorBag('filas.' . $this->focusedInputIndex . '.codigo');
+
+    foreach ($this->filas as $index => $fila) {
+        if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
+            $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
+            return;
+        }
+    }
+
+    if ($this->codigosAsignados->contains('codigo', $codigo->codigo)) {
+        $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado a este producto.");
+        return;
+    }
+
+    $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
+    if ($tipoEmpaqueSeleccionado) {
+        foreach ($this->filas as $index => $fila) {
+            if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
+                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                return;
+            }
+        }
+
+        if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
+            $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+            return;
+        }
+    }
+
+    $familiaProducto = $this->producto->familia ? $this->producto->familia->nombre : 'Desconocido';
+    $nombreCodigo = $codigo->nombre;
+
+    $coincide = $this->coincidenNombres($familiaProducto, $nombreCodigo);
+
+    if (!$coincide) {
+        $this->confirmingAssign = true;
+        $this->codigoNombre = $codigo->nombre;
+        $this->addErrorMessage("Los nombres no coinciden. Por favor, confirma la asignación.");
+        return;
+    }
+
+    $this->asignarCodigo($this->focusedInputIndex, $codigo);
+    $this->addSuccessMessage("Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
+    $this->selectedCode = null;
+    $this->clearFocus();
+    $this->selectorKey = uniqid();
+}
+Método asignarCodigo:
+Llena los inputs de la fila seleccionada con los datos del código de barras.
+php
+
+Copiar
+private function asignarCodigo($index, $codigo)
+{
+    if (isset($this->filas[$index])) {
+        $this->filas[$index]['codigo'] = $codigo->codigo;
+        $this->filas[$index]['contenido'] = $codigo->contenido ?? 'N/A';
+        $this->filas[$index]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
+    }
+}
+4. Validación de Coincidencia de Nombres
+
+Método coincidenNombres:
+Compara el nombre de la familia del producto ($this->producto->familia->nombre) con el nombre del código de barras ($codigo->nombre), normalizando ambos valores (eliminando espacios y convirtiendo a minúsculas).
+php
+
+Copiar
+private function coincidenNombres($familiaProducto, $nombreCodigo)
+{
+    return trim(strtolower($familiaProducto)) === trim(strtolower($nombreCodigo));
+}
+Comportamiento:
+Si los nombres coinciden, la asignación se realiza directamente.
+Si no coinciden, se muestra un modal de confirmación al usuario.
+php
+
+Copiar
+@if ($confirmingAssign)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="modal-content bg-white rounded-lg p-6 max-w-md w-full">
+            <div class="modal-header">
+                <h5 class="modal-title text-lg font-bold text-gray-900 dark:text-gray-100">Confirmar Asignación</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-gray-700 dark:text-gray-300">
+                    Los productos no coinciden: la familia del producto ('{{ $producto->familia ? $producto->familia->nombre : 'Desconocido' }}') no coincide con el nombre del código ('{{ $codigoNombre ?? '' }}'). ¿Desea asignar de todos modos?
+                </p>
+            </div>
+            <div class="modal-footer flex justify-end space-x-2">
+                <button type="button" wire:click="cancelarAsignacion" class="ti-btn ti-btn-secondary !py-1 !px-2">Cancelar</button>
+                <button type="button" wire:click="confirmarAsignacion" wire:loading.attr="disabled" class="ti-btn ti-btn-primary !py-1 !px-2">Confirmar</button>
+            </div>
+        </div>
+    </div>
+@endif
+Método confirmarAsignacion:
+Si el usuario confirma, se llenan los inputs y se completa la asignación.
+php
+
+Copiar
+public function confirmarAsignacion()
+{
+    $codigo = CodigoBarra::find($this->selectedCode);
+    if ($codigo && $this->focusedInputIndex !== null) {
+        foreach ($this->filas as $index => $fila) {
+            if ($index !== $this->focusedInputIndex && $fila['codigo'] === $codigo->codigo) {
+                $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código.");
+                $this->confirmingAssign = false;
+                $this->selectedCode = null;
+                $this->codigoNombre = null;
+                return;
+            }
+        }
+
+        if ($this->codigosAsignados->contains('codigo', $codigo->codigo)) {
+            $this->addErrorMessage("El código " . $codigo->codigo . " ya está asignado a este producto.");
+            $this->confirmingAssign = false;
+            $this->selectedCode = null;
+            $this->codigoNombre = null;
+            return;
+        }
+
+        $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
+        if ($tipoEmpaqueSeleccionado) {
+            foreach ($this->filas as $index => $fila) {
+                if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
+                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                    $this->confirmingAssign = false;
+                    $this->selectedCode = null;
+                    $this->codigoNombre = null;
+                    return;
+                }
+            }
+
+            if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
+                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+                $this->confirmingAssign = false;
+                $this->selectedCode = null;
+                $this->codigoNombre = null;
+                return;
+            }
+        }
+
+        $this->asignarCodigo($this->focusedInputIndex, $codigo);
+        $this->addSuccessMessage("Asignación confirmada: Código " . $codigo->codigo . " asignado a la fila " . ($this->focusedInputIndex + 1) . ".");
+    }
+    $this->confirmingAssign = false;
+    $this->selectedCode = null;
+    $this->codigoNombre = null;
+    $this->clearFocus();
+    $this->selectorKey = uniqid();
+}
+Método cancelarAsignacion:
+Si el usuario cancela, se limpia el estado sin llenar los inputs.
+php
+
+Copiar
+public function cancelarAsignacion()
+{
+    $this->confirmingAssign = false;
+    $this->selectedCode = null;
+    $this->codigoNombre = null;
+    $this->addErrorMessage("La asignación del código ha sido cancelada.");
+    if ($this->focusedInputIndex !== null) {
+        $this->dispatch('focus-row', index: $this->focusedInputIndex);
+    }
+    $this->selectorKey = uniqid();
+}
+5. Guardado de Códigos Asignados
+
+Método guardar:
+Valida que todos los códigos en las filas sean válidos y existan en la base de datos.
+Realiza las mismas validaciones de duplicados que en asignar.
+Envía los datos al controlador ProductoCodigosBarrasController para guardar las asignaciones.
+php
+
+Copiar
+public function guardar()
+{
+    $this->validate([
+        'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
+    ]);
+
+    try {
+        $codigosAsignadosCodigos = $this->codigosAsignados->pluck('codigo')->toArray();
+        $codigosAsignadosTiposEmpaque = $this->codigosAsignados->pluck('tipo_empaque')->toArray();
+
+        foreach ($this->filas as $fila) {
+            $codigoBarra = CodigoBarra::where('codigo', $fila['codigo'])->first();
+            if ($codigoBarra) {
+                if (in_array($fila['codigo'], $codigosAsignadosCodigos)) {
+                    $this->addErrorMessage("El código " . $fila['codigo'] . " ya está asignado a este producto.");
+                    return;
+                }
+
+                $tipoEmpaque = $codigoBarra->tipo_empaque ?? '-';
+                if (in_array($tipoEmpaque, $codigosAsignadosTiposEmpaque)) {
+                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaque . " ya está asignado a otro código para este producto.");
+                    return;
+                }
+
+                $codigosAsignadosCodigos[] = $fila['codigo'];
+                $codigosAsignadosTiposEmpaque[] = $tipoEmpaque;
+            }
+        }
+
+        $request = new Request();
+        $request->replace([
+            'filas' => $this->filas,
+            '_token' => csrf_token(),
+        ]);
+
+        $controller = new \App\Http\Controllers\ProductoCodigosBarrasController();
+        $response = $controller->store($request, $this->sku);
+
+        $responseData = $response->getData(true);
+
+        if (isset($responseData['success']) && $responseData['success']) {
+            $this->loadProductoAndCodigos();
+            return redirect()->route('codigos-barras.asignar', $this->sku)->with('success', 'Códigos asignados correctamente.');
+        } else {
+            $errorMessage = $responseData['message'] ?? 'Ocurrió un error desconocido al intentar guardar los códigos.';
+            $this->addErrorMessage($errorMessage);
+        }
+    } catch (\Exception $e) {
+        $this->addErrorMessage("Error al guardar los códigos: " . $e->getMessage());
+    }
+}
+6. Desasignación de Códigos
+
+Método confirmarDesasignacion:
+Muestra un modal para confirmar la desasignación de un código ya asignado.
+php
+
+Copiar
+public function confirmarDesasignacion($codigoBarraId)
+{
+    try {
+        $this->codigoDesasignar = CodigoBarra::findOrFail($codigoBarraId);
+        $this->codigoDesasignarId = $codigoBarraId;
+
+        $this->confirmingAssign = false;
+        $this->confirmingUnassign = $codigoBarraId;
+
+        $this->dispatch('refresh');
+    } catch (\Exception $e) {
+        session()->flash('error', "Error al intentar abrir el modal de desasignación: " . $e->getMessage());
+    }
+}
+Método desasignar:
+Elimina la relación entre el producto y el código de barras en la tabla pivote.
+php
+
+Copiar
+public function desasignar()
+{
+    try {
+        $this->producto->codigosBarras()->detach($this->codigoDesasignarId);
+        $this->loadProductoAndCodigos();
+
+        session()->flash('success', 'Código de barras desasignado correctamente.');
+
+        $this->confirmingUnassign = null;
+        $this->codigoDesasignar = null;
+        $this->codigoDesasignarId = null;
+
+        $this->selectorKey = uniqid();
+    } catch (\Exception $e) {
+        session()->flash('error', "Error al desasignar el código de barras: " . $e->getMessage());
+    }
+}
+Modal de desasignación:
+Muestra un mensaje de confirmación antes de desasignar un código.
+php
+
+Copiar
+@if ($confirmingUnassign !== null)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="modal-content bg-white rounded-lg p-6 max-w-md w-full">
+            <div class="modal-header">
+                <h5 class="modal-title text-lg font-bold text-gray-900 dark:text-gray-100">Confirmar Desasignación</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-gray-700 dark:text-gray-300">
+                    ¿Estás seguro de que deseas desasignar el código de barras '{{ isset($codigoDesasignar) ? $codigoDesasignar->codigo : 'N/A' }}' del producto '{{ $producto->nombre_corto }}'?
+                </p>
+            </div>
+            <div class="modal-footer flex justify-end space-x-2">
+                <button type="button" wire:click="cancelarDesasignacion" class="ti-btn ti-btn-secondary !py-1 !px-2">Cancelar</button>
+                <button type="button" wire:click="desasignar" wire:loading.attr="disabled" class="ti-btn ti-btn-danger !py-1 !px-2">Confirmar</button>
+            </div>
+        </div>
+    </div>
+@endif
+Recomendaciones para Mantenimiento
+
+Validaciones adicionales:
+Si se agregan nuevos tipos de empaque o reglas de negocio, actualizar las validaciones en asignar y guardar para reflejarlas.
+Considerar agregar validaciones para manejar casos donde el producto no tenga una familia asignada (id_familia nulo) de manera más específica, si se requiere un comportamiento diferente al valor por defecto "Desconocido".
+Optimización:
+Si se accede frecuentemente al nombre de la familia, definir un accessor en el modelo Producto para simplificar el acceso:
+php
+
+Copiar
+public function getFamiliaNombreAttribute()
+{
+    return $this->familia ? $this->familia->nombre : 'Desconocido';
+}
+Esto permitiría usar $this->producto->familia_nombre en lugar de $this->producto->familia ? $this->producto->familia->nombre : 'Desconocido'.
+Interfaz de usuario:
+Si se desea mejorar la experiencia del usuario, considerar agregar tooltips o mensajes adicionales para guiar al usuario en el proceso de asignación.
+Asegurarse de que el diseño sea consistente con otras partes de la aplicación, ajustando las clases de Tailwind CSS si es necesario.
+Conclusión
+
+La funcionalidad de asignación de códigos de barras permite a los usuarios asignar códigos a productos de manera eficiente, con validaciones robustas para evitar duplicados y un modal de confirmación para nombres no coincidentes. El formulario dinámico soporta hasta 5 filas, con separadores visuales para mejorar la legibilidad, y los modales de confirmación y desasignación aseguran que el usuario tenga control total sobre las acciones realizadas.

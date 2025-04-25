@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Producto extends Model
 {
     use HasFactory;
 
-    protected $table = 'productos'; // Nombre de la tabla en la base de datos
+    protected $table = 'productos';
 
     protected $fillable = [
         'sku',
@@ -27,6 +28,28 @@ class Producto extends Model
         'peso',
         'variacion_peso'
     ];
+
+    // Mutadores para guardar en minúsculas
+    public function setDescripcionAttribute($value)
+    {
+        $this->attributes['descripcion'] = strtolower($value);
+    }
+
+    public function setNombreCortoAttribute($value)
+    {
+        $this->attributes['nombre_corto'] = strtolower($value);
+    }
+
+    // Accesores para mostrar con la primera letra de cada palabra en mayúsculas
+    public function getDescripcionAttribute($value)
+    {
+        return Str::title($value);
+    }
+
+    public function getNombreCortoAttribute($value)
+    {
+        return Str::title($value);
+    }
 
     // Relaciones
     public function categoria()
@@ -53,7 +76,7 @@ class Producto extends Model
     {
         return $this->belongsTo(Color::class, 'id_color');
     }
-    
+
     public function unidadMedida()
     {
         return $this->belongsTo(UnidadMedida::class, 'id_unidad_medida');
@@ -69,8 +92,4 @@ class Producto extends Model
         return $this->belongsToMany(CodigoBarra::class, 'producto_codigos_barras', 'producto_id', 'codigo_barra_id')
                     ->withPivot('tipo_empaque', 'contenido');
     }
-
-    
-
 }
-
