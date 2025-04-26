@@ -52,7 +52,7 @@
                             <label class="form-label">Unidad de medida</label>
                             <select name="id_unidad_medida" class="form-control @error('id_unidad_medida') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\UnidadMedida::all() as $unidad)
+                                @foreach ($unidadesMedida as $unidad)
                                     <option value="{{ $unidad->id }}" {{ old('id_unidad_medida') == $unidad->id ? 'selected' : '' }}>{{ $unidad->nombre }}</option>
                                 @endforeach
                             </select>
@@ -70,7 +70,7 @@
                             <label class="form-label">Categoría</label>
                             <select name="id_categoria" class="form-control @error('id_categoria') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\Categoria::all() as $categoria)
+                                @foreach ($categorias as $categoria)
                                     <option value="{{ $categoria->id }}" {{ old('id_categoria') == $categoria->id ? 'selected' : '' }}>{{ $categoria->nombre }}</option>
                                 @endforeach
                             </select>
@@ -85,7 +85,7 @@
                             <label class="form-label">Proveedor</label>
                             <select name="id_proveedor" class="form-control @error('id_proveedor') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\Proveedor::all() as $proveedor)
+                                @foreach ($proveedores as $proveedor)
                                     <option value="{{ $proveedor->id }}" {{ old('id_proveedor') == $proveedor->id ? 'selected' : '' }}>{{ $proveedor->nombre }}</option>
                                 @endforeach
                             </select>
@@ -95,7 +95,7 @@
                             <label class="form-label">Familia de producto</label>
                             <select name="id_familia" class="form-control @error('id_familia') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\FamiliaProducto::all() as $familia)
+                                @foreach ($familias as $familia)
                                     <option value="{{ $familia->id }}" {{ old('id_familia') == $familia->id ? 'selected' : '' }}>{{ $familia->nombre }}</option>
                                 @endforeach
                             </select>
@@ -105,7 +105,7 @@
                             <label class="form-label">Color</label>
                             <select name="id_color" class="form-control @error('id_color') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\Color::all() as $color)
+                                @foreach ($colores as $color)
                                     <option value="{{ $color->id }}" {{ old('id_color') == $color->id ? 'selected' : '' }}>{{ $color->nombre }}</option>
                                 @endforeach
                             </select>
@@ -115,7 +115,7 @@
                             <label class="form-label">Tamaño</label>
                             <select name="id_tamano" class="form-control @error('id_tamano') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
-                                @foreach (\App\Models\Tamano::all() as $tamano)
+                                @foreach ($tamanos as $tamano)
                                     <option value="{{ $tamano->id }}" {{ old('id_tamano') == $tamano->id ? 'selected' : '' }}>{{ $tamano->nombre }}</option>
                                 @endforeach
                             </select>
@@ -200,11 +200,11 @@
             <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar asignación</h2>
             <p class="text-gray-700 dark:text-gray-300 mb-6">El producto se ha guardado correctamente. ¿Estás seguro de que quieres asignar los códigos de barras ahora?</p>
             <div class="flex justify-end space-x-2">
-                <button onclick="window.location.href='{{ route('productos.index') }}'" 
+                <button onclick="window.location.href='{{ route('productos.index') }}'"
                         class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
                     Cancelar
                 </button>
-                <a href="{{ route('codigos-barras.asignar', $skuGuardado) }}" 
+                <a href="{{ route('codigos-barras.asignar', $skuGuardado) }}"
                    class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
                     Confirmar
                 </a>
@@ -250,7 +250,7 @@
             // Manejo del formulario
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
-                
+
                 fetch(form.action, {
                     method: 'POST',
                     body: new FormData(form),

@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use App\Models\UnidadMedida;
+use App\Models\Categoria;
+use App\Models\Proveedor;
+use App\Models\FamiliaProducto;
+use App\Models\Color;
+use App\Models\Tamano;
 use Illuminate\Database\QueryException;
 
 class ProductosController extends Controller
@@ -22,7 +28,24 @@ class ProductosController extends Controller
     public function create(Request $request)
     {
         $skuGuardado = $request->query('skuGuardado');
-        return view('productos.create', compact('skuGuardado'));
+
+        // Cargar los catálogos con ordenamiento alfabético por nombre
+        $unidadesMedida = UnidadMedida::orderBy('nombre', 'asc')->get();
+        $categorias = Categoria::orderBy('nombre', 'asc')->get();
+        $proveedores = Proveedor::orderBy('nombre', 'asc')->get();
+        $familias = FamiliaProducto::orderBy('nombre', 'asc')->get();
+        $colores = Color::orderBy('nombre', 'asc')->get();
+        $tamanos = Tamano::orderBy('nombre', 'asc')->get();
+
+        return view('productos.create', compact(
+            'skuGuardado',
+            'unidadesMedida',
+            'categorias',
+            'proveedores',
+            'familias',
+            'colores',
+            'tamanos'
+        ));
     }
 
     public function store(Request $request)
@@ -58,7 +81,7 @@ class ProductosController extends Controller
             'message' => 'Producto creado correctamente.'
         ]);
     }
-    
+
     /**
      * Muestra un producto específico.
      */
@@ -74,7 +97,24 @@ class ProductosController extends Controller
     public function edit($id)
     {
         $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
-        return view('productos.edit', compact('producto'));
+
+        // Cargar los catálogos con ordenamiento alfabético por nombre
+        $unidadesMedida = UnidadMedida::orderBy('nombre', 'asc')->get();
+        $categorias = Categoria::orderBy('nombre', 'asc')->get();
+        $proveedores = Proveedor::orderBy('nombre', 'asc')->get();
+        $familias = FamiliaProducto::orderBy('nombre', 'asc')->get();
+        $colores = Color::orderBy('nombre', 'asc')->get();
+        $tamanos = Tamano::orderBy('nombre', 'asc')->get();
+
+        return view('productos.edit', compact(
+            'producto',
+            'unidadesMedida',
+            'categorias',
+            'proveedores',
+            'familias',
+            'colores',
+            'tamanos'
+        ));
     }
 
     /**

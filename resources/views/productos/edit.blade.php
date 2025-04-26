@@ -13,7 +13,6 @@
     <x-breadcrumbs />
 </div>
 
-<!-- Mostrar alertas generales de éxito o error -->
 @if (session('success'))
     <div class="alert alert-success" role="alert">
         {{ session('success') }}
@@ -29,7 +28,7 @@
     </div>
 @endif
 
-<form action="{{ route('productos.update', $producto->id) }}" method="POST">
+<form action="{{ route('productos.update', $producto) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-12 gap-6">
@@ -53,7 +52,8 @@
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Unidad de medida</label>
                             <select name="id_unidad_medida" class="form-control @error('id_unidad_medida') is-invalid @enderror" required>
-                                @foreach (\App\Models\UnidadMedida::all() as $unidad)
+                                <option value="">Seleccione</option>
+                                @foreach ($unidadesMedida as $unidad)
                                     <option value="{{ $unidad->id }}" {{ old('id_unidad_medida', $producto->id_unidad_medida) == $unidad->id ? 'selected' : '' }}>{{ $unidad->nombre }}</option>
                                 @endforeach
                             </select>
@@ -68,9 +68,10 @@
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Categoria</label>
+                            <label class="form-label">Categoría</label>
                             <select name="id_categoria" class="form-control @error('id_categoria') is-invalid @enderror" required>
-                                @foreach (\App\Models\Categoria::all() as $categoria)
+                                <option value="">Seleccione</option>
+                                @foreach ($categorias as $categoria)
                                     <option value="{{ $categoria->id }}" {{ old('id_categoria', $producto->id_categoria) == $categoria->id ? 'selected' : '' }}>{{ $categoria->nombre }}</option>
                                 @endforeach
                             </select>
@@ -78,24 +79,24 @@
                         </div>
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Nombre Corto</label>
-                            <input type="text" name="nombre_corto" value="{{ old('nombre_corto', $producto->nombre_corto) }}" class="form-control @error('nombre_corto') is-invalid @enderror">
+                            <input type="text" name="nombre_corto" value="{{ old('nombre_corto', $producto->nombre_corto) }}" class="form-control @error('nombre_corto') is-invalid @enderror" readonly placeholder="Se generará automáticamente (Familia + Color + Tamaño)">
                             @error('nombre_corto') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Proveedor</label>
                             <select name="id_proveedor" class="form-control @error('id_proveedor') is-invalid @enderror" required>
-                                @foreach (\App\Models\Proveedor::all() as $proveedor)
+                                <option value="">Seleccione</option>
+                                @foreach ($proveedores as $proveedor)
                                     <option value="{{ $proveedor->id }}" {{ old('id_proveedor', $producto->id_proveedor) == $proveedor->id ? 'selected' : '' }}>{{ $proveedor->nombre }}</option>
                                 @endforeach
                             </select>
                             @error('id_proveedor') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Familia de producto</label>
                             <select name="id_familia" class="form-control @error('id_familia') is-invalid @enderror" required>
-                                @foreach (\App\Models\FamiliaProducto::all() as $familia)
+                                <option value="">Seleccione</option>
+                                @foreach ($familias as $familia)
                                     <option value="{{ $familia->id }}" {{ old('id_familia', $producto->id_familia) == $familia->id ? 'selected' : '' }}>{{ $familia->nombre }}</option>
                                 @endforeach
                             </select>
@@ -104,7 +105,8 @@
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Color</label>
                             <select name="id_color" class="form-control @error('id_color') is-invalid @enderror" required>
-                                @foreach (\App\Models\Color::all() as $color)
+                                <option value="">Seleccione</option>
+                                @foreach ($colores as $color)
                                     <option value="{{ $color->id }}" {{ old('id_color', $producto->id_color) == $color->id ? 'selected' : '' }}>{{ $color->nombre }}</option>
                                 @endforeach
                             </select>
@@ -113,7 +115,8 @@
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Tamaño</label>
                             <select name="id_tamano" class="form-control @error('id_tamano') is-invalid @enderror" required>
-                                @foreach (\App\Models\Tamano::all() as $tamano)
+                                <option value="">Seleccione</option>
+                                @foreach ($tamanos as $tamano)
                                     <option value="{{ $tamano->id }}" {{ old('id_tamano', $producto->id_tamano) == $tamano->id ? 'selected' : '' }}>{{ $tamano->nombre }}</option>
                                 @endforeach
                             </select>
@@ -127,29 +130,29 @@
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="md:col-span-3 col-span-12 mb-4">
+                        <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Código de barras Primario</label>
-                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->codigo_barras_primario ?? '') }}" class="form-control @error('codigo_barras_primario') is-invalid @enderror">
+                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Primario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras secundario</label>
-                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->codigo_barras_secundario ?? '') }}" class="form-control @error('codigo_barras_secundario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Secundario</label>
+                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Secundario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras terciario</label>
-                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->codigo_barras_terciario ?? '') }}" class="form-control @error('codigo_barras_terciario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Terciario</label>
+                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Terciario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras cuaternario</label>
-                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->codigo_barras_cuaternario ?? '') }}" class="form-control @error('codigo_barras_cuaternario') is-invalid @enderror">
+                        <div class="md:col-span-2 col-span-12 mb-4">
+                            <label class="form-label">Código de barras Cuaternario</label>
+                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Cuaternario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Código de barras master</label>
-                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->codigo_barras_master ?? '') }}" class="form-control @error('codigo_barras_master') is-invalid @enderror">
+                            <label class="form-label">Código de barras Master</label>
+                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->codigosBarras->where('pivot.tipo_empaque', 'Master')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
@@ -164,24 +167,24 @@
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Requiere peso</label>
-                            <select name="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
-                                <option value="SI" {{ old('requiere_peso', $producto->requiere_peso) == 'SI' ? 'selected' : '' }}>Sí</option>
+                            <select name="requiere_peso" id="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
                                 <option value="NO" {{ old('requiere_peso', $producto->requiere_peso) == 'NO' ? 'selected' : '' }}>No</option>
+                                <option value="SI" {{ old('requiere_peso', $producto->requiere_peso) == 'SI' ? 'selected' : '' }}>Sí</option>
                             </select>
                             @error('requiere_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Peso</label>
-                            <input type="number" step="0.01" name="peso" value="{{ old('peso', $producto->peso) }}" class="form-control @error('peso') is-invalid @enderror">
+                            <input type="number" step="0.01" name="peso" value="{{ old('peso', $producto->peso) }}" class="form-control @error('peso') is-invalid @enderror" id="peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
                             @error('peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Variación en el peso</label>
-                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso', $producto->variacion_peso) }}" class="form-control @error('variacion_peso') is-invalid @enderror">
+                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso', $producto->variacion_peso) }}" class="form-control @error('variacion_peso') is-invalid @enderror" id="variacion_peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
                             @error('variacion_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="flex justify-end md:col-span-12 col-span-12">
-                            <a href="{{ route('productos.index', $producto) }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                            <a href="{{ route('productos.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
                             <button type="submit" class="ti-btn ti-btn-primary-full">Actualizar</button>
                         </div>
                     </div>
@@ -190,8 +193,36 @@
         </div>
     </div>
 </form>
+
 @endsection
 
 @section('scripts')
-    @vite('resources/assets/js/modal.js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const requierePeso = document.getElementById('requiere_peso');
+            const peso = document.getElementById('peso');
+            const variacionPeso = document.getElementById('variacion_peso');
+
+            // Función para habilitar/deshabilitar campos
+            function togglePesoFields() {
+                if (requierePeso.value === 'SI') {
+                    peso.disabled = false;
+                    variacionPeso.disabled = false;
+                    peso.required = true;
+                    variacionPeso.required = true;
+                } else {
+                    peso.disabled = true;
+                    variacionPeso.disabled = true;
+                    peso.required = false;
+                    variacionPeso.required = false;
+                }
+            }
+
+            // Estado inicial
+            togglePesoFields();
+
+            // Escuchar cambios en el select
+            requierePeso.addEventListener('change', togglePesoFields);
+        });
+    </script>
 @endsection
