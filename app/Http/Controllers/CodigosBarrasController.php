@@ -27,6 +27,7 @@ class CodigosBarrasController extends Controller
             'codigos' => 'required|array',
             'codigos.*.tipo' => 'required|in:EAN13,ITF14',
             'codigos.*.codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
+            'codigos.*.consecutivo_codigo' => 'required|string|size:3',
             'codigos.*.nombre' => 'required|string|max:255',
             'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
             'codigos.*.empaque' => 'required|string|max:50|exists:empaques,nombre',
@@ -45,6 +46,7 @@ class CodigosBarrasController extends Controller
             CodigoBarra::create([
                 'tipo' => $codigoData['tipo'],
                 'codigo' => $codigoData['codigo'],
+                'consecutivo_codigo' => $codigoData['consecutivo_codigo'],
                 'nombre' => $codigoData['nombre'],
                 'tipo_empaque' => $codigoData['tipo_empaque'],
                 'empaque' => $codigoData['empaque'],
@@ -95,6 +97,14 @@ class CodigosBarrasController extends Controller
         } elseif ($validated['tipo'] === 'ITF14' && $longitud !== 14) {
             return redirect()->back()->withErrors(['codigo' => "El código ITF14 debe tener exactamente 14 dígitos."]);
         }
+
+        // Extraer el consecutivo del código actualizado
+        if ($longitud === 13) { // EAN13
+            $consecutivo = substr($validated['codigo'], 9, 3);
+        } elseif ($longitud === 14) { // ITF14
+            $consecutivo = substr($validated['codigo'], 10, 3);
+        }
+        $validated['consecutivo_codigo'] = $consecutivo;
 
         // Generar nombre_corto
         $color = $validated['color_id'] ? Color::find($validated['color_id'])->nombre : '';

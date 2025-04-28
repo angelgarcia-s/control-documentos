@@ -123,12 +123,24 @@ class CrearCodigosBarras extends Component
                     return;
                 }
                 $ean13Count++;
+
+                // Extraer el consecutivo (posiciones 10-12, 0-indexed: 9-11)
+                $consecutivo = substr($codigo['codigo'], 9, 3);
+
             } elseif ($codigo['tipo'] === 'ITF14') {
                 if ($longitud !== 14) {
                     $this->addError("codigos.$index.codigo", "El código ITF14 debe tener exactamente 14 dígitos.");
                     return;
                 }
+                // Extraer el consecutivo (posiciones 11-13, 0-indexed: 10-12)
+                $consecutivo = substr($codigo['codigo'], 10, 3);
+            } else {
+                $this->addError("codigos.$index.codigo", "El código debe tener 13 o 14 dígitos.");
+                return;
             }
+
+            // Agregar el consecutivo al array de datos
+            $this->codigos[$index]['consecutivo_codigo'] = $consecutivo;
         }
 
         try {
