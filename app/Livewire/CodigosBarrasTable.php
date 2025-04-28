@@ -16,6 +16,7 @@ class CodigosBarrasTable extends TablaGenerica
             modelo: $modelo,
             columnas: $columnas ?: [
                 ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+                ['name' => 'consecutivo_codigo', 'label' => 'Consecutivo', 'sortable' => true, 'searchable' => true],
                 ['name' => 'codigo', 'label' => 'Código', 'sortable' => true, 'searchable' => true],
                 ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
                 ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
@@ -35,7 +36,8 @@ class CodigosBarrasTable extends TablaGenerica
             ]
         );
 
-        // Establecemos el ordenamiento por defecto a descendente para el campo 'id'
+        // Establecemos el ordenamiento por defecto a descendente para el campo 'consecutivo'
+        $this->orderBy = 'consecutivo_codigo';
         $this->orderDirection = 'desc';
     }
 

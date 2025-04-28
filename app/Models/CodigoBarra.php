@@ -11,6 +11,7 @@ class CodigoBarra extends Model
 
     protected $fillable = [
         'codigo',
+        'consecutivo_codigo',
         'nombre',
         'tipo_empaque',
         'empaque',
@@ -45,6 +46,11 @@ class CodigoBarra extends Model
     public function setNombreCortoAttribute($value)
     {
         $this->attributes['nombre_corto'] = $value ? strtolower($value) : null;
+    }
+
+    public function setConsecutivoCodigoAttribute($value)
+    {
+        $this->attributes['consecutivo_codigo'] = str_pad($value, 3, '0', STR_PAD_LEFT); // Asegura que sea 3 dígitos (001, 002, etc.)
     }
 
     // Accesores para mostrar con la primera letra de cada palabra en mayúsculas
