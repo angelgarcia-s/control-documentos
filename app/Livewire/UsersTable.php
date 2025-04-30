@@ -13,8 +13,8 @@ class UsersTable extends TablaGenerica
         $columnas = [
             ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
             ['name' => 'name', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-            ['name' => 'email', 'label' => 'e-mail', 'sortable' => true, 'searchable' => true],
-            ['name' => 'roles', 'label' => 'Rol', 'sortable' => true, 'searchable' => true],
+            ['name' => 'email', 'label' => 'Correo electronico', 'sortable' => true, 'searchable' => true],
+            ['name' => 'roles', 'label' => 'Rol', 'sortable' => true, 'searchable' => true, 'callback' => 'getRoles'],
         ];
         $acciones = [
             'editar' => 'Editar',
@@ -37,5 +37,10 @@ class UsersTable extends TablaGenerica
     public function borrar($id)
     {
         $this->confirmingDelete = $id;
+    }
+
+    public function getRoles($elemento)
+    {
+        return $elemento->roles->pluck('name')->implode(', ');
     }
 }

@@ -1,6 +1,6 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
-        
+
         <!-- Mostrar el mensaje de error de Livewire -->
         @if ($errorMessage)
             <div class="alert alert-danger mb-4" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => @this.call('clearErrorMessage'), 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -70,11 +70,7 @@
                         </td>
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                @if(isset($columna['relationship']))
-                                    {{ $elemento->{$columna['relationship']}?->nombre ?? '-' }}
-                                @else
-                                    {{ $elemento->{$columna['name']} ?? '-' }}
-                                @endif
+                                {{ $this->getColumnValue($elemento, $columna) }}
                             </td>
                         @endforeach
 
@@ -105,7 +101,7 @@
                     @endforeach
                 </select>
             </div>
-    
+
             <!-- Paginación de Livewire con Tailwind -->
             <div>
                 {{ $elementos->links('vendor.pagination.tailwind') }}
@@ -119,12 +115,12 @@
             <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
             <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar este elemento?</p>
             <div class="flex justify-end space-x-2">
-                <button wire:click="cancelarEliminar" 
+                <button wire:click="cancelarEliminar"
                         class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
                     Cancelar
                 </button>
-                <button wire:click="eliminarElemento" 
-                        wire:loading.attr="disabled" 
+                <button wire:click="eliminarElemento"
+                        wire:loading.attr="disabled"
                         class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
                     Confirmar
                 </button>

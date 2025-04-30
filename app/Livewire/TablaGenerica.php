@@ -43,7 +43,7 @@ class TablaGenerica extends Component
         $this->botones = $botones;
         $this->confirmingDelete = null; // Aseguramos que sea null al montar
         $this->selectedActions = []; // Reiniciamos al montar
-        
+
     }
 
     public function ejecutarAccion($id, $accion)
@@ -82,7 +82,7 @@ class TablaGenerica extends Component
                         }
                     }
                 }
-    
+
                 try {
                     $elemento->delete();
                     session()->flash('success', 'Elemento eliminado correctamente.');
@@ -91,7 +91,7 @@ class TablaGenerica extends Component
                 } catch (\Exception $e) {
                     $this->errorMessage = 'Error al eliminar el elemento: ' . $e->getMessage();
                 }
-                
+
                 $this->confirmingDelete = null;
                 $this->selectedActions = []; // Reiniciamos todos los <select>
             } else {
@@ -161,5 +161,20 @@ class TablaGenerica extends Component
             'acciones' => $this->acciones,
             'botones' => $this->botones,
         ]);
+    }
+
+    // Método para renderizar el valor de una columna, con soporte para callbacks
+    public function getColumnValue($elemento, $columna)
+    {
+        if (isset($columna['callback']) && method_exists($this, $columna['callback'])) {
+            return $this->{$columna['callback']}($elemento);
+        }
+
+        if (isset($columna['relationship'])) {
+            return $elemento->{$columna['relationship']}?->nombre ?? '-';
+        }
+
+        $campo = $columna['name'];
+        return $elemento->$campo ?? '-';
     }
 }
