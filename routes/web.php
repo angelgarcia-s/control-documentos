@@ -33,77 +33,286 @@ use App\Http\Controllers\MaterialesController;
 use App\Http\Controllers\BarnicesController;
 use App\Http\Controllers\CodigosBarrasController;
 use App\Http\Controllers\ProductoCodigosBarrasController;
+use App\Http\Controllers\PrintCardController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UsersController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
-//Route::get('/test', [TestController::class, 'index']);
+// Ruta de prueba
 Route::get('/test', function () {
     \Log::info('Ruta de prueba accedida');
     return response()->json(['success' => true, 'message' => 'Prueba exitosa']);
 });
 
+// Ruta raíz: Redirige al login si no está autenticado, o al dashboard si está autenticado
 Route::get('/', function () {
-    return view('welcome');
-})->name('dashboard');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
+});
 
-// Productos
-Route::resource('productos', ProductosController::class, ['parameters' => ['productos' => 'producto']]);
+// Rutas de autenticación (definidas en auth.php)
+require __DIR__.'/auth.php';
 
-// Codigos de barras
-Route::resource('codigos-barras', CodigosBarrasController::class, ['parameters' => ['codigos-barras' => 'codigoBarra']]);
-Route::get('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar');
-Route::post('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'store'])->name('codigos-barras.asignar.store');
-Route::resource('producto-codigos-barras', ProductoCodigosBarrasController::class, ['parameters' => ['producto-codigos-barras' => 'productoCodigosBarra']]);
-
-
-Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards');
-
-// Empaques
-// Route::get('empaques/asignar-codigos', [EmpaquesController::class, 'asignarCodigos'])->name('empaques.asignar-codigos');
-// Route::get('empaques/asignar-printcards', [EmpaquesController::class, 'asignarPrintcards'])->name('empaques.asignar-printcards');
-
-// Catálogos
-Route::resource('familias', FamiliasController::class, ['parameters' => ['familias' => 'familia']]);
-Route::resource('categorias', CategoriasController::class, ['parameters' => ['categorias' => 'categoria']]);
-Route::resource('colores', ColoresController::class, ['parameters' => ['colores' => 'color']]);
-Route::resource('tamanos', TamanosController::class, ['parameters' => ['tamanos' => 'tamano']]);
-Route::resource('unidades', UnidadMedidaController::class, ['parameters' => ['unidades' => 'unidad']]);
-Route::resource('tipos-empaque', TiposEmpaqueController::class, ['parameters' => ['tipos-empaque' => 'tipo_empaque']]);
-Route::resource('empaques', EmpaquesController::class, ['parameters' => ['empaques' => 'empaque']]);
-Route::resource('tipos-sello', TiposSelloController::class, ['parameters' => ['tipos-sello' => 'tipo_sello']]);
-Route::resource('acabados', AcabadosController::class, ['parameters' => ['acabados' => 'acabado']]);
-Route::resource('materiales', MaterialesController::class, ['parameters' => ['materiales' => 'material']]);
-Route::resource('barnices', BarnicesController::class, ['parameters' => ['barnices' => 'barniz']]);
-
-// Proveedores
-Route::resource('proveedores', ProveedoresController::class, ['parameters' => ['proveedores' => 'proveedor']]);
-
-// Revisiones
-// Route::get('revisiones/historial', [RevisionesController::class, 'historial'])->name('revisiones.historial');
-// Route::get('revisiones/printcards', [RevisionesController::class, 'printcards'])->name('revisiones.printcards');
-
-// Reportes
-// Route::get('reportes/printcards', [ReportesController::class, 'printcards'])->name('reportes.printcards');
-// Route::get('reportes/codigos-barras', [ReportesController::class, 'codigosBarras'])->name('reportes.codigos-barras');
-// Route::get('reportes/productos', [ReportesController::class, 'productos'])->name('reportes.productos');
-
-// Administración
-// Route::resource('usuarios', UsuariosController::class, ['parameters' => ['usuarios' => 'usuario']]);
-// Route::resource('roles', RolesController::class, ['parameters' => ['roles' => 'rol']]);
-// Route::resource('configuracion', ConfiguracionController::class, ['parameters' => ['configuracion' => 'config']]);
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [DashboardsController::class, 'index'])->name('dashboard');
+
+
+    // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rutas para Gestión de Usuarios
+    Route::prefix('usuarios')->group(function () {
+        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:gestionar-usuarios');
+        Route::get('/create', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:crear-usuarios');
+        Route::get('/{user}/show', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:ver-usuarios');
+        Route::get('/{user}/edit', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:editar-usuarios');
+        Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('permission:editar-usuarios');
+    });
+
+    // Rutas para Gestión de Roles
+    // Route::prefix('roles')->group(function () {
+    //     Route::get('/', [RoleManagementController::class, 'index'])->name('roles.index')->middleware('permission:gestionar-roles');
+    //     Route::get('/{role}/editar', [RoleManagementController::class, 'edit'])->name('roles.edit')->middleware('permission:gestionar-roles');
+    //     Route::put('/{role}', [RoleManagementController::class, 'update'])->name('roles.update')->middleware('permission:gestionar-roles');
+    // });
+
+    // Rutas para Productos
+    Route::resource('productos', ProductosController::class, [
+        'parameters' => ['productos' => 'producto'],
+        'middleware' => [
+            'index' => 'permission:ver-productos',
+            'create' => 'permission:crear-productos',
+            'store' => 'permission:crear-productos',
+            'show' => 'permission:ver-productos',
+            'edit' => 'permission:editar-productos',
+            'update' => 'permission:editar-productos',
+            'destroy' => 'permission:eliminar-productos',
+        ],
+    ]);
+    //Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards')->middleware('permission:ver-printcards');
+
+    // Rutas para Códigos de Barras
+    Route::resource('codigos-barras', CodigosBarrasController::class, [
+        'parameters' => ['codigos-barras' => 'codigoBarra'],
+        'middleware' => [
+            'index' => 'permission:ver-codigos-barras',
+            'create' => 'permission:crear-codigos-barras',
+            'store' => 'permission:crear-codigos-barras',
+            'show' => 'permission:ver-codigos-barras',
+            'edit' => 'permission:editar-codigos-barras',
+            'update' => 'permission:editar-codigos-barras',
+            'destroy' => 'permission:eliminar-codigos-barras',
+        ],
+    ]);
+    Route::get('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar')->middleware('permission:asignar-codigos-barras');
+    Route::post('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'store'])->name('codigos-barras.asignar.store')->middleware('permission:asignar-codigos-barras');
+
+    // Rutas para Producto-Codigos-Barras
+    Route::resource('producto-codigos-barras', ProductoCodigosBarrasController::class, [
+        'parameters' => ['producto-codigos-barras' => 'productoCodigosBarra'],
+        'middleware' => [
+            'index' => 'permission:ver-producto-codigos-barras',
+            'create' => 'permission:crear-producto-codigos-barras',
+            'store' => 'permission:crear-producto-codigos-barras',
+            'show' => 'permission:ver-producto-codigos-barras',
+            'edit' => 'permission:editar-producto-codigos-barras',
+            'update' => 'permission:editar-producto-codigos-barras',
+            'destroy' => 'permission:eliminar-producto-codigos-barras',
+        ],
+    ]);
+
+    // Rutas para Familias
+    Route::resource('familias', FamiliasController::class, [
+        'parameters' => ['familias' => 'familia'],
+        'middleware' => [
+            'index' => 'permission:ver-familias',
+            'create' => 'permission:crear-familias',
+            'store' => 'permission:crear-familias',
+            'show' => 'permission:ver-familias',
+            'edit' => 'permission:editar-familias',
+            'update' => 'permission:editar-familias',
+            'destroy' => 'permission:eliminar-familias',
+        ],
+    ]);
+
+    // Rutas para Categorías
+    Route::resource('categorias', CategoriasController::class, [
+        'parameters' => ['categorias' => 'categoria'],
+        'middleware' => [
+            'index' => 'permission:ver-categorias',
+            'create' => 'permission:crear-categorias',
+            'store' => 'permission:crear-categorias',
+            'show' => 'permission:ver-categorias',
+            'edit' => 'permission:editar-categorias',
+            'update' => 'permission:editar-categorias',
+            'destroy' => 'permission:eliminar-categorias',
+        ],
+    ]);
+
+    // Rutas para Colores
+    Route::resource('colores', ColoresController::class, [
+        'parameters' => ['colores' => 'color'],
+        'middleware' => [
+            'index' => 'permission:ver-colores',
+            'create' => 'permission:crear-colores',
+            'store' => 'permission:crear-colores',
+            'show' => 'permission:ver-colores',
+            'edit' => 'permission:editar-colores',
+            'update' => 'permission:editar-colores',
+            'destroy' => 'permission:eliminar-colores',
+        ],
+    ]);
+
+    // Rutas para Tamaños
+    Route::resource('tamanos', TamanosController::class, [
+        'parameters' => ['tamanos' => 'tamano'],
+        'middleware' => [
+            'index' => 'permission:ver-tamanos',
+            'create' => 'permission:crear-tamanos',
+            'store' => 'permission:crear-tamanos',
+            'show' => 'permission:ver-tamanos',
+            'edit' => 'permission:editar-tamanos',
+            'update' => 'permission:editar-tamanos',
+            'destroy' => 'permission:eliminar-tamanos',
+        ],
+    ]);
+
+    // Rutas para Unidades (Unidades de Medida)
+    Route::resource('unidades', UnidadMedidaController::class, [
+        'parameters' => ['unidades' => 'unidad'],
+        'middleware' => [
+            'index' => 'permission:ver-unidades',
+            'create' => 'permission:crear-unidades',
+            'store' => 'permission:crear-unidades',
+            'show' => 'permission:ver-unidades',
+            'edit' => 'permission:editar-unidades',
+            'update' => 'permission:editar-unidades',
+            'destroy' => 'permission:eliminar-unidades',
+        ],
+    ]);
+
+    // Rutas para Tipos de Empaque
+    Route::resource('tipos-empaque', TiposEmpaqueController::class, [
+        'parameters' => ['tipos-empaque' => 'tipo_empaque'],
+        'middleware' => [
+            'index' => 'permission:ver-tipos-empaque',
+            'create' => 'permission:crear-tipos-empaque',
+            'store' => 'permission:crear-tipos-empaque',
+            'show' => 'permission:ver-tipos-empaque',
+            'edit' => 'permission:editar-tipos-empaque',
+            'update' => 'permission:editar-tipos-empaque',
+            'destroy' => 'permission:eliminar-tipos-empaque',
+        ],
+    ]);
+
+    // Rutas para Empaques
+    Route::resource('empaques', EmpaquesController::class, [
+        'parameters' => ['empaques' => 'empaque'],
+        'middleware' => [
+            'index' => 'permission:ver-empaques',
+            'create' => 'permission:crear-empaques',
+            'store' => 'permission:crear-empaques',
+            'show' => 'permission:ver-empaques',
+            'edit' => 'permission:editar-empaques',
+            'update' => 'permission:editar-empaques',
+            'destroy' => 'permission:eliminar-empaques',
+        ],
+    ]);
+
+    // Rutas para Tipos de Sello
+    Route::resource('tipos-sello', TiposSelloController::class, [
+        'parameters' => ['tipos-sello' => 'tipo_sello'],
+        'middleware' => [
+            'index' => 'permission:ver-tipos-sello',
+            'create' => 'permission:crear-tipos-sello',
+            'store' => 'permission:crear-tipos-sello',
+            'show' => 'permission:ver-tipos-sello',
+            'edit' => 'permission:editar-tipos-sello',
+            'update' => 'permission:editar-tipos-sello',
+            'destroy' => 'permission:eliminar-tipos-sello',
+        ],
+    ]);
+
+    // Rutas para Acabados
+    Route::resource('acabados', AcabadosController::class, [
+        'parameters' => ['acabados' => 'acabado'],
+        'middleware' => [
+            'index' => 'permission:ver-acabados',
+            'create' => 'permission:crear-acabados',
+            'store' => 'permission:crear-acabados',
+            'show' => 'permission:ver-acabados',
+            'edit' => 'permission:editar-acabados',
+            'update' => 'permission:editar-acabados',
+            'destroy' => 'permission:eliminar-acabados',
+        ],
+    ]);
+
+    // Rutas para Materiales
+    Route::resource('materiales', MaterialesController::class, [
+        'parameters' => ['materiales' => 'material'],
+        'middleware' => [
+            'index' => 'permission:ver-materiales',
+            'create' => 'permission:crear-materiales',
+            'store' => 'permission:crear-materiales',
+            'show' => 'permission:ver-materiales',
+            'edit' => 'permission:editar-materiales',
+            'update' => 'permission:editar-materiales',
+            'destroy' => 'permission:eliminar-materiales',
+        ],
+    ]);
+
+    // Rutas para Barnices
+    Route::resource('barnices', BarnicesController::class, [
+        'parameters' => ['barnices' => 'barniz'],
+        'middleware' => [
+            'index' => 'permission:ver-barnices',
+            'create' => 'permission:crear-barnices',
+            'store' => 'permission:crear-barnices',
+            'show' => 'permission:ver-barnices',
+            'edit' => 'permission:editar-barnices',
+            'update' => 'permission:editar-barnices',
+            'destroy' => 'permission:eliminar-barnices',
+        ],
+    ]);
+
+    // Rutas para Proveedores
+    Route::resource('proveedores', ProveedoresController::class, [
+        'parameters' => ['proveedores' => 'proveedor'],
+        'middleware' => [
+            'index' => 'permission:ver-proveedores',
+            'create' => 'permission:crear-proveedores',
+            'store' => 'permission:crear-proveedores',
+            'show' => 'permission:ver-proveedores',
+            'edit' => 'permission:editar-proveedores',
+            'update' => 'permission:editar-proveedores',
+            'destroy' => 'permission:eliminar-proveedores',
+        ],
+    ]);
+
+    // Rutas para PrintCards
+    // Route::resource('printcards', PrintCardController::class, [
+    //     'parameters' => ['printcards' => 'printCard'],
+    //     'middleware' => [
+    //         'index' => 'permission:ver-printcards',
+    //         'create' => 'permission:crear-printcards',
+    //         'store' => 'permission:crear-printcards',
+    //         'show' => 'permission:ver-printcards',
+    //         'edit' => 'permission:editar-printcards',
+    //         'update' => 'permission:editar-printcards',
+    //         'destroy' => 'permission:eliminar-printcards',
+    //     ],
+    // ]);
 });
 
 // DASHBOARDS //
-Route::get('/', [DashboardsController::class, 'index']);
 Route::get('index', [DashboardsController::class, 'index']);
 Route::get('index2', [DashboardsController::class, 'index2']);
 Route::get('index3', [DashboardsController::class, 'index3']);
@@ -299,4 +508,3 @@ Route::get('vector-maps', [MapsController::class, 'vector_maps']);
 // ICONS //
 Route::get('icons', [IconsController::class, 'icons']);
 
-require __DIR__.'/auth.php';

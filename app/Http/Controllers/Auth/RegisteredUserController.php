@@ -42,6 +42,15 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Asignar rol por defecto
+        if (User::count() === 1) {
+            // Si es el primer usuario, asignar rol de SuperAdmin
+            $user->assignRole('SuperAdmin');
+        } else {
+            // Asignar rol por defecto a otros usuarios
+            $user->assignRole('Visualizador de Productos');
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
