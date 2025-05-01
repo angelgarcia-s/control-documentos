@@ -17,10 +17,13 @@ class ProductosController extends Controller
     /**
      * Muestra la vista de productos con Livewire.
      */
-    public function index()
-    {
-        return view('productos.index');
-    }
+    public function index(Request $request)
+{
+    $user = auth()->user();
+    $hasPermission = $user->hasPermissionTo('ver-productos');
+    dd($user->name, $user->roles->pluck('name'), $user->getAllPermissions()->pluck('name'), $hasPermission);
+    return view('productos.index');
+}
 
     /**
      * Muestra el formulario para crear un nuevo producto.

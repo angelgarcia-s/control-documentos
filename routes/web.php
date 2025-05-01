@@ -36,6 +36,7 @@ use App\Http\Controllers\ProductoCodigosBarrasController;
 use App\Http\Controllers\PrintCardController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\RolesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -70,25 +71,32 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para Gestión de Usuarios
     Route::prefix('usuarios')->group(function () {
-        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:gestionar-usuarios');
-        Route::get('/create', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:crear-usuarios');
-        Route::get('/{user}/show', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:ver-usuarios');
-        Route::get('/{user}/edit', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:editar-usuarios');
+        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:ver-usuarios');
+        Route::get('/crear', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:crear-usuarios');
+        Route::post('/', [UsersController::class, 'store'])->name('usuarios.store')->middleware('permission:crear-usuarios');
+        Route::get('/{user}', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:ver-usuarios');
+        Route::get('/{user}/editar', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:editar-usuarios');
         Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('permission:editar-usuarios');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('usuarios.destroy')->middleware('permission:eliminar-usuarios');
     });
 
     // Rutas para Gestión de Roles
-    // Route::prefix('roles')->group(function () {
-    //     Route::get('/', [RoleManagementController::class, 'index'])->name('roles.index')->middleware('permission:gestionar-roles');
-    //     Route::get('/{role}/editar', [RoleManagementController::class, 'edit'])->name('roles.edit')->middleware('permission:gestionar-roles');
-    //     Route::put('/{role}', [RoleManagementController::class, 'update'])->name('roles.update')->middleware('permission:gestionar-roles');
-    // });
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RolesController::class, 'index'])->name('roles.index')->middleware('permission:ver-roles');
+        Route::get('/crear', [RolesController::class, 'create'])->name('roles.create')->middleware('permission:crear-roles');
+        Route::post('/', [RolesController::class, 'store'])->name('roles.store')->middleware('permission:crear-roles');
+        Route::get('/{role}', [RolesController::class, 'show'])->name('roles.show')->middleware('permission:ver-roles');
+        Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('permission:editar-roles');
+        Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:editar-roles');
+        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:eliminar-roles');
+    });
 
     // Rutas para Productos
     Route::resource('productos', ProductosController::class, [
         'parameters' => ['productos' => 'producto'],
         'middleware' => [
             'index' => 'permission:ver-productos',
+            //'index' => [],
             'create' => 'permission:crear-productos',
             'store' => 'permission:crear-productos',
             'show' => 'permission:ver-productos',

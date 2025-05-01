@@ -11,24 +11,24 @@
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <h5 class="box-title">Usuarios</h5>
+                    <h5 class="box-title">Roles</h5>
                 </div>
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            @can('crear-usuarios')
-                                <a href="{{ route('usuarios.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Usua</a>
+                            @can('crear-roles')
+                                <a href="{{ route('roles.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Rol</a>
                             @endcan
                         </div>
                         <div>
-                            @can('ver-usuarios')
+                            @can('ver-roles')
                                 <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                             @endcan
                         </div>
                     </div>
 
                     <!-- Componente Livewire que maneja la tabla -->
-                    @livewire('users-table')
+                    @livewire('roles-table')
                 </div>
             </div>
         </div>

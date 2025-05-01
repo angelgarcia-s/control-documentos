@@ -141,11 +141,11 @@
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
-                        @can('gestionar-usuarios')
+                        @can('ver-usuarios')
                             <li class="slide"><a href="{{ route('usuarios.index') }}" class="side-menu__item">Usuarios</a></li>
                         @endcan
-                        @can('gestionar-roles')
-                            <li class="slide"><a href="{{ url('roles.index') }}" class="side-menu__item">Roles</a></li>
+                        @can('ver-roles')
+                            <li class="slide"><a href="{{ route('roles.index') }}" class="side-menu__item">Roles</a></li>
                         @endcan
                     </ul>
                 </li>
