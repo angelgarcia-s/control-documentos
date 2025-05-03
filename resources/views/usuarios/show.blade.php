@@ -22,21 +22,21 @@
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                    <div class="md:col-span-6 col-span-12 mb-4">
+                    <div class="md:col-span-2 col-span-12 mb-4">
                         <label class="form-label">ID</label>
                         <input type="text" value="{{ $user->id }}" class="form-control" disabled>
                     </div>
-                    <div class="md:col-span-6 col-span-12 mb-4">
+                    <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Nombre</label>
                         <input type="text" value="{{ $user->name }}" class="form-control" disabled>
                     </div>
-                    <div class="md:col-span-6 col-span-12 mb-4">
+                    <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Email</label>
                         <input type="text" value="{{ $user->email }}" class="form-control" disabled>
                     </div>
                     <div class="md:col-span-12 col-span-12 mb-4">
-                        <label class="form-label">Roles</label>
-                        <input type="text" value="{{ $roles->pluck('name')->implode(', ') ?: '-' }}" class="form-control" disabled>
+                        <label class="form-label">Rol</label>
+                        <input type="text" value="{{ $user->roles->first()->name ?? '-' }}" class="form-control" disabled>
                     </div>
                 </div>
             </div>
