@@ -89,11 +89,11 @@
                                                                 // La acción será el último elemento después de ignorar las partes del módulo
                                                                 $action = $permissionParts[count($permissionParts) - 1];
                                                                 // Lista de acciones válidas
-                                                                $validActions = ['list', 'create', 'edit', 'show', 'destroy'];
+                                                                $validActions = ['list', 'create', 'edit', 'show', 'destroy', 'download', 'import'];
                                                                 // Verificar si es un permiso individual (acción no válida)
                                                                 $isIndividual = !in_array($action, $validActions);
                                                                 // Transformar la acción si no es un permiso individual
-                                                                $transformedAction = $isIndividual ? null : ucfirst(str_replace('list', 'Listado', str_replace('create', 'Creación', str_replace('edit', 'Edición', str_replace('show', 'Visualización', str_replace('destroy', 'Eliminación', $action))))));
+                                                                $transformedAction = $isIndividual ? null : ucfirst(str_replace('list', 'Listado', str_replace('create', 'Creación', str_replace('edit', 'Edición', str_replace('show', 'Visualización', str_replace('destroy', 'Eliminación', str_replace('download', 'Descargar', str_replace('import', 'Importación', $action))))))));
                                                             @endphp
                                                             @if ($isIndividual)
                                                                 {{ $permission->description ?? 'Sin descripción' }}

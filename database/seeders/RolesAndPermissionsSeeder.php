@@ -36,46 +36,31 @@ class RolesAndPermissionsSeeder extends Seeder
             'permisos' => 'permisos',
         ];
 
-        // Crear permisos base para cada módulo (list, create, edit, show, destroy)
+        // Definir las acciones disponibles para cada módulo
+        $acciones = [
+            'list' => 'Listar',
+            'create' => 'Crear',
+            'edit' => 'Editar',
+            'show' => 'Ver',
+            'destroy' => 'Eliminar',
+            'download' => 'Descargar',
+            'import' => 'Importar',
+        ];
+
+        // Crear permisos base para cada módulo y acción
         foreach ($basePermisos as $permiso => $descripcion) {
             // Transformar el nombre del módulo para la categoría, reemplazando '-' por ' de '
             $categoryName = str_replace('-', ' de ', $permiso);
 
-            Permission::updateOrCreate(
-                ['name' => $permiso . '-list'],
-                [
-                    'description' => 'Listar ' . $descripcion,
-                    'category' => $permiso, // Asignar la categoría
-                ]
-            );
-            Permission::updateOrCreate(
-                ['name' => $permiso . '-create'],
-                [
-                    'description' => 'Crear ' . $descripcion,
-                    'category' => $permiso,
-                ]
-            );
-            Permission::updateOrCreate(
-                ['name' => $permiso . '-edit'],
-                [
-                    'description' => 'Editar ' . $descripcion,
-                    'category' => $permiso,
-                ]
-            );
-            Permission::updateOrCreate(
-                ['name' => $permiso . '-show'],
-                [
-                    'description' => 'Ver ' . $descripcion,
-                    'category' => $permiso,
-                ]
-            );
-            Permission::updateOrCreate(
-                ['name' => $permiso . '-destroy'],
-                [
-                    'description' => 'Eliminar ' . $descripcion,
-                    'category' => $permiso,
-                ]
-            );
+            foreach ($acciones as $accion => $accionDescripcion) {
+                Permission::updateOrCreate(
+                    ['name' => $permiso . '-' . $accion],
+                    [
+                        'description' => $accionDescripcion . ' ' . $descripcion,
+                        'category' => $categoryName,
+                    ]
+                );
+            }
         }
 
         // Crear permisos individuales (que no encajan en el formato [módulo]-[acción])
