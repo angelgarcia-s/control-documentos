@@ -147,7 +147,7 @@
 
                 <!-- Modal de confirmación para desasignar -->
                 @if ($confirmingUnassign !== null)
-                    <div class="fixed inset-0 z-50 flex items.center justify-center bg-gray-800 bg-opacity-50">
+                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
                         <div class="modal-content bg-white rounded-lg p-6 max-w-md w-full">
                             <div class="modal-header">
                                 <h5 class="modal-title text-lg font-bold text-gray-900 dark:text-gray-100">Confirmar Desasignación</h5>

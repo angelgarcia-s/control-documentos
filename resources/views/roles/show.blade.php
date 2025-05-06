@@ -19,9 +19,6 @@
         <div class="box">
             <div class="box-header">
                 <div class="box-title">Información del Rol</div>
-                <div class="">
-                    <a href="{{ route('roles.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Volver</a>
-                </div>
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
@@ -33,10 +30,8 @@
                         <label class="form-label">Permisos</label>
                         <div class="hs-accordion-group">
                             @php
-                                // Agrupar permisos por módulo (basado en el prefijo del nombre)
-                                $groupedPermissions = $role->permissions->groupBy(function ($permission) {
-                                    return explode('-', $permission->name)[1]; // Ejemplo: "ver-usuarios" -> "usuarios"
-                                });
+                                // Agrupar permisos por la columna 'category'
+                                $groupedPermissions = $role->permissions->groupBy('category');
                             @endphp
 
                             @foreach ($groupedPermissions as $module => $modulePermissions)
@@ -67,7 +62,26 @@
                                                            id="permission-{{ $module }}-{{ $permission->name }}"
                                                            {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }} disabled>
                                                     <label for="permission-{{ $module }}-{{ $permission->name }}" class="text-sm text-gray-500 ms-3 dark:text-[#8c9097] dark:text-white/50">
-                                                        {{ ucfirst(str_replace('ver', 'Visualización', str_replace('crear', 'Creación', str_replace('editar', 'Edición', str_replace('eliminar', 'Eliminación', explode('-', $permission->name)[0]))))) }}
+                                                        @php
+                                                            // Contar los guiones en el nombre del módulo para determinar cuántos elementos ignorar
+                                                            $moduleParts = explode('-', $module);
+                                                            $modulePartsCount = count($moduleParts);
+                                                            // Dividir el nombre del permiso
+                                                            $permissionParts = explode('-', $permission->name);
+                                                            // La acción será el último elemento después de ignorar las partes del módulo
+                                                            $action = $permissionParts[count($permissionParts) - 1];
+                                                            // Lista de acciones válidas
+                                                            $validActions = ['list', 'create', 'edit', 'show', 'destroy'];
+                                                            // Verificar si es un permiso individual (acción no válida)
+                                                            $isIndividual = !in_array($action, $validActions);
+                                                            // Transformar la acción si no es un permiso individual
+                                                            $transformedAction = $isIndividual ? null : ucfirst(str_replace('list', 'Listado', str_replace('create', 'Creación', str_replace('edit', 'Edición', str_replace('show', 'Visualización', str_replace('destroy', 'Eliminación', $action))))));
+                                                        @endphp
+                                                        @if ($isIndividual)
+                                                            {{ $permission->description ?? 'Sin descripción' }}
+                                                        @else
+                                                            {{ $transformedAction }}
+                                                        @endif
                                                     </label>
                                                 </div>
                                             @endforeach
@@ -77,6 +91,9 @@
                             @endforeach
                         </div>
                     </div>
+                </div>
+                <div class="box-footer text-right">
+                    <a href="{{ route('roles.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Volver</a>
                 </div>
             </div>
         </div>
@@ -153,7 +170,7 @@
             // Inicializar el estado del checkbox "Activar/Desactivar Todos" al cargar la página
             document.querySelectorAll('.module-checkbox').forEach(function (checkbox) {
                 const module = checkbox.getAttribute('data-module');
-                updateModuleCheckbox(module); // Actualizar el estado inicial
+                updateModuleCheckbox(module);
             });
 
             // Manejar el colapso/expansión del acordeón

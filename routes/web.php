@@ -63,7 +63,6 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('dashboard', [DashboardsController::class, 'index'])->name('dashboard');
 
-
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -71,53 +70,51 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para Gestión de Usuarios
     Route::prefix('usuarios')->group(function () {
-        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:ver-usuarios');
-        Route::get('/crear', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:crear-usuarios');
-        Route::post('/', [UsersController::class, 'store'])->name('usuarios.store')->middleware('permission:crear-usuarios');
-        Route::get('/{user}', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:ver-usuarios');
-        Route::get('/{user}/editar', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:editar-usuarios');
-        Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('permission:editar-usuarios');
-        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('usuarios.destroy')->middleware('permission:eliminar-usuarios');
+        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:usuarios-list');
+        Route::get('/crear', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:usuarios-create');
+        Route::post('/', [UsersController::class, 'store'])->name('usuarios.store')->middleware('permission:usuarios-create');
+        Route::get('/{user}', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:usuarios-show');
+        Route::get('/{user}/editar', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:usuarios-edit');
+        Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('permission:usuarios-edit');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('usuarios.destroy')->middleware('permission:usuarios-destroy');
     });
 
     // Rutas para Gestión de Roles
     Route::prefix('roles')->group(function () {
-        Route::get('/', [RolesController::class, 'index'])->name('roles.index')->middleware('permission:ver-roles');
-        Route::get('/crear', [RolesController::class, 'create'])->name('roles.create')->middleware('permission:crear-roles');
-        Route::post('/', [RolesController::class, 'store'])->name('roles.store')->middleware('permission:crear-roles');
-        Route::get('/{role}', [RolesController::class, 'show'])->name('roles.show')->middleware('permission:ver-roles');
-        Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('permission:editar-roles');
-        Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:editar-roles');
-        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:eliminar-roles');
+        Route::get('/', [RolesController::class, 'index'])->name('roles.index')->middleware('permission:roles-list');
+        Route::get('/crear', [RolesController::class, 'create'])->name('roles.create')->middleware('permission:roles-create');
+        Route::post('/', [RolesController::class, 'store'])->name('roles.store')->middleware('permission:roles-create');
+        Route::get('/{role}', [RolesController::class, 'show'])->name('roles.show')->middleware('permission:roles-show');
+        Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('permission:roles-edit');
+        Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:roles-edit');
+        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles-destroy');
     });
 
     // Rutas para Productos
     Route::resource('productos', ProductosController::class, [
         'parameters' => ['productos' => 'producto'],
         'middleware' => [
-            'index' => 'permission:ver-productos',
-            //'index' => [],
-            'create' => 'permission:crear-productos',
-            'store' => 'permission:crear-productos',
-            'show' => 'permission:ver-productos',
-            'edit' => 'permission:editar-productos',
-            'update' => 'permission:editar-productos',
-            'destroy' => 'permission:eliminar-productos',
+            'index' => 'permission:productos-list',
+            'create' => 'permission:productos-create',
+            'store' => 'permission:productos-create',
+            'show' => 'permission:productos-show',
+            'edit' => 'permission:productos-edit',
+            'update' => 'permission:productos-edit',
+            'destroy' => 'permission:productos-destroy',
         ],
     ]);
-    //Route::get('productos/printcards', [ProductosController::class, 'printcards'])->name('productos.printcards')->middleware('permission:ver-printcards');
 
     // Rutas para Códigos de Barras
     Route::resource('codigos-barras', CodigosBarrasController::class, [
         'parameters' => ['codigos-barras' => 'codigoBarra'],
         'middleware' => [
-            'index' => 'permission:ver-codigos-barras',
-            'create' => 'permission:crear-codigos-barras',
-            'store' => 'permission:crear-codigos-barras',
-            'show' => 'permission:ver-codigos-barras',
-            'edit' => 'permission:editar-codigos-barras',
-            'update' => 'permission:editar-codigos-barras',
-            'destroy' => 'permission:eliminar-codigos-barras',
+            'index' => 'permission:codigos-barras-list',
+            'create' => 'permission:codigos-barras-create',
+            'store' => 'permission:codigos-barras-create',
+            'show' => 'permission:codigos-barras-show',
+            'edit' => 'permission:codigos-barras-edit',
+            'update' => 'permission:codigos-barras-edit',
+            'destroy' => 'permission:codigos-barras-destroy',
         ],
     ]);
     Route::get('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar')->middleware('permission:asignar-codigos-barras');
@@ -127,13 +124,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('producto-codigos-barras', ProductoCodigosBarrasController::class, [
         'parameters' => ['producto-codigos-barras' => 'productoCodigosBarra'],
         'middleware' => [
-            'index' => 'permission:ver-producto-codigos-barras',
-            'create' => 'permission:crear-producto-codigos-barras',
-            'store' => 'permission:crear-producto-codigos-barras',
-            'show' => 'permission:ver-producto-codigos-barras',
-            'edit' => 'permission:editar-producto-codigos-barras',
-            'update' => 'permission:editar-producto-codigos-barras',
-            'destroy' => 'permission:eliminar-producto-codigos-barras',
+            'index' => 'permission:producto-codigos-barras-list',
+            'create' => 'permission:producto-codigos-barras-create',
+            'store' => 'permission:producto-codigos-barras-create',
+            'show' => 'permission:producto-codigos-barras-show',
+            'edit' => 'permission:producto-codigos-barras-edit',
+            'update' => 'permission:producto-codigos-barras-edit',
+            'destroy' => 'permission:producto-codigos-barras-destroy',
         ],
     ]);
 
@@ -141,13 +138,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('familias', FamiliasController::class, [
         'parameters' => ['familias' => 'familia'],
         'middleware' => [
-            'index' => 'permission:ver-familias',
-            'create' => 'permission:crear-familias',
-            'store' => 'permission:crear-familias',
-            'show' => 'permission:ver-familias',
-            'edit' => 'permission:editar-familias',
-            'update' => 'permission:editar-familias',
-            'destroy' => 'permission:eliminar-familias',
+            'index' => 'permission:familias-list',
+            'create' => 'permission:familias-create',
+            'store' => 'permission:familias-create',
+            'show' => 'permission:familias-show',
+            'edit' => 'permission:familias-edit',
+            'update' => 'permission:familias-edit',
+            'destroy' => 'permission:familias-destroy',
         ],
     ]);
 
@@ -155,13 +152,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('categorias', CategoriasController::class, [
         'parameters' => ['categorias' => 'categoria'],
         'middleware' => [
-            'index' => 'permission:ver-categorias',
-            'create' => 'permission:crear-categorias',
-            'store' => 'permission:crear-categorias',
-            'show' => 'permission:ver-categorias',
-            'edit' => 'permission:editar-categorias',
-            'update' => 'permission:editar-categorias',
-            'destroy' => 'permission:eliminar-categorias',
+            'index' => 'permission:categorias-list',
+            'create' => 'permission:categorias-create',
+            'store' => 'permission:categorias-create',
+            'show' => 'permission:categorias-show',
+            'edit' => 'permission:categorias-edit',
+            'update' => 'permission:categorias-edit',
+            'destroy' => 'permission:categorias-destroy',
         ],
     ]);
 
@@ -169,13 +166,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('colores', ColoresController::class, [
         'parameters' => ['colores' => 'color'],
         'middleware' => [
-            'index' => 'permission:ver-colores',
-            'create' => 'permission:crear-colores',
-            'store' => 'permission:crear-colores',
-            'show' => 'permission:ver-colores',
-            'edit' => 'permission:editar-colores',
-            'update' => 'permission:editar-colores',
-            'destroy' => 'permission:eliminar-colores',
+            'index' => 'permission:colores-list',
+            'create' => 'permission:colores-create',
+            'store' => 'permission:colores-create',
+            'show' => 'permission:colores-show',
+            'edit' => 'permission:colores-edit',
+            'update' => 'permission:colores-edit',
+            'destroy' => 'permission:colores-destroy',
         ],
     ]);
 
@@ -183,13 +180,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('tamanos', TamanosController::class, [
         'parameters' => ['tamanos' => 'tamano'],
         'middleware' => [
-            'index' => 'permission:ver-tamanos',
-            'create' => 'permission:crear-tamanos',
-            'store' => 'permission:crear-tamanos',
-            'show' => 'permission:ver-tamanos',
-            'edit' => 'permission:editar-tamanos',
-            'update' => 'permission:editar-tamanos',
-            'destroy' => 'permission:eliminar-tamanos',
+            'index' => 'permission:tamanos-list',
+            'create' => 'permission:tamanos-create',
+            'store' => 'permission:tamanos-create',
+            'show' => 'permission:tamanos-show',
+            'edit' => 'permission:tamanos-edit',
+            'update' => 'permission:tamanos-edit',
+            'destroy' => 'permission:tamanos-destroy',
         ],
     ]);
 
@@ -197,13 +194,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('unidades', UnidadMedidaController::class, [
         'parameters' => ['unidades' => 'unidad'],
         'middleware' => [
-            'index' => 'permission:ver-unidades',
-            'create' => 'permission:crear-unidades',
-            'store' => 'permission:crear-unidades',
-            'show' => 'permission:ver-unidades',
-            'edit' => 'permission:editar-unidades',
-            'update' => 'permission:editar-unidades',
-            'destroy' => 'permission:eliminar-unidades',
+            'index' => 'permission:unidades-list',
+            'create' => 'permission:unidades-create',
+            'store' => 'permission:unidades-create',
+            'show' => 'permission:unidades-show',
+            'edit' => 'permission:unidades-edit',
+            'update' => 'permission:unidades-edit',
+            'destroy' => 'permission:unidades-destroy',
         ],
     ]);
 
@@ -211,13 +208,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('tipos-empaque', TiposEmpaqueController::class, [
         'parameters' => ['tipos-empaque' => 'tipo_empaque'],
         'middleware' => [
-            'index' => 'permission:ver-tipos-empaque',
-            'create' => 'permission:crear-tipos-empaque',
-            'store' => 'permission:crear-tipos-empaque',
-            'show' => 'permission:ver-tipos-empaque',
-            'edit' => 'permission:editar-tipos-empaque',
-            'update' => 'permission:editar-tipos-empaque',
-            'destroy' => 'permission:eliminar-tipos-empaque',
+            'index' => 'permission:tipos-empaque-list',
+            'create' => 'permission:tipos-empaque-create',
+            'store' => 'permission:tipos-empaque-create',
+            'show' => 'permission:tipos-empaque-show',
+            'edit' => 'permission:tipos-empaque-edit',
+            'update' => 'permission:tipos-empaque-edit',
+            'destroy' => 'permission:tipos-empaque-destroy',
         ],
     ]);
 
@@ -225,13 +222,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('empaques', EmpaquesController::class, [
         'parameters' => ['empaques' => 'empaque'],
         'middleware' => [
-            'index' => 'permission:ver-empaques',
-            'create' => 'permission:crear-empaques',
-            'store' => 'permission:crear-empaques',
-            'show' => 'permission:ver-empaques',
-            'edit' => 'permission:editar-empaques',
-            'update' => 'permission:editar-empaques',
-            'destroy' => 'permission:eliminar-empaques',
+            'index' => 'permission:empaques-list',
+            'create' => 'permission:empaques-create',
+            'store' => 'permission:empaques-create',
+            'show' => 'permission:empaques-show',
+            'edit' => 'permission:empaques-edit',
+            'update' => 'permission:empaques-edit',
+            'destroy' => 'permission:empaques-destroy',
         ],
     ]);
 
@@ -239,13 +236,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('tipos-sello', TiposSelloController::class, [
         'parameters' => ['tipos-sello' => 'tipo_sello'],
         'middleware' => [
-            'index' => 'permission:ver-tipos-sello',
-            'create' => 'permission:crear-tipos-sello',
-            'store' => 'permission:crear-tipos-sello',
-            'show' => 'permission:ver-tipos-sello',
-            'edit' => 'permission:editar-tipos-sello',
-            'update' => 'permission:editar-tipos-sello',
-            'destroy' => 'permission:eliminar-tipos-sello',
+            'index' => 'permission:tipos-sello-list',
+            'create' => 'permission:tipos-sello-create',
+            'store' => 'permission:tipos-sello-create',
+            'show' => 'permission:tipos-sello-show',
+            'edit' => 'permission:tipos-sello-edit',
+            'update' => 'permission:tipos-sello-edit',
+            'destroy' => 'permission:tipos-sello-destroy',
         ],
     ]);
 
@@ -253,13 +250,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('acabados', AcabadosController::class, [
         'parameters' => ['acabados' => 'acabado'],
         'middleware' => [
-            'index' => 'permission:ver-acabados',
-            'create' => 'permission:crear-acabados',
-            'store' => 'permission:crear-acabados',
-            'show' => 'permission:ver-acabados',
-            'edit' => 'permission:editar-acabados',
-            'update' => 'permission:editar-acabados',
-            'destroy' => 'permission:eliminar-acabados',
+            'index' => 'permission:acabados-list',
+            'create' => 'permission:acabados-create',
+            'store' => 'permission:acabados-create',
+            'show' => 'permission:acabados-show',
+            'edit' => 'permission:acabados-edit',
+            'update' => 'permission:acabados-edit',
+            'destroy' => 'permission:acabados-destroy',
         ],
     ]);
 
@@ -267,13 +264,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('materiales', MaterialesController::class, [
         'parameters' => ['materiales' => 'material'],
         'middleware' => [
-            'index' => 'permission:ver-materiales',
-            'create' => 'permission:crear-materiales',
-            'store' => 'permission:crear-materiales',
-            'show' => 'permission:ver-materiales',
-            'edit' => 'permission:editar-materiales',
-            'update' => 'permission:editar-materiales',
-            'destroy' => 'permission:eliminar-materiales',
+            'index' => 'permission:materiales-list',
+            'create' => 'permission:materiales-create',
+            'store' => 'permission:materiales-create',
+            'show' => 'permission:materiales-show',
+            'edit' => 'permission:materiales-edit',
+            'update' => 'permission:materiales-edit',
+            'destroy' => 'permission:materiales-destroy',
         ],
     ]);
 
@@ -281,13 +278,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('barnices', BarnicesController::class, [
         'parameters' => ['barnices' => 'barniz'],
         'middleware' => [
-            'index' => 'permission:ver-barnices',
-            'create' => 'permission:crear-barnices',
-            'store' => 'permission:crear-barnices',
-            'show' => 'permission:ver-barnices',
-            'edit' => 'permission:editar-barnices',
-            'update' => 'permission:editar-barnices',
-            'destroy' => 'permission:eliminar-barnices',
+            'index' => 'permission:barnices-list',
+            'create' => 'permission:barnices-create',
+            'store' => 'permission:barnices-create',
+            'show' => 'permission:barnices-show',
+            'edit' => 'permission:barnices-edit',
+            'update' => 'permission:barnices-edit',
+            'destroy' => 'permission:barnices-destroy',
         ],
     ]);
 
@@ -295,27 +292,27 @@ Route::middleware('auth')->group(function () {
     Route::resource('proveedores', ProveedoresController::class, [
         'parameters' => ['proveedores' => 'proveedor'],
         'middleware' => [
-            'index' => 'permission:ver-proveedores',
-            'create' => 'permission:crear-proveedores',
-            'store' => 'permission:crear-proveedores',
-            'show' => 'permission:ver-proveedores',
-            'edit' => 'permission:editar-proveedores',
-            'update' => 'permission:editar-proveedores',
-            'destroy' => 'permission:eliminar-proveedores',
+            'index' => 'permission:proveedores-list',
+            'create' => 'permission:proveedores-create',
+            'store' => 'permission:proveedores-create',
+            'show' => 'permission:proveedores-show',
+            'edit' => 'permission:proveedores-edit',
+            'update' => 'permission:proveedores-edit',
+            'destroy' => 'permission:proveedores-destroy',
         ],
     ]);
 
-    // Rutas para PrintCards
+    // Rutas para PrintCards (descomentadas y actualizadas)
     // Route::resource('printcards', PrintCardController::class, [
     //     'parameters' => ['printcards' => 'printCard'],
     //     'middleware' => [
-    //         'index' => 'permission:ver-printcards',
-    //         'create' => 'permission:crear-printcards',
-    //         'store' => 'permission:crear-printcards',
-    //         'show' => 'permission:ver-printcards',
-    //         'edit' => 'permission:editar-printcards',
-    //         'update' => 'permission:editar-printcards',
-    //         'destroy' => 'permission:eliminar-printcards',
+    //         'index' => 'permission:printcards-list',
+    //         'create' => 'permission:printcards-create',
+    //         'store' => 'permission:printcards-create',
+    //         'show' => 'permission:printcards-show',
+    //         'edit' => 'permission:printcards-edit',
+    //         'update' => 'permission:printcards-edit',
+    //         'destroy' => 'permission:printcards-destroy',
     //     ],
     // ]);
 });

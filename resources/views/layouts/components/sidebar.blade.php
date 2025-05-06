@@ -27,7 +27,7 @@
                 <!-- End::slide__category -->
 
                 <!-- Productos -->
-                @can('ver-productos')
+                @can('productos-list')
                     <li class="slide has-sub">
                         <a href="javascript:void(0);" class="side-menu__item">
                             <i class="bx bx-box side-menu__icon"></i>
@@ -35,16 +35,16 @@
                             <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
                         <ul class="slide-menu child1">
-                            @can('ver-productos')
+                            @can('productos-list')
                                 <li class="slide"><a href="{{ route('productos.index') }}" class="side-menu__item">Lista de Productos</a></li>
                             @endcan
-                            @can('crear-productos')
+                            @can('productos-create')
                                 <li class="slide"><a href="{{ route('productos.create') }}" class="side-menu__item">Agregar Producto</a></li>
                             @endcan
-                            @can('ver-producto-codigos-barras')
+                            @can('producto-codigos-barras-list')
                                 <li class="slide"><a href="{{ route('producto-codigos-barras.index') }}" class="side-menu__item">Productos con Códigos de Barras</a></li>
                             @endcan
-                            @can('ver-printcards')
+                            @can('printcards-list') <!-- Ajustado para el nuevo formato, aunque está comentado en las rutas -->
                                 <li class="slide"><a href="{{ url('productos/printcards') }}" class="side-menu__item">Print Cards</a></li>
                             @endcan
                         </ul>
@@ -52,7 +52,7 @@
                 @endcan
 
                 <!-- Códigos de Barras -->
-                @can('ver-codigos-barras')
+                @can('codigos-barras-list')
                     <li class="slide has-sub">
                         <a href="javascript:void(0);" class="side-menu__item">
                             <i class="bx bx-package side-menu__icon"></i>
@@ -60,13 +60,12 @@
                             <i class="fe fe-chevron-right side-menu__angle"></i>
                         </a>
                         <ul class="slide-menu child1">
-                            @can('ver-codigos-barras')
+                            @can('codigos-barras-list')
                                 <li class="slide"><a href="{{ route('codigos-barras.index') }}" class="side-menu__item">Códigos de Barras</a></li>
                             @endcan
-                            @can('crear-codigos-barras')
+                            @can('codigos-barras-create')
                                 <li class="slide"><a href="{{ route('codigos-barras.create') }}" class="side-menu__item">Agregar Códigos</a></li>
                             @endcan
-                            <!-- Eliminamos "Pro" y "Asignar Print Cards" porque no están implementados -->
                         </ul>
                     </li>
                 @endcan
@@ -79,44 +78,44 @@
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
-                        @can('ver-familias')
+                        @can('familias-list')
                             <li class="slide"><a href="{{ route('familias.index') }}" class="side-menu__item">Familias</a></li>
                         @endcan
-                        @can('ver-categorias')
+                        @can('categorias-list')
                             <li class="slide"><a href="{{ route('categorias.index') }}" class="side-menu__item">Categorías</a></li>
                         @endcan
-                        @can('ver-colores')
+                        @can('colores-list')
                             <li class="slide"><a href="{{ route('colores.index') }}" class="side-menu__item">Colores</a></li>
                         @endcan
-                        @can('ver-tamanos')
+                        @can('tamanos-list')
                             <li class="slide"><a href="{{ route('tamanos.index') }}" class="side-menu__item">Tamaños</a></li>
                         @endcan
-                        @can('ver-unidades')
+                        @can('unidades-list')
                             <li class="slide"><a href="{{ route('unidades.index') }}" class="side-menu__item">Unidades de Medida</a></li>
                         @endcan
-                        @can('ver-empaques')
+                        @can('empaques-list')
                             <li class="slide"><a href="{{ route('empaques.index') }}" class="side-menu__item">Empaques</a></li>
                         @endcan
-                        @can('ver-tipos-empaque')
+                        @can('tipos-empaque-list')
                             <li class="slide"><a href="{{ route('tipos-empaque.index') }}" class="side-menu__item">Tipos de Empaque</a></li>
                         @endcan
-                        @can('ver-tipos-sello')
+                        @can('tipos-sello-list')
                             <li class="slide"><a href="{{ route('tipos-sello.index') }}" class="side-menu__item">Tipos de Sello</a></li>
                         @endcan
-                        @can('ver-acabados')
+                        @can('acabados-list')
                             <li class="slide"><a href="{{ route('acabados.index') }}" class="side-menu__item">Acabados</a></li>
                         @endcan
-                        @can('ver-materiales')
+                        @can('materiales-list')
                             <li class="slide"><a href="{{ route('materiales.index') }}" class="side-menu__item">Materiales</a></li>
                         @endcan
-                        @can('ver-barnices')
+                        @can('barnices-list')
                             <li class="slide"><a href="{{ route('barnices.index') }}" class="side-menu__item">Barnices</a></li>
                         @endcan
                     </ul>
                 </li>
 
                 <!-- Proveedores -->
-                @can('ver-proveedores')
+                @can('proveedores-list')
                     <li class="slide">
                         <a href="{{ route('proveedores.index') }}" class="side-menu__item">
                             <i class="bx bx-user-circle side-menu__icon"></i>
@@ -124,14 +123,6 @@
                         </a>
                     </li>
                 @endcan
-
-                <!-- Revisiones -->
-                <!-- Eliminamos esta sección porque no está implementada -->
-                <!-- Si deseas implementarla en el futuro, podemos agregar permisos específicos -->
-
-                <!-- Reportes -->
-                <!-- Eliminamos esta sección porque no está implementada -->
-                <!-- Si deseas implementarla en el futuro, podemos agregar permisos específicos -->
 
                 <!-- Administración -->
                 <li class="slide has-sub">
@@ -141,10 +132,10 @@
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
-                        @can('ver-usuarios')
+                        @can('usuarios-list')
                             <li class="slide"><a href="{{ route('usuarios.index') }}" class="side-menu__item">Usuarios</a></li>
                         @endcan
-                        @can('ver-roles')
+                        @can('roles-list')
                             <li class="slide"><a href="{{ route('roles.index') }}" class="side-menu__item">Roles</a></li>
                         @endcan
                     </ul>

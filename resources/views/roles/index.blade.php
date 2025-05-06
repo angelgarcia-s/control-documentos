@@ -16,12 +16,12 @@
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            @can('crear-roles')
+                            @can('roles-list')
                                 <a href="{{ route('roles.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Rol</a>
                             @endcan
                         </div>
                         <div>
-                            @can('ver-roles')
+                            @can('roles-show')
                                 <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                             @endcan
                         </div>

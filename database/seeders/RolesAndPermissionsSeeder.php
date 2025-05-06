@@ -3,254 +3,122 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Crear permisos específicos para usuarios
-        $permisosUsuarios = [
-            'ver-usuarios',
-            'crear-usuarios',
-            'editar-usuarios',
-            'eliminar-usuarios',
+        // Resetear caché de permisos para evitar conflictos
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Definir los módulos y sus descripciones
+        $basePermisos = [
+            'usuarios' => 'usuarios',
+            'roles' => 'roles de usuarios',
+            'productos' => 'productos',
+            'codigos-barras' => 'códigos de barras',
+            'producto-codigos-barras' => 'productos con códigos de barras',
+            'familias' => 'familias de productos',
+            'categorias' => 'categorías de productos',
+            'colores' => 'colores de productos',
+            'tamanos' => 'tamaños de productos',
+            'unidades' => 'unidades de productos',
+            'tipos-empaque' => 'tipos de empaque',
+            'empaques' => 'empaques',
+            'tipos-sello' => 'tipos de sello',
+            'acabados' => 'acabados',
+            'materiales' => 'materiales',
+            'barnices' => 'barnices',
+            'proveedores' => 'proveedores',
         ];
 
-        foreach ($permisosUsuarios as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
+        // Crear permisos base para cada módulo (list, create, edit, show, destroy)
+        foreach ($basePermisos as $permiso => $descripcion) {
+            // Transformar el nombre del módulo para la categoría, reemplazando '-' por ' de '
+            $categoryName = str_replace('-', ' de ', $permiso);
+
+            Permission::updateOrCreate(
+                ['name' => $permiso . '-list'],
+                [
+                    'description' => 'Listar ' . $descripcion,
+                    'category' => $permiso, // Asignar la categoría
+                ]
+            );
+            Permission::updateOrCreate(
+                ['name' => $permiso . '-create'],
+                [
+                    'description' => 'Crear ' . $descripcion,
+                    'category' => $permiso,
+                ]
+            );
+            Permission::updateOrCreate(
+                ['name' => $permiso . '-edit'],
+                [
+                    'description' => 'Editar ' . $descripcion,
+                    'category' => $permiso,
+                ]
+            );
+            Permission::updateOrCreate(
+                ['name' => $permiso . '-show'],
+                [
+                    'description' => 'Ver ' . $descripcion,
+                    'category' => $permiso,
+                ]
+            );
+            Permission::updateOrCreate(
+                ['name' => $permiso . '-destroy'],
+                [
+                    'description' => 'Eliminar ' . $descripcion,
+                    'category' => $permiso,
+                ]
+            );
         }
 
-        $permisosRoles = [
-            'ver-roles',
-            'crear-roles',
-            'editar-roles',
-            'eliminar-roles',
-        ];
+        // Crear permisos individuales (que no encajan en el formato [módulo]-[acción])
+        Permission::updateOrCreate(
+            ['name' => 'asignar-codigos-barras'],
+            [
+                'description' => 'Asignar códigos de barras a productos',
+                'category' => 'Otros', // Asignar la categoría "Otros"
+            ]
+        );
 
-        foreach ($permisosRoles as $permiso) {
-            Permission::FirstOrCreate(['name' => $permiso]);
-        }
+        // Crear roles y asignar permisos
+        // SuperAdmin: tiene todos los permisos
+        $superAdminRole = Role::updateOrCreate(['name' => 'SuperAdmin']);
+        $superAdminRole->syncPermissions(Permission::all());
 
-        // Crear permisos para productos
-        $permisosProductos = [
-            'ver-productos',
-            'crear-productos',
-            'editar-productos',
-            'eliminar-productos',
-        ];
+        // Visualizador de Productos: solo puede visualizar datos
+        $visualizadorProductosRole = Role::updateOrCreate(['name' => 'Visualizador de Productos']);
+        $visualizadorPermissions = Permission::whereIn('name', [
+            'productos-list', 'productos-show',
+            'producto-codigos-barras-list', 'producto-codigos-barras-show',
+            'familias-list', 'familias-show',
+            'categorias-list', 'categorias-show',
+            'colores-list', 'colores-show',
+            'tamanos-list', 'tamanos-show',
+            'unidades-list', 'unidades-show',
+            'tipos-empaque-list', 'tipos-empaque-show',
+            'empaques-list', 'empaques-show',
+            'tipos-sello-list', 'tipos-sello-show',
+            'acabados-list', 'acabados-show',
+            'materiales-list', 'materiales-show',
+            'barnices-list', 'barnices-show',
+            'proveedores-list', 'proveedores-show',
+        ])->pluck('id')->toArray();
+        $visualizadorProductosRole->syncPermissions($visualizadorPermissions);
 
-        foreach ($permisosProductos as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para códigos de barras
-        $permisosCodigosBarras = [
-            'ver-codigos-barras',
-            'crear-codigos-barras',
-            'editar-codigos-barras',
-            'eliminar-codigos-barras',
+        // Creador de Códigos: puede gestionar códigos de barras
+        $creadorCodigosRole = Role::updateOrCreate(['name' => 'Creador de Códigos']);
+        $creadorCodigosPermissions = Permission::whereIn('name', [
+            'codigos-barras-list', 'codigos-barras-create', 'codigos-barras-edit', 'codigos-barras-show', 'codigos-barras-destroy',
+            'producto-codigos-barras-list', 'producto-codigos-barras-create', 'producto-codigos-barras-edit', 'producto-codigos-barras-show', 'producto-codigos-barras-destroy',
             'asignar-codigos-barras',
-        ];
-
-        foreach ($permisosCodigosBarras as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para producto-codigos-barras
-        $permisosProductoCodigosBarras = [
-            'ver-producto-codigos-barras',
-            'crear-producto-codigos-barras',
-            'editar-producto-codigos-barras',
-            'eliminar-producto-codigos-barras',
-        ];
-
-        foreach ($permisosProductoCodigosBarras as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para familias
-        $permisosFamilias = [
-            'ver-familias',
-            'crear-familias',
-            'editar-familias',
-            'eliminar-familias',
-        ];
-
-        foreach ($permisosFamilias as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para categorías
-        $permisosCategorias = [
-            'ver-categorias',
-            'crear-categorias',
-            'editar-categorias',
-            'eliminar-categorias',
-        ];
-
-        foreach ($permisosCategorias as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para colores
-        $permisosColores = [
-            'ver-colores',
-            'crear-colores',
-            'editar-colores',
-            'eliminar-colores',
-        ];
-
-        foreach ($permisosColores as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para tamaños
-        $permisosTamanos = [
-            'ver-tamanos',
-            'crear-tamanos',
-            'editar-tamanos',
-            'eliminar-tamanos',
-        ];
-
-        foreach ($permisosTamanos as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para unidades
-        $permisosUnidades = [
-            'ver-unidades',
-            'crear-unidades',
-            'editar-unidades',
-            'eliminar-unidades',
-        ];
-
-        foreach ($permisosUnidades as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para tipos de empaque
-        $permisosTiposEmpaque = [
-            'ver-tipos-empaque',
-            'crear-tipos-empaque',
-            'editar-tipos-empaque',
-            'eliminar-tipos-empaque',
-        ];
-
-        foreach ($permisosTiposEmpaque as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para empaques
-        $permisosEmpaques = [
-            'ver-empaques',
-            'crear-empaques',
-            'editar-empaques',
-            'eliminar-empaques',
-        ];
-
-        foreach ($permisosEmpaques as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para tipos de sello
-        $permisosTiposSello = [
-            'ver-tipos-sello',
-            'crear-tipos-sello',
-            'editar-tipos-sello',
-            'eliminar-tipos-sello',
-        ];
-
-        foreach ($permisosTiposSello as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para acabados
-        $permisosAcabados = [
-            'ver-acabados',
-            'crear-acabados',
-            'editar-acabados',
-            'eliminar-acabados',
-        ];
-
-        foreach ($permisosAcabados as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para materiales
-        $permisosMateriales = [
-            'ver-materiales',
-            'crear-materiales',
-            'editar-materiales',
-            'eliminar-materiales',
-        ];
-
-        foreach ($permisosMateriales as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para barnices
-        $permisosBarnices = [
-            'ver-barnices',
-            'crear-barnices',
-            'editar-barnices',
-            'eliminar-barnices',
-        ];
-
-        foreach ($permisosBarnices as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear permisos para proveedores
-        $permisosProveedores = [
-            'ver-proveedores',
-            'crear-proveedores',
-            'editar-proveedores',
-            'eliminar-proveedores',
-        ];
-
-        foreach ($permisosProveedores as $permiso) {
-            Permission::firstOrCreate(['name' => $permiso]);
-        }
-
-        // Crear roles
-        $superAdmin = Role::firstOrCreate(['name' => 'SuperAdmin']);
-        $visualizadorProductos = Role::firstOrCreate(['name' => 'Visualizador de Productos']);
-        $creadorCodigos = Role::firstOrCreate(['name' => 'Creador de Códigos']);
-
-        // Asignar permisos a los roles
-        $superAdmin->syncPermissions(Permission::all());
-
-        $visualizadorProductos->syncPermissions([
-            'ver-productos',
-            'ver-producto-codigos-barras',
-            'ver-familias',
-            'ver-categorias',
-            'ver-colores',
-            'ver-tamanos',
-            'ver-unidades',
-            'ver-tipos-empaque',
-            'ver-empaques',
-            'ver-tipos-sello',
-            'ver-acabados',
-            'ver-materiales',
-            'ver-barnices',
-            'ver-proveedores',
-        ]);
-
-        $creadorCodigos->syncPermissions([
-            'ver-codigos-barras',
-            'crear-codigos-barras',
-            'editar-codigos-barras',
-            'eliminar-codigos-barras',
-            'asignar-codigos-barras',
-            'ver-producto-codigos-barras',
-            'crear-producto-codigos-barras',
-            'editar-producto-codigos-barras',
-            'eliminar-producto-codigos-barras',
-        ]);
+        ])->pluck('id')->toArray();
+        $creadorCodigosRole->syncPermissions($creadorCodigosPermissions);
 
         // Crear un usuario SuperAdmin
         $superAdminUser = User::firstOrCreate(
@@ -281,5 +149,8 @@ class RolesAndPermissionsSeeder extends Seeder
             ]
         );
         $creadorCodigosUser->assignRole('Creador de Códigos');
+
+        // Resetear caché después de crear permisos y roles
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }
