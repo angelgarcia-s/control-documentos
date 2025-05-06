@@ -33,6 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'materiales' => 'materiales',
             'barnices' => 'barnices',
             'proveedores' => 'proveedores',
+            'permisos' => 'permisos',
         ];
 
         // Crear permisos base para cada módulo (list, create, edit, show, destroy)

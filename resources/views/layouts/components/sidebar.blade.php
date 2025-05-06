@@ -138,6 +138,9 @@
                         @can('roles-list')
                             <li class="slide"><a href="{{ route('roles.index') }}" class="side-menu__item">Roles</a></li>
                         @endcan
+                        @can('permisos-list')
+                            <li class="slide"><a href="{{ route('permisos.index') }}" class="side-menu__item">Permisos</a></li>
+                        @endcan
                     </ul>
                 </li>
                 <!-- End::slide -->

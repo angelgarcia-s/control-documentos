@@ -37,6 +37,7 @@ use App\Http\Controllers\PrintCardController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\PermissionsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -88,6 +89,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('permission:roles-edit');
         Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:roles-edit');
         Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles-destroy');
+    });
+
+    // Rutas para Gestión de Permisos
+    Route::prefix('permisos')->group(function () {
+        Route::get('/', [PermissionsController::class, 'index'])->name('permisos.index')->middleware('permission:permisos-list');
+        Route::get('/crear', [PermissionsController::class, 'create'])->name('permisos.create')->middleware('permission:permisos-create');
+        Route::post('/', [PermissionsController::class, 'store'])->name('permisos.store')->middleware('permission:permisos-create');
+        Route::get('/{permission}/editar', [PermissionsController::class, 'edit'])->name('permisos.edit')->middleware('permission:permisos-edit');
+        Route::put('/{permission}', [PermissionsController::class, 'update'])->name('permisos.update')->middleware('permission:permisos-edit');
     });
 
     // Rutas para Productos
