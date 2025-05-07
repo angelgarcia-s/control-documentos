@@ -3,7 +3,7 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Detalles del Familia</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Detalles de la Familia</h3>
     </div>
     <x-breadcrumbs />
 </div>
@@ -23,13 +23,14 @@
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Nombre</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{  $familia->nombre }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $familia->nombre }}</p>
                     </div>
                 </div>
-                
-                
+
                 <div class="flex justify-end md:col-span-12 col-span-12">
-                    <a href="{{ route('familias.edit', $familia) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @can('familias-edit')
+                        <a href="{{ route('familias.edit', $familia) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @endcan
                     <a href="{{ route('familias.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                 </div>
             </div>

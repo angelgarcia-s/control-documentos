@@ -2,39 +2,90 @@
 
 namespace App\Livewire;
 
+use Livewire\Component;
 use App\Models\FamiliaProducto;
-use App\Livewire\TablaGenerica;
+use App\Traits\HasTableFeatures;
 
-class FamiliasTable extends TablaGenerica
+class FamiliasTable extends Component
 {
-    public function mount($modelo = FamiliaProducto::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
-    {
-        $modelo = FamiliaProducto::class;
-        $columnas = [
-            ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-            ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-            ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false], // Opcional
-        ];
-        $acciones = [
-            'editar' => 'Editar',
-            'borrar' => 'Borrar',
-        ];
-        $relaciones = ['productos']; // Si no hay relaciones, déjarlo vacío
-        $relacionesBloqueantes = ['productos'];
-        $botones = [
-            ['ruta' => 'familias.show', 'parametro' => 'familia', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
-        ];
+    use HasTableFeatures;
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
+    public $confirmingDelete = null;
+    public $errorMessage = '';
+
+    public $columnas = [
+        ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+        ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false],
+    ];
+
+    public function mount()
+    {
+        $this->confirmingDelete = null;
     }
 
-    public function editar($id)
+    public function clearErrorMessage()
     {
-        return redirect()->route('familias.edit', $id);
+        $this->errorMessage = '';
     }
 
-    public function borrar($id)
+    public function confirmarEliminar($id)
     {
-         $this->confirmingDelete = $id;
+        $this->confirmingDelete = $id;
+        $this->dispatch('abrir-modal', 'eliminar-elemento');
+    }
+
+    public function eliminarElemento()
+    {
+        if ($this->confirmingDelete) {
+            $familia = FamiliaProducto::find($this->confirmingDelete);
+            if ($familia) {
+                if ($familia->productos()->count() > 0) {
+                    $this->errorMessage = "No se puede eliminar la familia porque tiene productos asociados.";
+                    $this->confirmingDelete = null;
+                    return;
+                }
+
+                try {
+                    $familia->delete();
+                    session()->flash('success', 'Familia eliminada correctamente.');
+                    $this->resetPage();
+                    $this->dispatch('reiniciarSelects');
+                } catch (\Exception $e) {
+                    $this->errorMessage = 'Error al eliminar la familia: ' . $e->getMessage();
+                }
+
+                $this->confirmingDelete = null;
+            } else {
+                $this->errorMessage = 'Familia no encontrada.';
+                $this->confirmingDelete = null;
+            }
+        }
+    }
+
+    public function cancelarEliminar()
+    {
+        $this->confirmingDelete = null;
+    }
+
+    public function render()
+    {
+        $query = FamiliaProducto::query()
+            ->with(['productos'])
+            ->withCount(['productos']);
+
+        $query = $this->aplicarFiltros($query, $this->columnas);
+        $familias = $query->paginate($this->perPage);
+
+        return view('livewire.familias-table', [
+            'familias' => $familias,
+            'columnas' => $this->columnas,
+        ]);
+    }
+
+    public function getColumnValue($familia, $columna)
+    {
+        $campo = $columna['name'];
+        return $familia->$campo ?? '-';
     }
 }

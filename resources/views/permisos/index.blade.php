@@ -19,12 +19,12 @@
         <div class="box">
             <div class="box-header">
                 <div class="box-title">Permisos</div>
-                {{-- @can('permisos-create')
-                    <a href="{{ route('permisos.create') }}" class="ti-btn ti-btn-primary-full">Crear Nuevo Permiso</a>
-                @endcan --}}
+                @can('permisos-create')
+                    <a href="{{ route('permisos.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Crear Nuevo Permiso</a>
+                @endcan
             </div>
             <div class="box-body">
-                <livewire:permisos-table />
+                @livewire('permisos-table')
             </div>
         </div>
     </div>

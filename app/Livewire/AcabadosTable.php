@@ -2,37 +2,80 @@
 
 namespace App\Livewire;
 
+use Livewire\Component;
 use App\Models\Acabado;
+use App\Traits\HasTableFeatures;
 
-class AcabadosTable extends TablaGenerica
+class AcabadosTable extends Component
 {
-    public function mount($modelo = Acabado::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
-    {
-        $modelo = Acabado::class;
-        $columnas = [
-            ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-            ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-        ];
-        $acciones = [
-            'editar' => 'Editar',
-            'borrar' => 'Borrar',
-        ];
-        $relaciones = [];
-        $relacionesBloqueantes = [];
-        $botones = [
-            ['ruta' => 'acabados.show', 'parametro' => 'acabado', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
-        ];
+    use HasTableFeatures;
 
-        parent::mount($modelo, $columnas, $acciones, $relaciones, $relacionesBloqueantes, $botones);
+    public $confirmingDelete = null;
+    public $errorMessage = '';
+
+    public $columnas = [
+        ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+    ];
+
+    public function mount()
+    {
+        $this->confirmingDelete = null;
     }
 
-    public function editar($id)
+    public function clearErrorMessage()
     {
-        return redirect()->route('acabados.edit', $id);
+        $this->errorMessage = '';
     }
 
-    public function borrar($id)
+    public function confirmarEliminar($id)
     {
         $this->confirmingDelete = $id;
+        $this->dispatch('abrir-modal', 'eliminar-elemento');
+    }
+
+    public function eliminarElemento()
+    {
+        if ($this->confirmingDelete) {
+            $acabado = Acabado::find($this->confirmingDelete);
+            if ($acabado) {
+                try {
+                    $acabado->delete();
+                    session()->flash('success', 'Acabado eliminado correctamente.');
+                    $this->resetPage();
+                    $this->dispatch('reiniciarSelects');
+                } catch (\Exception $e) {
+                    $this->errorMessage = 'Error al eliminar el acabado: ' . $e->getMessage();
+                }
+
+                $this->confirmingDelete = null;
+            } else {
+                $this->errorMessage = 'Acabado no encontrado.';
+                $this->confirmingDelete = null;
+            }
+        }
+    }
+
+    public function cancelarEliminar()
+    {
+        $this->confirmingDelete = null;
+    }
+
+    public function render()
+    {
+        $query = Acabado::query();
+        $query = $this->aplicarFiltros($query, $this->columnas);
+        $acabados = $query->paginate($this->perPage);
+
+        return view('livewire.acabados-table', [
+            'acabados' => $acabados,
+            'columnas' => $this->columnas,
+        ]);
+    }
+
+    public function getColumnValue($acabado, $columna)
+    {
+        $campo = $columna['name'];
+        return $acabado->$campo ?? '-';
     }
 }

@@ -16,10 +16,17 @@
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            <a href="{{ route('materiales.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Material</a>
+                            @can('materiales-create')
+                                <a href="{{ route('materiales.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Material</a>
+                            @endcan
                         </div>
-                        <div>
-                            <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
+                        <div class="space-x-2">
+                            @can('materiales-import')
+                                <button type="button" class="ti-btn ti-btn-primary" id="import-xlsx">Importar</button>
+                            @endcan
+                            @can('materiales-download')
+                                <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
+                            @endcan
                         </div>
                     </div>
 
@@ -32,19 +39,10 @@
 @endsection
 
 @section('scripts')
-    <!-- Tabulator JS -->
-    <script src="{{ asset('build/assets/libs/tabulator-tables/js/tabulator.min.js') }}"></script>
-
-    <!-- Choices JS -->
-    <script src="{{ asset('build/assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
-
     <!-- XLXS JS -->
     <script src="{{ asset('build/assets/libs/xlsx/xlsx.full.min.js') }}"></script>
 
     <!-- JSPDF JS -->
     <script src="{{ asset('build/assets/libs/jspdf/jspdf.umd.min.js') }}"></script>
     <script src="{{ asset('build/assets/libs/jspdf-autotable/jspdf.plugin.autotable.min.js') }}"></script>
-
-    <!-- Tabulator Custom JS -->
-    @vite('resources/assets/js/datatable.js')
 @endsection

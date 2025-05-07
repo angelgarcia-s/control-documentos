@@ -28,7 +28,9 @@
                 </div>
 
                 <div class="flex justify-end md:col-span-12 col-span-12">
-                    <a href="{{ route('categorias.edit', $categoria) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @can('categorias-edit')
+                        <a href="{{ route('categorias.edit', $categoria) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @endcan
                     <a href="{{ route('categorias.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                 </div>
             </div>

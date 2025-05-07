@@ -7,6 +7,7 @@
     </div>
     <x-breadcrumbs />
 </div>
+<!-- Page Header Close -->
 
 <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12">
@@ -25,9 +26,11 @@
                         <p class="form-control border border-slate-200 min-h-9">{{ $empaque->nombre }}</p>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end md:col-span-12 col-span-12">
-                    <a href="{{ route('empaques.edit', $empaque) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @can('empaques-edit')
+                        <a href="{{ route('empaques.edit', $empaque) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @endcan
                     <a href="{{ route('empaques.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                 </div>
             </div>

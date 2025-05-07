@@ -16,18 +16,21 @@
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            @can('crear-usuarios')
-                                <a href="{{ route('usuarios.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Usua</a>
+                            @can('usuarios-create')
+                                <a href="{{ route('usuarios.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Usuario</a>
                             @endcan
                         </div>
-                        <div>
-                            @can('ver-usuarios')
+                        <div class="space-x-2">
+                            @can('usuarios-import')
+                                <button type="button" class="ti-btn ti-btn-primary" id="import-xlsx">Importar</button>
+                            @endcan
+                            @can('usuarios-download')
                                 <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                             @endcan
                         </div>
                     </div>
 
-                    <!-- Componente Livewire que maneja la tabla -->
+                    <!-- Componente Livewire -->
                     @livewire('users-table')
                 </div>
             </div>
@@ -36,19 +39,10 @@
 @endsection
 
 @section('scripts')
-    <!-- Tabulator JS -->
-    <script src="{{ asset('build/assets/libs/tabulator-tables/js/tabulator.min.js') }}"></script>
-
-    <!-- Choices JS -->
-    <script src="{{ asset('build/assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
-
     <!-- XLXS JS -->
     <script src="{{ asset('build/assets/libs/xlsx/xlsx.full.min.js') }}"></script>
 
     <!-- JSPDF JS -->
     <script src="{{ asset('build/assets/libs/jspdf/jspdf.umd.min.js') }}"></script>
     <script src="{{ asset('build/assets/libs/jspdf-autotable/jspdf.plugin.autotable.min.js') }}"></script>
-
-    <!-- Tabulator Custom JS -->
-    @vite('resources/assets/js/datatable.js')
 @endsection

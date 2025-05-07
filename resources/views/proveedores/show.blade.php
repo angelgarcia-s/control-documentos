@@ -23,17 +23,18 @@
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Nombre</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{  $proveedor->nombre }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $proveedor->nombre }}</p>
                     </div>
                     <div class="md:col-span-2 col-span-12 mb-4">
                         <label class="form-label">Abreviación</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $proveedor->abreviacion ?? '-' }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $proveedor->abreviacion }}</p>
                     </div>
                 </div>
-                
-                
+
                 <div class="flex justify-end md:col-span-12 col-span-12">
-                    <a href="{{ route('proveedores.edit', $proveedor) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @can('proveedores-edit')
+                        <a href="{{ route('proveedores.edit', $proveedor) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @endcan
                     <a href="{{ route('proveedores.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                 </div>
             </div>

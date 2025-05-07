@@ -13,7 +13,7 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <div class="box-title">Unidad: {{ $unidad->nombre }}</div>
+                <div class="box-title">Unidad de Medida: {{ $unidad->nombre }}</div>
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
@@ -28,7 +28,9 @@
                 </div>
 
                 <div class="flex justify-end md:col-span-12 col-span-12">
-                    <a href="{{ route('unidades.edit', $unidad) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @can('unidades-edit')
+                        <a href="{{ route('unidades.edit', $unidad) }}" class="ti-btn ti-btn-info-full ml-2 !mb-0">Editar</a>
+                    @endcan
                     <a href="{{ route('unidades.index') }}" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Regresar</a>
                 </div>
             </div>

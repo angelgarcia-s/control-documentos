@@ -23,7 +23,15 @@ trait HasTableFeatures
 
     public function limpiarBusqueda($campo)
     {
-        $this->search[$campo] = '';
+        if (str_contains($campo, '.')) {
+            [$relacion, $subcampo] = explode('.', $campo);
+            if (!isset($this->search[$relacion])) {
+                $this->search[$relacion] = [];
+            }
+            $this->search[$relacion][$subcampo] = '';
+        } else {
+            $this->search[$campo] = '';
+        }
         $this->resetPage();
     }
 
@@ -46,17 +54,44 @@ trait HasTableFeatures
     protected function aplicarFiltros($query, $columnas)
     {
         foreach ($this->search as $campo => $valor) {
-            if (!empty($valor)) {
-                $columna = collect($columnas)->firstWhere('name', $campo);
-                if ($columna && $columna['searchable']) {
-                    if (isset($columna['relationship'])) {
-                        $query->whereHas($columna['relationship'], fn ($q) => $q->where('nombre', 'like', "%{$valor}%"));
-                    } else {
-                        $query->where($campo, 'like', "%{$valor}%");
+            // Manejar campos anidados (como producto.sku)
+            if (is_array($valor)) {
+                foreach ($valor as $subcampo => $subvalor) {
+                    if (!empty($subvalor)) {
+                        $fullField = "{$campo}.{$subcampo}";
+                        $columna = collect($columnas)->firstWhere('name', $fullField);
+                        if ($columna && $columna['searchable']) {
+                            if (isset($columna['relationship'])) {
+                                $query->whereHas($columna['relationship'], fn ($q) => $q->where($subcampo, 'like', "%{$subvalor}%"));
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (!empty($valor)) {
+                    $columna = collect($columnas)->firstWhere('name', $campo);
+                    if ($columna && $columna['searchable']) {
+                        if (isset($columna['relationship'])) {
+                            $query->whereHas($columna['relationship'], fn ($q) => $q->where('nombre', 'like', "%{$valor}%"));
+                        } else {
+                            $query->where($campo, 'like', "%{$valor}%");
+                        }
                     }
                 }
             }
         }
-        return $query->orderBy($this->orderBy, $this->orderDirection);
+
+        // Manejar ordenamiento para campos anidados
+        if (str_contains($this->orderBy, '.')) {
+            [$relacion, $field] = explode('.', $this->orderBy);
+            $table = $relacion === 'producto' ? 'productos' : ($relacion === 'codigoBarra' ? 'codigos_barras' : null);
+            if ($table) {
+                $query->orderBy("{$table}.{$field}", $this->orderDirection);
+            }
+        } else {
+            $query->orderBy($this->orderBy, $this->orderDirection);
+        }
+
+        return $query;
     }
 }

@@ -2,7 +2,7 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <h5 class="box-title">Crear Códigos de Barras</h5>
+                <h5 class="box-title">Nuevo código de barras</h5>
             </div>
             <div class="box-body">
                 @if (session('success'))

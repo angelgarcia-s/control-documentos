@@ -2,40 +2,80 @@
 
 namespace App\Livewire;
 
+use Livewire\Component;
 use App\Models\Empaque;
+use App\Traits\HasTableFeatures;
 
-class EmpaquesTable extends TablaGenerica
+class EmpaquesTable extends Component
 {
-    public function mount($modelo = Empaque::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
+    use HasTableFeatures;
+
+    public $confirmingDelete = null;
+    public $errorMessage = '';
+
+    public $columnas = [
+        ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+    ];
+
+    public function mount()
     {
         $this->confirmingDelete = null;
-        $this->selectedActions = [];
-        
-        parent::mount(
-            modelo: $modelo,
-            columnas: $columnas ?: [
-                ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-                ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-            ],
-            acciones: $acciones ?: [
-                'editar' => 'Editar',
-                'borrar' => 'Borrar',
-            ],
-            relaciones: $relaciones ?: [],
-            relacionesBloqueantes: $relacionesBloqueantes ?: [],
-            botones: $botones ?: [
-                ['ruta' => 'empaques.show', 'parametro' => 'empaque', 'etiqueta' => 'Ver', 'estilo' => 'primary'],
-            ]
-        );
     }
 
-    public function editar($id)
+    public function clearErrorMessage()
     {
-        return redirect()->route('empaques.edit', $id);
+        $this->errorMessage = '';
     }
 
-    public function borrar($id)
+    public function confirmarEliminar($id)
     {
-        $this->confirmarEliminar($id);
+        $this->confirmingDelete = $id;
+        $this->dispatch('abrir-modal', 'eliminar-elemento');
+    }
+
+    public function eliminarElemento()
+    {
+        if ($this->confirmingDelete) {
+            $empaque = Empaque::find($this->confirmingDelete);
+            if ($empaque) {
+                try {
+                    $empaque->delete();
+                    session()->flash('success', 'Empaque eliminado correctamente.');
+                    $this->resetPage();
+                    $this->dispatch('reiniciarSelects');
+                } catch (\Exception $e) {
+                    $this->errorMessage = 'Error al eliminar el empaque: ' . $e->getMessage();
+                }
+
+                $this->confirmingDelete = null;
+            } else {
+                $this->errorMessage = 'Empaque no encontrado.';
+                $this->confirmingDelete = null;
+            }
+        }
+    }
+
+    public function cancelarEliminar()
+    {
+        $this->confirmingDelete = null;
+    }
+
+    public function render()
+    {
+        $query = Empaque::query();
+        $query = $this->aplicarFiltros($query, $this->columnas);
+        $empaques = $query->paginate($this->perPage);
+
+        return view('livewire.empaques-table', [
+            'empaques' => $empaques,
+            'columnas' => $this->columnas,
+        ]);
+    }
+
+    public function getColumnValue($empaque, $columna)
+    {
+        $campo = $columna['name'];
+        return $empaque->$campo ?? '-';
     }
 }

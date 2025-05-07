@@ -1,6 +1,7 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
-        
+
+        <!-- Mostrar el mensaje de error de Livewire -->
         @if ($errorMessage)
             <div class="alert alert-danger mb-4" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => @this.call('clearErrorMessage'), 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                 {{ $errorMessage }}
@@ -10,7 +11,6 @@
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                    <th class="py-3 px-6 text-left border">Acciones</th>
                     @foreach($columnas as $columna)
                         <th class="py-3 px-6 text-left border cursor-pointer" wire:click="ordenarPor('{{ $columna['name'] }}')">
                             {{ $columna['label'] }}
@@ -19,118 +19,118 @@
                             @endif
                         </th>
                     @endforeach
+                    <th class="py-3 px-6 text-left border">Acciones</th>
                 </tr>
                 <tr>
-                    <th class="border px-4 py-2"></th>
                     @foreach($columnas as $columna)
-                        <th class="border px-4 py-2 relative">
-                            @if($columna['searchable'])
-                                <div class="relative">
+                    <th class="border px-4 py-2 relative">
+                        @if($columna['searchable'])
+                            <div class="relative">
+                                @if(isset($columna['relationship']))
+                                    <?php
+                                        [$relacion, $subcampo] = explode('.', $columna['name']);
+                                    ?>
+                                    <input type="text"
+                                           wire:model.live="search.{{ $relacion }}.{{ $subcampo }}"
+                                           class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
+                                           placeholder="Buscar {{ $columna['label'] }}'">
+                                    @if(!empty($search[$relacion][$subcampo]))
+                                        <button type="button"
+                                                wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
+                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i class="ti ti-x text-sm"></i>
+                                        </button>
+                                    @endif
+                                @else
                                     <input type="text"
                                            wire:model.live="search.{{ $columna['name'] }}"
                                            class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
                                            placeholder="Buscar {{ $columna['label'] }}'">
-                                           @php
-                                           // Manejar claves anidadas para columnas con relaciones
-                                           $hasValue = false;
-                                           if (str_contains($columna['name'], '.')) {
-                                               [$relacion, $subcampo] = explode('.', $columna['name']);
-                                               $hasValue = !empty($search[$relacion][$subcampo]);
-                                           } else {
-                                               $hasValue = !empty($search[$columna['name']]);
-                                           }
-                                       @endphp
-                                       @if($hasValue)
-                                           <button type="button"
-                                                   wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
-                                                   class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                               <i class="ti ti-x text-sm"></i>
-                                           </button>
-                                       @endif
-                                </div>
-                            @endif
-                        </th>
+                                    @if(!empty($search[$columna['name']]))
+                                        <button type="button"
+                                                wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
+                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i class="ti ti-x text-sm"></i>
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
+                    </th>
                     @endforeach
+                    <th class="border px-4 py-2"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($elementos as $elemento)
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <td class="py-3 px-6 border">
-                            <div class="flex items-center space-x-2">
-                                @if(!empty($botones))
-                                    @foreach($botones as $boton)
-                                        <a href="{{ route($boton['ruta'], [$boton['parametro'] => $elemento->id]) }}"
-                                           class="ti-btn ti-btn-outline-{{ $boton['estilo'] ?? 'primary' }} !py-1 !px-2 ti-btn-wave">
-                                            {{ $boton['etiqueta'] }}
-                                        </a>
-                                    @endforeach
-                                @endif
-                                <select wire:model.live="selectedActions.{{ $elemento->id }}"
-                                        wire:change="ejecutarAccion({{ $elemento->id }}, $event.target.value)"
-                                        wire:key="select-{{ $elemento->id }}"
-                                        class="action-select appearance-none w-24 bg-white border-gray-200 text-gray-700 py-1 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-gray-500">
-                                    <option value="">Acción</option>
-                                    @foreach($acciones as $accion => $etiqueta)
-                                        <option value="{{ $accion }}">{{ $etiqueta }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </td>
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                @if(str_ends_with($columna['name'], '_count'))
-                                    {{ $elemento->{$columna['name']} ?? '0' }}
-                                @elseif(isset($columna['relationship']))
-                                    @php
-                                        $parts = explode('.', $columna['name']);
-                                        $field = count($parts) > 1 ? $parts[1] : $parts[0];
-                                        $value = $elemento->{$columna['relationship']} ? $elemento->{$columna['relationship']}->$field : '-';
-                                    @endphp
-                                    {{ $value }}
-                                @else
-                                    {{ $elemento->{$columna['name']} ?? '-' }}
-                                @endif
+                                {{ $this->getColumnValue($elemento, $columna) }}
                             </td>
                         @endforeach
+                        <td class="py-3 px-6 border">
+                            <div class="flex items-center space-x-2">
+                                @can('producto-codigos-barras-show')
+                                    <a href="{{ route('producto-codigos-barras.show', $elemento) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                        <i class="ri-eye-line"></i>
+                                    </a>
+                                @endcan
+                                @can('producto-codigos-barras-edit')
+                                    <a href="{{ route('producto-codigos-barras.edit', $elemento) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                        <i class="ri-pencil-line"></i>
+                                    </a>
+                                @endcan
+                                @can('producto-codigos-barras-destroy')
+                                    <button wire:click="confirmarEliminar({{ $elemento->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
+                                        <i class="ri-delete-bin-2-line"></i>
+                                    </button>
+                                @endcan
+                            </div>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
 
-        <div class="mt-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <label for="perPage" class="text-sm text-gray-700 dark:text-gray-300">Mostrar:</label>
-                <select wire:model.live="perPage" id="perPage"
-                        class="ti-form-select w-16 px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
-                    @foreach($perPageOptions as $option)
-                        <option value="{{ $option }}">{{ $option }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                {!! $elementos->links('vendor.pagination.tailwind') !!}
-            </div>
+    <!-- Paginación con Livewire y <select> -->
+    <div class="mt-3 flex items-center justify-between">
+        <!-- Select para elementos por página -->
+        <div class="flex items-center space-x-2">
+            <label for="perPage" class="text-sm text-gray-700 dark:text-gray-300">Mostrar:</label>
+            <select wire:model.live="perPage" id="perPage"
+                    class="ti-form-select w-16 px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-400 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                @foreach($perPageOptions as $option)
+                    <option value="{{ $option }}">{{ $option }}</option>
+                @endforeach
+            </select>
         </div>
 
-        @if($confirmingDelete !== null)
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div class="bg-white rounded-lg p-6 max-w-md w-full">
-                    <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
-                    <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar esta asignación?</p>
-                    <div class="flex justify-end space-x-2">
-                        <button wire:click="cancelarEliminar" 
-                                class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
-                            Cancelar
-                        </button>
-                        <button wire:click="eliminarElemento" 
-                                wire:loading.attr="disabled" 
-                                class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
-                            Confirmar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        @endif
+        <!-- Paginación de Livewire con Tailwind -->
+        <div>
+            {{ $elementos->links('vendor.pagination.tailwind') }}
+        </div>
     </div>
+
+    <!-- Modal basado en Livewire puro -->
+    @if($confirmingDelete !== null)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar este elemento?</p>
+            <div class="flex justify-end space-x-2">
+                <button wire:click="cancelarEliminar"
+                        class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
+                    Cancelar
+                </button>
+                <button wire:click="eliminarElemento"
+                        wire:loading.attr="disabled"
+                        class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

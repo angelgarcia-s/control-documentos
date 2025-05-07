@@ -2,35 +2,82 @@
 
 namespace App\Livewire;
 
+use Livewire\Component;
 use Spatie\Permission\Models\Permission;
+use App\Traits\HasTableFeatures;
 
-class PermisosTable extends TablaGenerica
+class PermisosTable extends Component
 {
-    public function mount($modelo = Permission::class, $columnas = [], $acciones = [], $relaciones = [], $relacionesBloqueantes = [], $botones = [])
-    {
-        // Reiniciamos confirmingDelete al montar para evitar valores residuales
-        $this->confirmingDelete = null;
-        $this->selectedActions = []; // Reiniciamos al montar
+    use HasTableFeatures;
 
-        parent::mount(
-            modelo: $modelo,
-            columnas: $columnas ?: [
-                ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-                ['name' => 'name', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
-                ['name' => 'description', 'label' => 'Descripción', 'sortable' => true, 'searchable' => true],
-                ['name' => 'category', 'label' => 'Categoría', 'sortable' => true, 'searchable' => true],
-            ],
-            acciones: $acciones ?: [
-                'editar' => 'Editar',
-            ],
-            relaciones: $relaciones ?: [],
-            relacionesBloqueantes: $relacionesBloqueantes ?: [],
-            botones: $botones ?: []
-        );
+    public $confirmingDelete = null;
+    public $errorMessage = '';
+
+    public $columnas = [
+        ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'name', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+        ['name' => 'description', 'label' => 'Descripción', 'sortable' => true, 'searchable' => true],
+        ['name' => 'category', 'label' => 'Categoría', 'sortable' => true, 'searchable' => true],
+    ];
+
+    public function mount()
+    {
+        $this->confirmingDelete = null;
     }
 
-    public function editar($id)
+    public function clearErrorMessage()
     {
-        return redirect()->route('permisos.edit', ['permission' => $id]);
+        $this->errorMessage = '';
+    }
+
+    public function confirmarEliminar($id)
+    {
+        $this->confirmingDelete = $id;
+        $this->dispatch('abrir-modal', 'eliminar-elemento');
+    }
+
+    public function eliminarElemento()
+    {
+        if ($this->confirmingDelete) {
+            $permiso = Permission::find($this->confirmingDelete);
+            if ($permiso) {
+                try {
+                    $permiso->delete();
+                    session()->flash('success', 'Permiso eliminado correctamente.');
+                    $this->resetPage();
+                    $this->dispatch('reiniciarSelects');
+                } catch (\Exception $e) {
+                    $this->errorMessage = 'Error al eliminar el permiso: ' . $e->getMessage();
+                }
+
+                $this->confirmingDelete = null;
+            } else {
+                $this->errorMessage = 'Permiso no encontrado.';
+                $this->confirmingDelete = null;
+            }
+        }
+    }
+
+    public function cancelarEliminar()
+    {
+        $this->confirmingDelete = null;
+    }
+
+    public function render()
+    {
+        $query = Permission::query();
+        $query = $this->aplicarFiltros($query, $this->columnas);
+        $permisos = $query->paginate($this->perPage);
+
+        return view('livewire.permisos-table', [
+            'permisos' => $permisos,
+            'columnas' => $this->columnas,
+        ]);
+    }
+
+    public function getColumnValue($permiso, $columna)
+    {
+        $campo = $columna['name'];
+        return $permiso->$campo ?? '-';
     }
 }
