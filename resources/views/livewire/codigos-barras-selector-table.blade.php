@@ -4,7 +4,7 @@
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
                     @foreach($columnas as $columna)
-                        <th class="py-3 px-6 text-left border cursor-pointer" wire:click="ordenarPor('{{ $columna['name'] }}')">
+                        <th class="py-3 px-6 text-left border {{ $columna['sortable'] ? 'cursor-pointer' : '' }}" @if($columna['sortable']) wire:click="ordenarPor('{{ $columna['name'] }}')" @endif>
                             {{ $columna['label'] }}
                             @if($columna['sortable'])
                                 <i class="ti {{ $orderBy === $columna['name'] ? ($orderDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending') : 'ti-arrows-sort' }} ml-1"></i>
@@ -35,21 +35,20 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($elementos as $elemento)
+                @foreach($codigosBarras as $codigoBarra)
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
                                 @if($columna['name'] === 'check')
                                     <input type="radio"
                                            name="code_selection"
-                                           value="{{ $elemento->id }}"
-                                           wire:change="$parent.selectCode({{ $elemento->id }})"
-                                           {{ $selectedCode == $elemento->id ? 'checked' : '' }}
+                                           value="{{ $codigoBarra->id }}"
+                                           wire:change="$parent.selectCode({{ $codigoBarra->id }})"
+                                           {{ $selectedCode == $codigoBarra->id ? 'checked' : '' }}
                                            class="ti-form-radio"
-                                           :key="'codigo-'.$elemento->id.'-'.$selectedCode"
-                                           >
+                                           :key="'codigo-'.$codigoBarra->id.'-'.$selectedCode">
                                 @else
-                                    {{ $elemento->{$columna['name']} ?? '-' }}
+                                    {{ $codigoBarra->{$columna['name']} ?? '-' }}
                                 @endif
                             </td>
                         @endforeach
@@ -69,7 +68,7 @@
                 </select>
             </div>
             <div>
-                {!! $elementos->links('vendor.pagination.tailwind') !!}
+                {{ $codigosBarras->links('vendor.pagination.tailwind') }}
             </div>
         </div>
     </div>
