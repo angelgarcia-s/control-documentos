@@ -51,7 +51,14 @@
                                     $groupedPermissions = $permissions->groupBy('category');
                                 @endphp
 
-                                @foreach ($groupedPermissions as $module => $modulePermissions)
+                                @foreach ($groupedPermissions as $category => $modulePermissions)
+                                    @php
+                                        // Usar la categoría directamente como identificador
+                                        $module = $category;
+                                        // Transformar el nombre para visualización (agregar espacios y tildes)
+                                        $displayName = ucwords(str_replace('-', ' ', $module));
+                                        $displayName = str_replace('Codigos', 'Códigos', $displayName);
+                                    @endphp
                                     <div class="hs-accordion overflow-hidden bg-white dark:bg-bodybg border -mt-px first:rounded-t-sm last:rounded-b-sm dark:bg-bgdark dark:border-white/10" id="hs-{{ $module }}-heading">
                                         <button class="hs-accordion-toggle hs-accordion-active:text-primary hs-accordion-active:bg-primary/10 group py-4 px-5 inline-flex items-center justify-between gap-x-3 w-full text-xl font-thin text-start text-gray-400 transition hover:text-gray-500 dark:hs-accordion-active:text-primary dark:text-gray-200 dark:hover:text-white/80" aria-controls="hs-{{ $module }}-collapse" type="button">
                                             <div class="flex items-center">
@@ -61,7 +68,7 @@
                                                 <svg class="hs-accordion-active:block hs-accordion-active:text-primary hs-accordion-active:group-hover:text-primary hidden w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-[#8c9097] dark:text-white/50 mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M2 11L8.16086 5.31305C8.35239 5.13625 8.64761 5.13625 8.83914 5.31305L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
-                                                <span class="capitalize">{{ $module }}</span>
+                                                <span class="capitalize">{{ $displayName }}</span>
                                             </div>
                                             <div class="flex items-center">
                                                 <label for="module-{{ $module }}" class="text-sm text-gray-300 me-3 dark:text-[#8c9097] dark:text-white/50">
@@ -81,13 +88,10 @@
                                                                {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                                                         <label for="permission-{{ $module }}-{{ $permission->name }}" class="text-sm text-gray-500 ms-3 dark:text-[#8c9097] dark:text-white/50">
                                                             @php
-                                                                // Contar los guiones en el nombre del módulo para determinar cuántos elementos ignorar
-                                                                $moduleParts = explode('-', $module);
-                                                                $modulePartsCount = count($moduleParts);
                                                                 // Dividir el nombre del permiso
                                                                 $permissionParts = explode('-', $permission->name);
-                                                                // La acción será el último elemento después de ignorar las partes del módulo
-                                                                $action = $permissionParts[count($permissionParts) - 1];
+                                                                // La acción será el último elemento
+                                                                $action = end($permissionParts);
                                                                 // Lista de acciones válidas
                                                                 $validActions = ['list', 'create', 'edit', 'show', 'destroy', 'download', 'import'];
                                                                 // Verificar si es un permiso individual (acción no válida)
@@ -149,21 +153,15 @@
                     return;
                 }
 
-                // Temporariamente expandimos el acordeón para acceder a los permisos
-                const accordionContent = document.getElementById(`hs-${module}-collapse`);
-                const wasHidden = accordionContent.classList.contains('hidden');
-                if (wasHidden) {
-                    accordionContent.classList.remove('hidden');
+                // Seleccionar todos los permisos del módulo
+                const modulePermissions = document.querySelectorAll(`.module-${module}`);
+                if (modulePermissions.length === 0) {
+                    console.error(`No se encontraron permisos para el módulo: ${module}`);
+                    return;
                 }
 
-                const modulePermissions = document.querySelectorAll(`.module-${module}`);
                 const allChecked = Array.from(modulePermissions).every(p => p.checked);
                 const anyChecked = Array.from(modulePermissions).some(p => p.checked);
-
-                // Restaurar el estado colapsado del acordeón si estaba oculto
-                if (wasHidden) {
-                    accordionContent.classList.add('hidden');
-                }
 
                 // Definir las clases base del switch
                 const baseClasses = 'ti-switch module-checkbox shrink-0';
@@ -192,6 +190,10 @@
 
                     const module = this.getAttribute('data-module');
                     const modulePermissions = document.querySelectorAll(`.module-${module}`);
+                    if (modulePermissions.length === 0) {
+                        console.error(`No se encontraron permisos para el módulo: ${module}`);
+                        return;
+                    }
                     modulePermissions.forEach(function (permission) {
                         permission.checked = checkbox.checked;
                     });
