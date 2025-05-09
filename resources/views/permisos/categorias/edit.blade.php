@@ -9,17 +9,18 @@
 </div>
 
 @if (session('success'))
-    <div class="alert alert-success" role="alert">
+    <div class="alert alert-success" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         {{ session('success') }}
     </div>
 @endif
+
 @if (session('error'))
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         {{ session('error') }}
     </div>
 @endif
 @if ($errors->any())
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
@@ -35,6 +36,8 @@
             <div class="box">
                 <div class="box-header">
                     <div class="box-title">Categorías de Permisos</div>
+                    <a href="{{ route('permisos.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                    <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12">
@@ -73,8 +76,7 @@
                     </div>
                 </div>
                 <div class="box-footer text-right">
-                    <a href="{{ route('permisos.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
-                    <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
+
                 </div>
             </div>
         </div>

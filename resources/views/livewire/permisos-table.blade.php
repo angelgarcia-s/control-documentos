@@ -1,11 +1,6 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
-        <!-- Mostrar mensaje de éxito -->
-        @if (session('success'))
-            <div class="alert alert-success mb-4" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
+
 
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">
             <thead class="bg-gray-100 dark:bg-gray-700">

@@ -9,9 +9,11 @@
 </div>
 
 @if (session('success'))
-    <div class="alert alert-success" role="alert">
-        {{ session('success') }}
-    </div>
+    <x-alert type="success" :message="session('success')" />
+@endif
+
+@if (session('error'))
+    <x-alert type="danger" :message="session('error')" />
 @endif
 
 <div class="grid grid-cols-12 gap-6">
