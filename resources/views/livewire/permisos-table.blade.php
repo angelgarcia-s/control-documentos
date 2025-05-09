@@ -1,5 +1,12 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
+        <!-- Mostrar mensaje de éxito -->
+        @if (session('success'))
+            <div class="alert alert-success mb-4" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
@@ -41,18 +48,29 @@
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                {{ $this->getColumnValue($permiso, $columna) }}
+                                @if($columna['name'] === 'category')
+                                    <!-- Campo editable para la categoría -->
+                                    <select wire:model.live="updateCategory.{{ $permiso->id }}"
+                                            wire:change="updateCategory({{ $permiso->id }}, $event.target.value)"
+                                            class="ti-form-select w-full px-2 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded focus:outline-none focus:ring focus:ring-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                                        @foreach($categoriasDisponibles as $categoria)
+                                            <option value="{{ $categoria }}" {{ $permiso->category === $categoria ? 'selected' : '' }}>
+                                                {{ $categoria }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    {{ $this->getColumnValue($permiso, $columna) }}
+                                @endif
                             </td>
                         @endforeach
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-
                                 @can('permisos-edit')
                                     <a href="{{ route('permisos.edit', $permiso) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 @endcan
-
                             </div>
                         </td>
                     </tr>

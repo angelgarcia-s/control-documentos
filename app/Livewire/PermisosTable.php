@@ -17,6 +17,30 @@ class PermisosTable extends Component
         ['name' => 'category', 'label' => 'Categoría', 'sortable' => true, 'searchable' => true],
     ];
 
+    public $categoriasDisponibles = [];
+
+    public function mount()
+    {
+        // Obtener las categorías únicas de la tabla permissions y ordenarlas alfabéticamente (ASC)
+        $this->categoriasDisponibles = Permission::select('category')
+            ->distinct()
+            ->pluck('category')
+            ->toArray();
+
+        // Ordenar alfabéticamente en orden ascendente
+        sort($this->categoriasDisponibles);
+    }
+
+    public function updateCategory($permissionId, $newCategory)
+    {
+        $permiso = Permission::find($permissionId);
+        if ($permiso) {
+            $permiso->update(['category' => $newCategory]);
+            session()->flash('success', 'Categoría actualizada correctamente.');
+        } else {
+            session()->flash('error', 'Permiso no encontrado.');
+        }
+    }
 
     public function render()
     {
