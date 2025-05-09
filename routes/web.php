@@ -38,13 +38,13 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\CategoriasPermisosController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 // Ruta de prueba
 Route::get('/test', function () {
-    \Log::info('Ruta de prueba accedida');
     return response()->json(['success' => true, 'message' => 'Prueba exitosa']);
 });
 
@@ -98,6 +98,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PermissionsController::class, 'store'])->name('permisos.store')->middleware('permission:permisos-create');
         Route::get('/{permission}/editar', [PermissionsController::class, 'edit'])->name('permisos.edit')->middleware('permission:permisos-edit');
         Route::put('/{permission}', [PermissionsController::class, 'update'])->name('permisos.update')->middleware('permission:permisos-edit');
+    });
+
+    // Rutas para Gestión de Nombres de Visualización de Categorías
+    Route::prefix('permisos/categorias')->group(function () {
+        Route::get('/edit', [CategoriasPermisosController::class, 'edit'])
+            ->name('categorias-permisos.edit')
+            ->middleware('permission:permisos-edit');
+        Route::post('/', [CategoriasPermisosController::class, 'update'])
+            ->name('categorias-permisos.update')
+            ->middleware(['permission:permisos-edit', \App\Http\Middleware\DebugRequest::class]);
     });
 
     // Rutas para Productos

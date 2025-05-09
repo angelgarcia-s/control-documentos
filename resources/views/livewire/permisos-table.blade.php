@@ -1,13 +1,5 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
-
-        <!-- Mostrar el mensaje de error de Livewire -->
-        @if ($errorMessage)
-            <div class="alert alert-danger mb-4" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => @this.call('clearErrorMessage'), 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                {{ $errorMessage }}
-            </div>
-        @endif
-
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
@@ -54,21 +46,13 @@
                         @endforeach
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-                                @can('permisos-show')
-                                    <a href="{{ route('permisos.show', $permiso) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                @endcan
+
                                 @can('permisos-edit')
                                     <a href="{{ route('permisos.edit', $permiso) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 @endcan
-                                @can('permisos-destroy')
-                                    <button wire:click="confirmarEliminar({{ $permiso->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
-                                        <i class="ri-delete-bin-2-line"></i>
-                                    </button>
-                                @endcan
+
                             </div>
                         </td>
                     </tr>
@@ -95,25 +79,4 @@
             {{ $permisos->links('vendor.pagination.tailwind') }}
         </div>
     </div>
-
-    <!-- Modal basado en Livewire puro -->
-    @if($confirmingDelete !== null)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Confirmar eliminación</h2>
-            <p class="text-gray-700 dark:text-gray-300 mb-6">¿Estás seguro de que quieres eliminar este elemento?</p>
-            <div class="flex justify-end space-x-2">
-                <button wire:click="cancelarEliminar"
-                        class="ti-btn ti-btn-secondary !py-1 !px-2 ti-btn-wave">
-                    Cancelar
-                </button>
-                <button wire:click="eliminarElemento"
-                        wire:loading.attr="disabled"
-                        class="ti-btn ti-btn-danger !py-1 !px-2 ti-btn-wave">
-                    Confirmar
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>

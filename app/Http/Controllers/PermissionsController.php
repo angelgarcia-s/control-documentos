@@ -49,7 +49,6 @@ class PermissionsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'description' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +57,6 @@ class PermissionsController extends Controller
 
         $permission->update([
             'description' => $request->description,
-            'category' => $request->category,
         ]);
 
         return redirect()->route('permisos.index')->with('success', 'Permiso actualizado correctamente.');

@@ -34,7 +34,7 @@
                 </div>
                 <div class="box-body">
                     <div class="text-sm text-gray-500 font-light pb-3">
-                        <p>Solo se pueden editar la Descripción y la Categoría</p>
+                        <p>Solo se puede editar la Descripción. Para cambiar el nombre de visualización de la categoría, ve a "Editar Nombres de Categorías" desde la lista de permisos.</p>
                     </div>
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-4 col-span-12 mb-4">
@@ -48,8 +48,7 @@
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label for="category" class="form-label">Categoría</label>
-                            <input type="text" name="category" id="category" value="{{ old('category', $permission->category) }}" class="form-control @error('category') is-invalid @enderror" required>
-                            @error('category') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            <input type="text" name="category" id="category" value="{{ old('category', $permission->category) }}" class="form-control" readonly disabled>
                         </div>
                     </div>
                 </div>

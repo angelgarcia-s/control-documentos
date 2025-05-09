@@ -34,6 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'barnices' => 'barnices',
             'proveedores' => 'proveedores',
             'permisos' => 'permisos',
+            'administracion' => 'administracion',
         ];
 
         // Definir las acciones disponibles para cada módulo

@@ -48,14 +48,18 @@
                                 @php
                                     // Agrupar permisos por la columna 'category'
                                     $groupedPermissions = $permissions->groupBy('category');
+                                    // Obtener los nombres de visualización
+                                    $nombresVisuales = \App\Models\NombreVisualCategoriaPermiso::whereIn('categoria', array_keys($groupedPermissions->toArray()))
+                                        ->pluck('nombre_visual', 'categoria')
+                                        ->toArray();
                                 @endphp
 
                                 @foreach ($groupedPermissions as $category => $modulePermissions)
                                     @php
-                                        // Usar la categoría directamente como identificador
-                                        $module = $category;
-                                        // Transformar el nombre para visualización (agregar espacios y tildes)
-                                        $displayName = ucwords(str_replace('-', ' ', $module));
+                                        // Usar el nombre original de la categoría como identificador
+                                        $module = \Illuminate\Support\Str::slug($category, '-');
+                                        // Obtener el nombre de visualización, o transformar el nombre original si no existe
+                                        $displayName = $nombresVisuales[$category] ?? ucwords(str_replace('-', ' ', $category));
                                         $displayName = str_replace('Codigos', 'Códigos', $displayName);
                                     @endphp
                                     <div class="hs-accordion overflow-hidden bg-white dark:bg-bodybg border -mt-px first:rounded-t-sm last:rounded-b-sm dark:bg-bgdark dark:border-white/10" id="hs-{{ $module }}-heading">
@@ -96,7 +100,7 @@
                                                                 // Verificar si es un permiso individual (acción no válida)
                                                                 $isIndividual = !in_array($action, $validActions);
                                                                 // Transformar la acción si no es un permiso individual
-                                                                $transformedAction = $isIndividual ? null : ucfirst(str_replace('list', 'Listado', str_replace('create', 'Creación', str_replace('edit', 'Edición', str_replace('show', 'Visualización', str_replace('destroy', 'Eliminación', str_replace('download', 'Descargar', str_replace('import', 'Importación', $action))))))));
+                                                                $transformedAction = $isIndividual ? null : ucfirst(str_replace('list', 'Listado', str_replace('create', 'Creación', str_replace('edit', 'Edición', str_replace('show', 'Visualización', str_replace('destroy', 'Eliminación', str_replace('download', 'Descargar', str_replace('import', 'Importación', $action)))))));
                                                             @endphp
                                                             @if ($isIndividual)
                                                                 {{ $permission->description ?? 'Sin descripción' }}

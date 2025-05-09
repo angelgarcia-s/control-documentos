@@ -54,11 +54,6 @@
                         @endforeach
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-                                @can('roles-show')
-                                    <a href="{{ route('roles.show', $role) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                @endcan
                                 @can('roles-edit')
                                     <a href="{{ route('roles.edit', $role) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-pencil-line"></i>
