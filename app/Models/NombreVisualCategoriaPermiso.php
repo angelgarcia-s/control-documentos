@@ -12,5 +12,5 @@ class NombreVisualCategoriaPermiso extends Model
 
     protected $table = 'nombres_visuales_categorias_permisos';
 
-    protected $fillable = ['categoria', 'nombre_visual'];
+    protected $fillable = ['categoria', 'nombre_visual','orden'];
 }

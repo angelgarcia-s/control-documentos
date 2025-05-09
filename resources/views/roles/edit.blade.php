@@ -49,19 +49,28 @@
                                 @php
                                     // Agrupar permisos por la columna 'category'
                                     $groupedPermissions = $permissions->groupBy('category');
-                                    // Obtener los nombres de visualización
+                                    // Obtener los nombres de visualización y el orden
+                                    $ordenCategorias = \App\Models\NombreVisualCategoriaPermiso::whereIn('categoria', array_keys($groupedPermissions->toArray()))
+                                        ->orderBy('orden', 'asc')
+                                        ->orderBy('categoria', 'asc')
+                                        ->pluck('categoria')
+                                        ->toArray();
                                     $nombresVisuales = \App\Models\NombreVisualCategoriaPermiso::whereIn('categoria', array_keys($groupedPermissions->toArray()))
                                         ->pluck('nombre_visual', 'categoria')
                                         ->toArray();
+                                    // Ordenar las categorías según el orden definido
+                                    $categoriasOrdenadas = array_unique(array_merge($ordenCategorias, array_keys($groupedPermissions->toArray())));
                                 @endphp
 
-                                @foreach ($groupedPermissions as $category => $modulePermissions)
+                                @foreach ($categoriasOrdenadas as $category)
                                     @php
                                         // Usar el nombre original de la categoría como identificador
                                         $module = \Illuminate\Support\Str::slug($category, '-');
-                                        // Obtener el nombre de visualización, o transformar el nombre original si no existe
+                                        // Obtener el nombre de visualización
                                         $displayName = $nombresVisuales[$category] ?? ucwords(str_replace('-', ' ', $category));
                                         $displayName = str_replace('Codigos', 'Códigos', $displayName);
+                                        // Obtener los permisos de esta categoría
+                                        $modulePermissions = $groupedPermissions[$category] ?? collect([]);
                                     @endphp
                                     <div class="hs-accordion overflow-hidden bg-white dark:bg-bodybg border -mt-px first:rounded-t-sm last:rounded-b-sm dark:bg-bgdark dark:border-white/10" id="hs-{{ $module }}-heading">
                                         <button class="hs-accordion-toggle hs-accordion-active:text-primary hs-accordion-active:bg-primary/10 group py-4 px-5 inline-flex items-center justify-between gap-x-3 w-full text-xl font-thin text-start text-gray-400 transition hover:text-gray-500 dark:hs-accordion-active:text-primary dark:text-gray-200 dark:hover:text-white/80" aria-controls="hs-{{ $module }}-collapse" type="button">
@@ -72,7 +81,7 @@
                                                 <svg class="hs-accordion-active:block hs-accordion-active:text-primary hs-accordion-active:group-hover:text-primary hidden w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-[#8c9097] dark:text-white/50 mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M2 11L8.16086 5.31305C8.35239 5.13625 8.64761 5.13625 8.83914 5.31305L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
-                                                <span class="capitalize">{{ $displayName }}</span>
+                                                <span class="">{{ $displayName }}</span>
                                             </div>
                                             <div class="flex items-center">
                                                 <label for="module-{{ $module }}" class="text-sm text-gray-300 me-3 dark:text-[#8c9097] dark:text-white/50">

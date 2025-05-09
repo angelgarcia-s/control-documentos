@@ -50,8 +50,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Crear permisos base para cada módulo y acción
         foreach ($basePermisos as $permiso => $descripcion) {
-            // Transformar el nombre del módulo para la categoría, reemplazando '-' por ' de '
-            $categoryName = str_replace('-', ' de ', $permiso);
+            // Usar el nombre del módulo tal cual como categoría
+            $categoryName = $permiso;
 
             foreach ($acciones as $accion => $accionDescripcion) {
                 Permission::updateOrCreate(
