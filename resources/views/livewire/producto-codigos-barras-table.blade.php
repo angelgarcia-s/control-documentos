@@ -69,7 +69,7 @@
                                 {{ $this->getColumnValue($elemento, $columna) }}
                             </td>
                         @endforeach
-                        <td class="py-3 px-6 border">
+                        {{-- <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
                                 @can('producto-codigos-barras-show')
                                     <a href="{{ route('producto-codigos-barras.show', $elemento) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
@@ -87,7 +87,7 @@
                                     </button>
                                 @endcan
                             </div>
-                        </td>
+                        </td> --}}
                     </tr>
                 @endforeach
             </tbody>

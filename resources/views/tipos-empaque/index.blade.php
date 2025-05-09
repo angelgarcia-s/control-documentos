@@ -6,6 +6,13 @@
         <x-breadcrumbs />
     </div>
     <!-- Page Header Close -->
+    @if (session('success'))
+    <x-alert type="success" :message="session('success')" />
+    @endif
+
+    @if (session('error'))
+        <x-alert type="danger" :message="session('error')" />
+    @endif
 
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
