@@ -19,7 +19,7 @@
                             @endif
                         </th>
                     @endforeach
-                    <th class="py-3 px-6 text-left border">Acciones</th>
+                    {{-- <th class="py-3 px-6 text-left border">Acciones</th> --}}
                 </tr>
                 <tr>
                     @foreach($columnas as $columna)
@@ -58,7 +58,7 @@
                         @endif
                     </th>
                     @endforeach
-                    <th class="border px-4 py-2"></th>
+                    {{-- <th class="border px-4 py-2"></th> --}}
                 </tr>
             </thead>
             <tbody>
