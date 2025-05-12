@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             TiposEmpaqueSeeder::class,
             UnidadMedidaSeeder::class,
             ProductosSeeder::class,
+            RolesAndPermissionsSeeder::class,
         ]);
     }
 }
