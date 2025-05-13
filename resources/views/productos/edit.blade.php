@@ -8,7 +8,7 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar Producto</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar Producto {{ $producto->nombre_corto }}</h3>
     </div>
     <x-breadcrumbs />
 </div>
@@ -145,7 +145,7 @@
                             <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Terciario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
+                        <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Código de barras Cuaternario</label>
                             <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Cuaternario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror

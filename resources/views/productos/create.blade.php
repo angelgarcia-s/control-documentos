@@ -144,7 +144,7 @@
                             <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
+                        <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Código de barras Cuaternario</label>
                             <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
                             @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
