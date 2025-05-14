@@ -71,44 +71,110 @@
                         <p class="form-control border border-slate-200 min-h-9">{{ $producto->tamano ? $producto->tamano->nombre : '-' }}</p>
                     </div>
                 </div>
-            </div>
+                <div class="mb-10"></div>
 
-            <div class="box-header justify-between">
-                <div class="box-title">Códigos de barras y Contenidos</div>
-            </div>
-            <div class="box-body">
-                <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Código de barras Primario</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 md:col-span-6 pr-4 border-r border-gray-100">
+                        <div class="box ">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Códigos de barras</div>
+                            </div>
+                            <div class="box-body">
+                                <div class="grid grid-cols-12 gap-6">
+                                    <div class="col-span-6 sm:col-span-6">
+
+                                        <!-- Código de barras Primario -->
+                                        <label class="form-label">Código de barras Primario</label>
+                                        @php
+                                            $primario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario');
+                                        @endphp
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $primario ? ($primario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-6">
+                                        <label class="form-label">Contenido Primario</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $primario ? ($primario->contenido ?? '-') : '-' }}</p>
+                                    </div>
+
+                                    <!-- Código de barras Secundario -->
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Código de barras Secundario</label>
+                                        @php
+                                            $secundario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario');
+                                        @endphp
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $secundario ? ($secundario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Contenido Secundario</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $secundario ? ($secundario->contenido ?? '-') : '-' }}</p>
+                                    </div>
+
+                                    <!-- Código de barras Terciario -->
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Código de barras Terciario</label>
+                                        @php
+                                            $terciario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario');
+                                        @endphp
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $terciario ? ($terciario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Contenido Terciario</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $terciario ? ($terciario->contenido ?? '-') : '-' }}</p>
+                                    </div>
+
+                                    <!-- Código de barras Cuaternario -->
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Código de barras Cuaternario</label>
+                                        @php
+                                            $cuaternario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario');
+                                        @endphp
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $cuaternario ? ($cuaternario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Contenido Cuaternario</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $cuaternario ? ($cuaternario->contenido ?? '-') : '-' }}</p>
+                                    </div>
+
+                                    <!-- Código de barras Master -->
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Código de barras Master</label>
+                                        @php
+                                            $master = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master');
+                                        @endphp
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $master ? ($master->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                        <label class="form-label">Contenido Master</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $master ? ($master->contenido ?? '-') : '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Código de barras Secundario</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
-                    </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Código de barras Terciario</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
-                    </div>
-                    <div class="md:col-span-3 col-span-12 mb-4">
-                        <label class="form-label">Código de barras Cuaternario</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
-                    </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Código de barras Master</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
-                    </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Múltiplos Master</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
-                    </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Contenido de la Tarima</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->cupo_tarima }}</p>
-                    </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Peso</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->peso }}</p>
+
+                    <div class="col-span-12 md:col-span-6">
+                        <div class="box">
+                            <div class="box-header justify-between">
+                                <div class="box-title">Otros datos</div>
+                            </div>
+                            <div class="box-body">
+                                <div class="grid grid-cols-12 gap-6">
+                                    <div class="col-span-12 sm:col-span-8">
+                                        <!-- Otros campos -->
+                                        <label class="form-label">Múltiplos Master</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->multiplos_master }}</p>
+                                    </div>
+                                    <div class="col-span-12 sm:col-span-8">
+                                        <label class="form-label">Contenido de la Tarima</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->cupo_tarima }}</p>
+                                    </div>
+                                    <div class="col-span-12 sm:col-span-8">
+                                        <label class="form-label">Peso</label>
+                                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->peso }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

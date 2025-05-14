@@ -123,70 +123,123 @@
                             @error('id_tamano') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                     </div>
-                </div>
+                    <div class="mb-10"></div>
 
-                <div class="box-header justify-between">
-                    <div class="box-title">Códigos de barras y Contenidos</div>
-                </div>
-                <div class="box-body">
-                    <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="md:col-span-2 col-span-12 mb-4">
-                            <label class="form-label">Código de barras Primario</label>
-                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Primario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
-                            @error('codigo_barras_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    <div class="grid grid-cols-12 gap-6">
+                        <div class="col-span-12 md:col-span-6 pr-4 border-r border-gray-100">
+                            <div class="box">
+                                <div class="box-header justify-between">
+                                    <div class="box-title">Códigos de barras</div>
+                                </div>
+                                <div class="box-body">
+                                    <div class="grid grid-cols-12 gap-6">
+                                        <div class="col-span-6 sm:col-span-6">
+                                            <label class="form-label">Código de barras Primario</label>
+                                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('codigo_barras_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="col-span-6 sm:col-span-6">
+                                            <label class="form-label">Contenido Primario</label>
+                                            <input type="text" name="contenido_primario" value="{{ old('contenido_primario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('contenido_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Código de barras Secundario</label>
+                                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('codigo_barras_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Contenido Secundario</label>
+                                            <input type="text" name="contenido_secundario" value="{{ old('contenido_secundario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('contenido_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Código de barras Terciario</label>
+                                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Contenido Terciario</label>
+                                            <input type="text" name="contenido_terciario" value="{{ old('contenido_terciario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('contenido_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Código de barras Cuaternario</label>
+                                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Contenido Cuaternario</label>
+                                            <input type="text" name="contenido_cuaternario" value="{{ old('contenido_cuaternario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('contenido_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Código de barras Master</label>
+                                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('codigo_barras_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="md:col-span-6 col-span-12 mb-4">
+                                            <label class="form-label">Contenido Master</label>
+                                            <input type="text" name="contenido_master" value="{{ old('contenido_master', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            @error('contenido_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
-                            <label class="form-label">Código de barras Secundario</label>
-                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Secundario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
-                            @error('codigo_barras_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+
+                        <div class="col-span-12 md:col-span-6">
+                            <div class="box">
+                                <div class="box-header justify-between">
+                                    <div class="box-title">Otros datos</div>
+                                </div>
+                                <div class="box-body">
+                                    <div class="grid grid-cols-12 gap-6">
+                                        <div class="col-span-12 sm:col-span-12">
+                                            <label class="form-label">Múltiplos por Master</label>
+                                            <input type="number" name="multiplos_master" value="{{ old('multiplos_master', $producto->multiplos_master) }}" required class="form-control @error('multiplos_master') is-invalid @enderror">
+                                            @error('multiplos_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="col-span-12 sm:col-span-12">
+                                            <label class="form-label">Contenido de la Tarima</label>
+                                            <input type="number" name="cupo_tarima" value="{{ old('cupo_tarima', $producto->cupo_tarima) }}" required class="form-control @error('cupo_tarima') is-invalid @enderror">
+                                            @error('cupo_tarima') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="col-span-12 sm:col-span-12">
+                                            <label class="form-label">Requiere peso</label>
+                                            <select name="requiere_peso" id="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
+                                                <option value="NO" {{ old('requiere_peso', $producto->requiere_peso) == 'NO' ? 'selected' : '' }}>No</option>
+                                                <option value="SI" {{ old('requiere_peso', $producto->requiere_peso) == 'SI' ? 'selected' : '' }}>Sí</option>
+                                            </select>
+                                            @error('requiere_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="col-span-12 sm:col-span-12">
+                                            <label class="form-label">Peso</label>
+                                            <input type="number" step="0.01" name="peso" value="{{ old('peso', $producto->peso) }}" class="form-control @error('peso') is-invalid @enderror" id="peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
+                                            @error('peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                        <div class="col-span-12 sm:col-span-12">
+                                            <label class="form-label">Variación en el peso</label>
+                                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso', $producto->variacion_peso) }}" class="form-control @error('variacion_peso') is-invalid @enderror" id="variacion_peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
+                                            @error('variacion_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
-                            <label class="form-label">Código de barras Terciario</label>
-                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Terciario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
-                            @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
-                            <label class="form-label">Código de barras Cuaternario</label>
-                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->codigosBarras->where('pivot.tipo_empaque', 'Cuaternario')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
-                            @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Código de barras Master</label>
-                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->codigosBarras->where('pivot.tipo_empaque', 'Master')->first()->codigo ?? '') }}" class="form-control opacity-50" disabled placeholder="Asignar después de guardar">
-                            @error('codigo_barras_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Múltiplos por Master</label>
-                            <input type="number" name="multiplos_master" value="{{ old('multiplos_master', $producto->multiplos_master) }}" required class="form-control @error('multiplos_master') is-invalid @enderror">
-                            @error('multiplos_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Contenido de la Tarima</label>
-                            <input type="number" name="cupo_tarima" value="{{ old('cupo_tarima', $producto->cupo_tarima) }}" required class="form-control @error('cupo_tarima') is-invalid @enderror">
-                            @error('cupo_tarima') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Requiere peso</label>
-                            <select name="requiere_peso" id="requiere_peso" class="form-control @error('requiere_peso') is-invalid @enderror" required>
-                                <option value="NO" {{ old('requiere_peso', $producto->requiere_peso) == 'NO' ? 'selected' : '' }}>No</option>
-                                <option value="SI" {{ old('requiere_peso', $producto->requiere_peso) == 'SI' ? 'selected' : '' }}>Sí</option>
-                            </select>
-                            @error('requiere_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Peso</label>
-                            <input type="number" step="0.01" name="peso" value="{{ old('peso', $producto->peso) }}" class="form-control @error('peso') is-invalid @enderror" id="peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
-                            @error('peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="lg:col-span-2 md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Variación en el peso</label>
-                            <input type="number" step="0.01" name="variacion_peso" value="{{ old('variacion_peso', $producto->variacion_peso) }}" class="form-control @error('variacion_peso') is-invalid @enderror" id="variacion_peso" {{ $producto->requiere_peso == 'NO' ? 'disabled' : '' }}>
-                            @error('variacion_peso') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="flex justify-end md:col-span-12 col-span-12">
+                    </div>
+
+                    <div class="flex justify-between md:col-span-12 col-span-12">
+                        @can('asignar-codigos-barras')
+                            <div>
+                                <a href="{{ route('codigos-barras.asignar', $producto->sku) }}" class="ti-btn ti-btn-primary mr-2">Asignar códigos</a>
+                            </div>
+                        @endcan
+                        <div>
                             <a href="{{ route('productos.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
                             <button type="submit" class="ti-btn ti-btn-primary-full">Actualizar</button>
                         </div>
+
                     </div>
                 </div>
             </div>

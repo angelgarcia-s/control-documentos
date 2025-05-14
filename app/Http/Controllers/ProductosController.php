@@ -90,7 +90,7 @@ class ProductosController extends Controller
      */
     public function show($id)
     {
-        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras', 'productoCodigosBarras.codigoBarra'])->findOrFail($id);
         return view('productos.show', compact('producto'));
     }
 

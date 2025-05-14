@@ -92,4 +92,9 @@ class Producto extends Model
         return $this->belongsToMany(CodigoBarra::class, 'producto_codigos_barras', 'producto_id', 'codigo_barra_id')
                     ->withPivot('tipo_empaque', 'contenido');
     }
+
+    public function productoCodigosBarras()
+    {
+        return $this->hasMany(ProductoCodigosBarras::class, 'producto_id');
+    }
 }
