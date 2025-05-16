@@ -31,8 +31,8 @@
                                         <td class="text-start">{{ $codigo->contenido ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->tipo_empaque ?? '-' }}</td>
                                         <td>
-                                            <button type="button" wire:click="confirmarDesasignacion({{ $codigo->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
-                                                <i class="ri-link-unlink"></i>
+                                            <button type="button" wire:click="confirmarDesasignacion({{ $codigo->id }})" class="ti-btn text-xl text-rose-400 !py-1 !px-1 ti-btn-wave">
+                                                <i class="las la-unlink"></i>
                                             </button>
                                         </td>
                                     </tr>

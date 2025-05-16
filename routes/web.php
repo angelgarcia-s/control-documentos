@@ -57,284 +57,238 @@ Route::get('/', function () {
 });
 
 // Rutas de autenticación (definidas en auth.php)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
     // Dashboard
-    Route::get('dashboard', [DashboardsController::class, 'index'])->name('dashboard');
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardsController::class, 'index'])->name('dashboard')->middleware('can:dashboard-view');
+    });
 
     // Perfil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('can:profile-edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update')->middleware('can:profile-update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('can:profile-destroy');
+    });
 
     // Rutas para Gestión de Usuarios
     Route::prefix('usuarios')->group(function () {
-        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('permission:usuarios-list');
-        Route::get('/crear', [UsersController::class, 'create'])->name('usuarios.create')->middleware('permission:usuarios-create');
-        Route::post('/', [UsersController::class, 'store'])->name('usuarios.store')->middleware('permission:usuarios-create');
-        Route::get('/{user}', [UsersController::class, 'show'])->name('usuarios.show')->middleware('permission:usuarios-show');
-        Route::get('/{user}/editar', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('permission:usuarios-edit');
-        Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('permission:usuarios-edit');
-        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('usuarios.destroy')->middleware('permission:usuarios-destroy');
+        Route::get('/', [UsersController::class, 'index'])->name('usuarios.index')->middleware('can:usuarios-list');
+        Route::get('/crear', [UsersController::class, 'create'])->name('usuarios.create')->middleware('can:usuarios-create');
+        Route::post('/', [UsersController::class, 'store'])->name('usuarios.store')->middleware('can:usuarios-create');
+        Route::get('/{user}', [UsersController::class, 'show'])->name('usuarios.show')->middleware('can:usuarios-show');
+        Route::get('/{user}/editar', [UsersController::class, 'edit'])->name('usuarios.edit')->middleware('can:usuarios-edit');
+        Route::put('/{user}', [UsersController::class, 'update'])->name('usuarios.update')->middleware('can:usuarios-edit');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('usuarios.destroy')->middleware('can:usuarios-destroy');
     });
 
     // Rutas para Gestión de Roles
     Route::prefix('roles')->group(function () {
-        Route::get('/', [RolesController::class, 'index'])->name('roles.index')->middleware('permission:roles-list');
-        Route::get('/crear', [RolesController::class, 'create'])->name('roles.create')->middleware('permission:roles-create');
-        Route::post('/', [RolesController::class, 'store'])->name('roles.store')->middleware('permission:roles-create');
-        Route::get('/{role}', [RolesController::class, 'show'])->name('roles.show')->middleware('permission:roles-show');
-        Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('permission:roles-edit');
-        Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:roles-edit');
-        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:roles-destroy');
+        Route::get('/', [RolesController::class, 'index'])->name('roles.index')->middleware('can:roles-list');
+        Route::get('/crear', [RolesController::class, 'create'])->name('roles.create')->middleware('can:roles-create');
+        Route::post('/', [RolesController::class, 'store'])->name('roles.store')->middleware('can:roles-create');
+        Route::get('/{role}', [RolesController::class, 'show'])->name('roles.show')->middleware('can:roles-show');
+        Route::get('/{role}/editar', [RolesController::class, 'edit'])->name('roles.edit')->middleware('can:roles-edit');
+        Route::put('/{role}', [RolesController::class, 'update'])->name('roles.update')->middleware('can:roles-edit');
+        Route::delete('/{role}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('can:roles-destroy');
     });
 
     // Rutas para Gestión de Permisos
     Route::prefix('permisos')->group(function () {
-        Route::get('/', [PermissionsController::class, 'index'])->name('permisos.index')->middleware('permission:permisos-list');
-        Route::get('/crear', [PermissionsController::class, 'create'])->name('permisos.create')->middleware('permission:permisos-create');
-        Route::post('/', [PermissionsController::class, 'store'])->name('permisos.store')->middleware('permission:permisos-create');
-        Route::get('/{permission}/editar', [PermissionsController::class, 'edit'])->name('permisos.edit')->middleware('permission:permisos-edit');
-        Route::put('/{permission}', [PermissionsController::class, 'update'])->name('permisos.update')->middleware('permission:permisos-edit');
-    });
+        Route::get('/', [PermissionsController::class, 'index'])->name('permisos.index')->middleware('can:permisos-list');
+        Route::get('/crear', [PermissionsController::class, 'create'])->name('permisos.create')->middleware('can:permisos-create');
+        Route::post('/', [PermissionsController::class, 'store'])->name('permisos.store')->middleware('can:permisos-create');
+        Route::get('/{permission}/editar', [PermissionsController::class, 'edit'])->name('permisos.edit')->middleware('can:permisos-edit');
+        Route::put('/{permission}', [PermissionsController::class, 'update'])->name('permisos.update')->middleware('can:permisos-edit');
 
-    // Rutas para Gestión de Nombres de Visualización de Categorías
-    Route::prefix('permisos/categorias')->group(function () {
-        Route::get('/edit', [CategoriasPermisosController::class, 'edit'])
-            ->name('categorias-permisos.edit')
-            ->middleware('permission:permisos-edit');
-        Route::post('/', [CategoriasPermisosController::class, 'update'])
-            ->name('categorias-permisos.update')
-            ->middleware(['permission:permisos-edit', \App\Http\Middleware\DebugRequest::class]);
+        // Rutas para Gestión de Nombres de Visualización de Categorías
+        Route::prefix('categorias')->group(function () {
+            Route::get('/edit', [CategoriasPermisosController::class, 'edit'])->name('categorias-permisos.edit')->middleware('can:permisos-edit');
+            Route::post('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware(['can:permisos-edit', \App\Http\Middleware\DebugRequest::class]);
+        });
     });
 
     // Rutas para Productos
-    Route::resource('productos', ProductosController::class, [
-        'parameters' => ['productos' => 'producto'],
-        'middleware' => [
-            'index' => 'permission:productos-list',
-            'create' => 'permission:productos-create',
-            'store' => 'permission:productos-create',
-            'show' => 'permission:productos-show',
-            'edit' => 'permission:productos-edit',
-            'update' => 'permission:productos-edit',
-            'destroy' => 'permission:productos-destroy',
-        ],
-    ]);
+    Route::prefix('productos')->group(function () {
+        Route::get('/', [ProductosController::class, 'index'])->name('productos.index')->middleware('can:productos-list');
+        Route::get('/crear', [ProductosController::class, 'create'])->name('productos.create')->middleware('can:productos-create');
+        Route::post('/', [ProductosController::class, 'store'])->name('productos.store')->middleware('can:productos-create');
+        Route::get('/{producto}', [ProductosController::class, 'show'])->name('productos.show')->middleware('can:productos-show');
+        Route::get('/{producto}/editar', [ProductosController::class, 'edit'])->name('productos.edit')->middleware('can:productos-edit');
+        Route::put('/{producto}', [ProductosController::class, 'update'])->name('productos.update')->middleware('can:productos-edit');
+        Route::delete('/{producto}', [ProductosController::class, 'destroy'])->name('productos.destroy')->middleware('can:productos-destroy');
+    });
 
     // Rutas para Códigos de Barras
-    Route::resource('codigos-barras', CodigosBarrasController::class, [
-        'parameters' => ['codigos-barras' => 'codigoBarra'],
-        'middleware' => [
-            'index' => 'permission:codigos-barras-list',
-            'create' => 'permission:codigos-barras-create',
-            'store' => 'permission:codigos-barras-create',
-            'show' => 'permission:codigos-barras-show',
-            'edit' => 'permission:codigos-barras-edit',
-            'update' => 'permission:codigos-barras-edit',
-            'destroy' => 'permission:codigos-barras-destroy',
-        ],
-    ]);
-    Route::get('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar')->middleware('permission:asignar-codigos-barras');
-    Route::post('/codigos-barras/asignar/{sku}', [ProductoCodigosBarrasController::class, 'store'])->name('codigos-barras.asignar.store')->middleware('permission:asignar-codigos-barras');
+    Route::prefix('codigos-barras')->group(function () {
+        Route::get('/', [CodigosBarrasController::class, 'index'])->name('codigos-barras.index')->middleware('can:codigos-barras-list');
+        Route::get('/crear', [CodigosBarrasController::class, 'create'])->name('codigos-barras.create')->middleware('can:codigos-barras-create');
+        Route::post('/', [CodigosBarrasController::class, 'store'])->name('codigos-barras.store')->middleware('can:codigos-barras-create');
+        Route::get('/{codigoBarra}', [CodigosBarrasController::class, 'show'])->name('codigos-barras.show')->middleware('can:codigos-barras-show');
+        Route::get('/{codigoBarra}/editar', [CodigosBarrasController::class, 'edit'])->name('codigos-barras.edit')->middleware('can:codigos-barras-edit');
+        Route::put('/{codigoBarra}', [CodigosBarrasController::class, 'update'])->name('codigos-barras.update')->middleware('can:codigos-barras-edit');
+        Route::delete('/{codigoBarra}', [CodigosBarrasController::class, 'destroy'])->name('codigos-barras.destroy')->middleware('can:codigos-barras-destroy');
+
+        Route::get('/asignar/{sku}', [ProductoCodigosBarrasController::class, 'create'])->name('codigos-barras.asignar')->middleware('can:asignar-codigos-barras');
+        Route::post('/asignar/{sku}', [ProductoCodigosBarrasController::class, 'store'])->name('codigos-barras.asignar.store')->middleware('can:asignar-codigos-barras');
+    });
 
     // Rutas para Producto-Codigos-Barras
-    Route::resource('producto-codigos-barras', ProductoCodigosBarrasController::class, [
-        'parameters' => ['producto-codigos-barras' => 'productoCodigosBarra'],
-        'middleware' => [
-            'index' => 'permission:producto-codigos-barras-list',
-            'create' => 'permission:producto-codigos-barras-create',
-            'store' => 'permission:producto-codigos-barras-create',
-            'show' => 'permission:producto-codigos-barras-show',
-            'edit' => 'permission:producto-codigos-barras-edit',
-            'update' => 'permission:producto-codigos-barras-edit',
-            'destroy' => 'permission:producto-codigos-barras-destroy',
-        ],
-    ]);
+    Route::prefix('producto-codigos-barras')->group(function () {
+        Route::get('/', [ProductoCodigosBarrasController::class, 'index'])->name('producto-codigos-barras.index')->middleware('can:producto-codigos-barras-list');
+        Route::get('/crear', [ProductoCodigosBarrasController::class, 'create'])->name('producto-codigos-barras.create')->middleware('can:producto-codigos-barras-create');
+        Route::post('/', [ProductoCodigosBarrasController::class, 'store'])->name('producto-codigos-barras.store')->middleware('can:producto-codigos-barras-create');
+        Route::get('/{productoCodigosBarra}', [ProductoCodigosBarrasController::class, 'show'])->name('producto-codigos-barras.show')->middleware('can:producto-codigos-barras-show');
+        Route::get('/{productoCodigosBarra}/editar', [ProductoCodigosBarrasController::class, 'edit'])->name('producto-codigos-barras.edit')->middleware('can:producto-codigos-barras-edit');
+        Route::put('/{productoCodigosBarra}', [ProductoCodigosBarrasController::class, 'update'])->name('producto-codigos-barras.update')->middleware('can:producto-codigos-barras-edit');
+        Route::delete('/{productoCodigosBarra}', [ProductoCodigosBarrasController::class, 'destroy'])->name('producto-codigos-barras.destroy')->middleware('can:producto-codigos-barras-destroy');
+    });
 
     // Rutas para Familias
-    Route::resource('familias', FamiliasController::class, [
-        'parameters' => ['familias' => 'familia'],
-        'middleware' => [
-            'index' => 'permission:familias-list',
-            'create' => 'permission:familias-create',
-            'store' => 'permission:familias-create',
-            'show' => 'permission:familias-show',
-            'edit' => 'permission:familias-edit',
-            'update' => 'permission:familias-edit',
-            'destroy' => 'permission:familias-destroy',
-        ],
-    ]);
+    Route::prefix('familias')->group(function () {
+        Route::get('/', [FamiliasController::class, 'index'])->name('familias.index')->middleware('can:familias-list');
+        Route::get('/crear', [FamiliasController::class, 'create'])->name('familias.create')->middleware('can:familias-create');
+        Route::post('/', [FamiliasController::class, 'store'])->name('familias.store')->middleware('can:familias-create');
+        Route::get('/{familia}', [FamiliasController::class, 'show'])->name('familias.show')->middleware('can:familias-show');
+        Route::get('/{familia}/editar', [FamiliasController::class, 'edit'])->name('familias.edit')->middleware('can:familias-edit');
+        Route::put('/{familia}', [FamiliasController::class, 'update'])->name('familias.update')->middleware('can:familias-edit');
+        Route::delete('/{familia}', [FamiliasController::class, 'destroy'])->name('familias.destroy')->middleware('can:familias-destroy');
+        Route::get('/{familia}/productos', [FamiliasController::class, 'productos'])->name('familias.productos')->middleware('can:productos-list');
+    });
 
     // Rutas para Categorías
-    Route::resource('categorias', CategoriasController::class, [
-        'parameters' => ['categorias' => 'categoria'],
-        'middleware' => [
-            'index' => 'permission:categorias-list',
-            'create' => 'permission:categorias-create',
-            'store' => 'permission:categorias-create',
-            'show' => 'permission:categorias-show',
-            'edit' => 'permission:categorias-edit',
-            'update' => 'permission:categorias-edit',
-            'destroy' => 'permission:categorias-destroy',
-        ],
-    ]);
+    Route::prefix('categorias')->group(function () {
+        Route::get('/', [CategoriasController::class, 'index'])->name('categorias.index')->middleware('can:categorias-list');
+        Route::get('/crear', [CategoriasController::class, 'create'])->name('categorias.create')->middleware('can:categorias-create');
+        Route::post('/', [CategoriasController::class, 'store'])->name('categorias.store')->middleware('can:categorias-create');
+        Route::get('/{categoria}', [CategoriasController::class, 'show'])->name('categorias.show')->middleware('can:categorias-show');
+        Route::get('/{categoria}/editar', [CategoriasController::class, 'edit'])->name('categorias.edit')->middleware('can:categorias-edit');
+        Route::put('/{categoria}', [CategoriasController::class, 'update'])->name('categorias.update')->middleware('can:categorias-edit');
+        Route::delete('/{categoria}', [CategoriasController::class, 'destroy'])->name('categorias.destroy')->middleware('can:categorias-destroy');
+    });
 
     // Rutas para Colores
-    Route::resource('colores', ColoresController::class, [
-        'parameters' => ['colores' => 'color'],
-        'middleware' => [
-            'index' => 'permission:colores-list',
-            'create' => 'permission:colores-create',
-            'store' => 'permission:colores-create',
-            'show' => 'permission:colores-show',
-            'edit' => 'permission:colores-edit',
-            'update' => 'permission:colores-edit',
-            'destroy' => 'permission:colores-destroy',
-        ],
-    ]);
+    Route::prefix('colores')->group(function () {
+        Route::get('/', [ColoresController::class, 'index'])->name('colores.index')->middleware('can:colores-list');
+        Route::get('/crear', [ColoresController::class, 'create'])->name('colores.create')->middleware('can:colores-create');
+        Route::post('/', [ColoresController::class, 'store'])->name('colores.store')->middleware('can:colores-create');
+        Route::get('/{color}', [ColoresController::class, 'show'])->name('colores.show')->middleware('can:colores-show');
+        Route::get('/{color}/editar', [ColoresController::class, 'edit'])->name('colores.edit')->middleware('can:colores-edit');
+        Route::put('/{color}', [ColoresController::class, 'update'])->name('colores.update')->middleware('can:colores-edit');
+        Route::delete('/{color}', [ColoresController::class, 'destroy'])->name('colores.destroy')->middleware('can:colores-destroy');
+    });
 
     // Rutas para Tamaños
-    Route::resource('tamanos', TamanosController::class, [
-        'parameters' => ['tamanos' => 'tamano'],
-        'middleware' => [
-            'index' => 'permission:tamanos-list',
-            'create' => 'permission:tamanos-create',
-            'store' => 'permission:tamanos-create',
-            'show' => 'permission:tamanos-show',
-            'edit' => 'permission:tamanos-edit',
-            'update' => 'permission:tamanos-edit',
-            'destroy' => 'permission:tamanos-destroy',
-        ],
-    ]);
+    Route::prefix('tamanos')->group(function () {
+        Route::get('/', [TamanosController::class, 'index'])->name('tamanos.index')->middleware('can:tamanos-list');
+        Route::get('/crear', [TamanosController::class, 'create'])->name('tamanos.create')->middleware('can:tamanos-create');
+        Route::post('/', [TamanosController::class, 'store'])->name('tamanos.store')->middleware('can:tamanos-create');
+        Route::get('/{tamano}', [TamanosController::class, 'show'])->name('tamanos.show')->middleware('can:tamanos-show');
+        Route::get('/{tamano}/editar', [TamanosController::class, 'edit'])->name('tamanos.edit')->middleware('can:tamanos-edit');
+        Route::put('/{tamano}', [TamanosController::class, 'update'])->name('tamanos.update')->middleware('can:tamanos-edit');
+        Route::delete('/{tamano}', [TamanosController::class, 'destroy'])->name('tamanos.destroy')->middleware('can:tamanos-destroy');
+    });
 
     // Rutas para Unidades (Unidades de Medida)
-    Route::resource('unidades', UnidadMedidaController::class, [
-        'parameters' => ['unidades' => 'unidad'],
-        'middleware' => [
-            'index' => 'permission:unidades-list',
-            'create' => 'permission:unidades-create',
-            'store' => 'permission:unidades-create',
-            'show' => 'permission:unidades-show',
-            'edit' => 'permission:unidades-edit',
-            'update' => 'permission:unidades-edit',
-            'destroy' => 'permission:unidades-destroy',
-        ],
-    ]);
+    Route::prefix('unidades')->group(function () {
+        Route::get('/', [UnidadMedidaController::class, 'index'])->name('unidades.index')->middleware('can:unidades-list');
+        Route::get('/crear', [UnidadMedidaController::class, 'create'])->name('unidades.create')->middleware('can:unidades-create');
+        Route::post('/', [UnidadMedidaController::class, 'store'])->name('unidades.store')->middleware('can:unidades-create');
+        Route::get('/{unidad}', [UnidadMedidaController::class, 'show'])->name('unidades.show')->middleware('can:unidades-show');
+        Route::get('/{unidad}/editar', [UnidadMedidaController::class, 'edit'])->name('unidades.edit')->middleware('can:unidades-edit');
+        Route::put('/{unidad}', [UnidadMedidaController::class, 'update'])->name('unidades.update')->middleware('can:unidades-edit');
+        Route::delete('/{unidad}', [UnidadMedidaController::class, 'destroy'])->name('unidades.destroy')->middleware('can:unidades-destroy');
+    });
 
     // Rutas para Tipos de Empaque
-    Route::resource('tipos-empaque', TiposEmpaqueController::class, [
-        'parameters' => ['tipos-empaque' => 'tipo_empaque'],
-        'middleware' => [
-            'index' => 'permission:tipos-empaque-list',
-            'create' => 'permission:tipos-empaque-create',
-            'store' => 'permission:tipos-empaque-create',
-            'show' => 'permission:tipos-empaque-show',
-            'edit' => 'permission:tipos-empaque-edit',
-            'update' => 'permission:tipos-empaque-edit',
-            'destroy' => 'permission:tipos-empaque-destroy',
-        ],
-    ]);
+    Route::prefix('tipos-empaque')->group(function () {
+        Route::get('/', [TiposEmpaqueController::class, 'index'])->name('tipos-empaque.index')->middleware('can:tipos-empaque-list');
+        Route::get('/crear', [TiposEmpaqueController::class, 'create'])->name('tipos-empaque.create')->middleware('can:tipos-empaque-create');
+        Route::post('/', [TiposEmpaqueController::class, 'store'])->name('tipos-empaque.store')->middleware('can:tipos-empaque-create');
+        Route::get('/{tipo_empaque}', [TiposEmpaqueController::class, 'show'])->name('tipos-empaque.show')->middleware('can:tipos-empaque-show');
+        Route::get('/{tipo_empaque}/editar', [TiposEmpaqueController::class, 'edit'])->name('tipos-empaque.edit')->middleware('can:tipos-empaque-edit');
+        Route::put('/{tipo_empaque}', [TiposEmpaqueController::class, 'update'])->name('tipos-empaque.update')->middleware('can:tipos-empaque-edit');
+        Route::delete('/{tipo_empaque}', [TiposEmpaqueController::class, 'destroy'])->name('tipos-empaque.destroy')->middleware('can:tipos-empaque-destroy');
+    });
 
     // Rutas para Empaques
-    Route::resource('empaques', EmpaquesController::class, [
-        'parameters' => ['empaques' => 'empaque'],
-        'middleware' => [
-            'index' => 'permission:empaques-list',
-            'create' => 'permission:empaques-create',
-            'store' => 'permission:empaques-create',
-            'show' => 'permission:empaques-show',
-            'edit' => 'permission:empaques-edit',
-            'update' => 'permission:empaques-edit',
-            'destroy' => 'permission:empaques-destroy',
-        ],
-    ]);
+    Route::prefix('empaques')->group(function () {
+        Route::get('/', [EmpaquesController::class, 'index'])->name('empaques.index')->middleware('can:empaques-list');
+        Route::get('/crear', [EmpaquesController::class, 'create'])->name('empaques.create')->middleware('can:empaques-create');
+        Route::post('/', [EmpaquesController::class, 'store'])->name('empaques.store')->middleware('can:empaques-create');
+        Route::get('/{empaque}', [EmpaquesController::class, 'show'])->name('empaques.show')->middleware('can:empaques-show');
+        Route::get('/{empaque}/editar', [EmpaquesController::class, 'edit'])->name('empaques.edit')->middleware('can:empaques-edit');
+        Route::put('/{empaque}', [EmpaquesController::class, 'update'])->name('empaques.update')->middleware('can:empaques-edit');
+        Route::delete('/{empaque}', [EmpaquesController::class, 'destroy'])->name('empaques.destroy')->middleware('can:empaques-destroy');
+    });
 
     // Rutas para Tipos de Sello
-    Route::resource('tipos-sello', TiposSelloController::class, [
-        'parameters' => ['tipos-sello' => 'tipo_sello'],
-        'middleware' => [
-            'index' => 'permission:tipos-sello-list',
-            'create' => 'permission:tipos-sello-create',
-            'store' => 'permission:tipos-sello-create',
-            'show' => 'permission:tipos-sello-show',
-            'edit' => 'permission:tipos-sello-edit',
-            'update' => 'permission:tipos-sello-edit',
-            'destroy' => 'permission:tipos-sello-destroy',
-        ],
-    ]);
+    Route::prefix('tipos-sello')->group(function () {
+        Route::get('/', [TiposSelloController::class, 'index'])->name('tipos-sello.index')->middleware('can:tipos-sello-list');
+        Route::get('/crear', [TiposSelloController::class, 'create'])->name('tipos-sello.create')->middleware('can:tipos-sello-create');
+        Route::post('/', [TiposSelloController::class, 'store'])->name('tipos-sello.store')->middleware('can:tipos-sello-create');
+        Route::get('/{tipo_sello}', [TiposSelloController::class, 'show'])->name('tipos-sello.show')->middleware('can:tipos-sello-show');
+        Route::get('/{tipo_sello}/editar', [TiposSelloController::class, 'edit'])->name('tipos-sello.edit')->middleware('can:tipos-sello-edit');
+        Route::put('/{tipo_sello}', [TiposSelloController::class, 'update'])->name('tipos-sello.update')->middleware('can:tipos-sello-edit');
+        Route::delete('/{tipo_sello}', [TiposSelloController::class, 'destroy'])->name('tipos-sello.destroy')->middleware('can:tipos-sello-destroy');
+    });
 
     // Rutas para Acabados
-    Route::resource('acabados', AcabadosController::class, [
-        'parameters' => ['acabados' => 'acabado'],
-        'middleware' => [
-            'index' => 'permission:acabados-list',
-            'create' => 'permission:acabados-create',
-            'store' => 'permission:acabados-create',
-            'show' => 'permission:acabados-show',
-            'edit' => 'permission:acabados-edit',
-            'update' => 'permission:acabados-edit',
-            'destroy' => 'permission:acabados-destroy',
-        ],
-    ]);
+    Route::prefix('acabados')->group(function () {
+        Route::get('/', [AcabadosController::class, 'index'])->name('acabados.index')->middleware('can:acabados-list');
+        Route::get('/crear', [AcabadosController::class, 'create'])->name('acabados.create')->middleware('can:acabados-create');
+        Route::post('/', [AcabadosController::class, 'store'])->name('acabados.store')->middleware('can:acabados-create');
+        Route::get('/{acabado}', [AcabadosController::class, 'show'])->name('acabados.show')->middleware('can:acabados-show');
+        Route::get('/{acabado}/editar', [AcabadosController::class, 'edit'])->name('acabados.edit')->middleware('can:acabados-edit');
+        Route::put('/{acabado}', [AcabadosController::class, 'update'])->name('acabados.update')->middleware('can:acabados-edit');
+        Route::delete('/{acabado}', [AcabadosController::class, 'destroy'])->name('acabados.destroy')->middleware('can:acabados-destroy');
+    });
 
     // Rutas para Materiales
-    Route::resource('materiales', MaterialesController::class, [
-        'parameters' => ['materiales' => 'material'],
-        'middleware' => [
-            'index' => 'permission:materiales-list',
-            'create' => 'permission:materiales-create',
-            'store' => 'permission:materiales-create',
-            'show' => 'permission:materiales-show',
-            'edit' => 'permission:materiales-edit',
-            'update' => 'permission:materiales-edit',
-            'destroy' => 'permission:materiales-destroy',
-        ],
-    ]);
+    Route::prefix('materiales')->group(function () {
+        Route::get('/', [MaterialesController::class, 'index'])->name('materiales.index')->middleware('can:materiales-list');
+        Route::get('/crear', [MaterialesController::class, 'create'])->name('materiales.create')->middleware('can:materiales-create');
+        Route::post('/', [MaterialesController::class, 'store'])->name('materiales.store')->middleware('can:materiales-create');
+        Route::get('/{material}', [MaterialesController::class, 'show'])->name('materiales.show')->middleware('can:materiales-show');
+        Route::get('/{material}/editar', [MaterialesController::class, 'edit'])->name('materiales.edit')->middleware('can:materiales-edit');
+        Route::put('/{material}', [MaterialesController::class, 'update'])->name('materiales.update')->middleware('can:materiales-edit');
+        Route::delete('/{material}', [MaterialesController::class, 'destroy'])->name('materiales.destroy')->middleware('can:materiales-destroy');
+    });
 
     // Rutas para Barnices
-    Route::resource('barnices', BarnicesController::class, [
-        'parameters' => ['barnices' => 'barniz'],
-        'middleware' => [
-            'index' => 'permission:barnices-list',
-            'create' => 'permission:barnices-create',
-            'store' => 'permission:barnices-create',
-            'show' => 'permission:barnices-show',
-            'edit' => 'permission:barnices-edit',
-            'update' => 'permission:barnices-edit',
-            'destroy' => 'permission:barnices-destroy',
-        ],
-    ]);
+    Route::prefix('barnices')->group(function () {
+        Route::get('/', [BarnicesController::class, 'index'])->name('barnices.index')->middleware('can:barnices-list');
+        Route::get('/crear', [BarnicesController::class, 'create'])->name('barnices.create')->middleware('can:barnices-create');
+        Route::post('/', [BarnicesController::class, 'store'])->name('barnices.store')->middleware('can:barnices-create');
+        Route::get('/{barniz}', [BarnicesController::class, 'show'])->name('barnices.show')->middleware('can:barnices-show');
+        Route::get('/{barniz}/editar', [BarnicesController::class, 'edit'])->name('barnices.edit')->middleware('can:barnices-edit');
+        Route::put('/{barniz}', [BarnicesController::class, 'update'])->name('barnices.update')->middleware('can:barnices-edit');
+        Route::delete('/{barniz}', [BarnicesController::class, 'destroy'])->name('barnices.destroy')->middleware('can:barnices-destroy');
+    });
 
     // Rutas para Proveedores
-    Route::resource('proveedores', ProveedoresController::class, [
-        'parameters' => ['proveedores' => 'proveedor'],
-        'middleware' => [
-            'index' => 'permission:proveedores-list',
-            'create' => 'permission:proveedores-create',
-            'store' => 'permission:proveedores-create',
-            'show' => 'permission:proveedores-show',
-            'edit' => 'permission:proveedores-edit',
-            'update' => 'permission:proveedores-edit',
-            'destroy' => 'permission:proveedores-destroy',
-        ],
-    ]);
+    Route::prefix('proveedores')->group(function () {
+        Route::get('/', [ProveedoresController::class, 'index'])->name('proveedores.index')->middleware('can:proveedores-list');
+        Route::get('/crear', [ProveedoresController::class, 'create'])->name('proveedores.create')->middleware('can:proveedores-create');
+        Route::post('/', [ProveedoresController::class, 'store'])->name('proveedores.store')->middleware('can:proveedores-create');
+        Route::get('/{proveedor}', [ProveedoresController::class, 'show'])->name('proveedores.show')->middleware('can:proveedores-show');
+        Route::get('/{proveedor}/editar', [ProveedoresController::class, 'edit'])->name('proveedores.edit')->middleware('can:proveedores-edit');
+        Route::put('/{proveedor}', [ProveedoresController::class, 'update'])->name('proveedores.update')->middleware('can:proveedores-edit');
+        Route::delete('/{proveedor}', [ProveedoresController::class, 'destroy'])->name('proveedores.destroy')->middleware('can:proveedores-destroy');
+    });
 
-    // Rutas para PrintCards (descomentadas y actualizadas)
-    // Route::resource('printcards', PrintCardController::class, [
-    //     'parameters' => ['printcards' => 'printCard'],
-    //     'middleware' => [
-    //         'index' => 'permission:printcards-list',
-    //         'create' => 'permission:printcards-create',
-    //         'store' => 'permission:printcards-create',
-    //         'show' => 'permission:printcards-show',
-    //         'edit' => 'permission:printcards-edit',
-    //         'update' => 'permission:printcards-edit',
-    //         'destroy' => 'permission:printcards-destroy',
-    //     ],
-    // ]);
+    // Rutas para PrintCards
+    // Route::prefix('printcards')->group(function () {
+    //     Route::get('/', [PrintCardController::class, 'index'])->name('printcards.index')->middleware('can:printcards-list');
+    //     Route::get('/crear', [PrintCardController::class, 'create'])->name('printcards.create')->middleware('can:printcards-create');
+    //     Route::post('/', [PrintCardController::class, 'store'])->name('printcards.store')->middleware('can:printcards-create');
+    //     Route::get('/{printCard}', [PrintCardController::class, 'show'])->name('printcards.show')->middleware('can:printcards-show');
+    //     Route::get('/{printCard}/editar', [PrintCardController::class, 'edit'])->name('printcards.edit')->middleware('can:printcards-edit');
+    //     Route::put('/{printCard}', [PrintCardController::class, 'update'])->name('printcards.update')->middleware('can:printcards-edit');
+    //     Route::delete('/{printCard}', [PrintCardController::class, 'destroy'])->name('printcards.destroy')->middleware('can:printcards-destroy');
+    // });
 });
 
 // DASHBOARDS //

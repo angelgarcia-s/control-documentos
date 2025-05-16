@@ -11,36 +11,23 @@
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
                     @foreach($columnas as $columna)
-                        <th class="py-3 px-6 text-left border cursor-pointer" wire:click="ordenarPor('{{ $columna['name'] }}')">
-                            {{ $columna['label'] }}
-                            @if($columna['sortable'])
-                                <i class="ti {{ $orderBy === $columna['name'] ? ($orderDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending') : 'ti-arrows-sort' }} ml-1"></i>
-                            @endif
-                        </th>
+                        @if($columna['name'] !== 'id_familia') <!-- Ocultar id_familia -->
+                            <th class="py-3 px-6 text-left border cursor-pointer" wire:click="ordenarPor('{{ $columna['name'] }}')">
+                                {{ $columna['label'] }}
+                                @if($columna['sortable'])
+                                    <i class="ti {{ $orderBy === $columna['name'] ? ($orderDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending') : 'ti-arrows-sort' }} ml-1"></i>
+                                @endif
+                            </th>
+                        @endif
                     @endforeach
                     <th class="py-3 px-6 text-left border">Acciones</th>
                 </tr>
                 <tr>
                     @foreach($columnas as $columna)
-                        <th class="border px-4 py-2 relative">
-                            @if($columna['searchable'])
-                                <div class="relative">
-                                    @if(isset($columna['relationship']))
-                                        <?php
-                                            [$relacion, $subcampo] = explode('.', $columna['name']);
-                                        ?>
-                                        <input type="text"
-                                               wire:model.live="search.{{ $relacion }}.{{ $subcampo }}"
-                                               class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
-                                               placeholder="Buscar {{ $columna['label'] }}'">
-                                        @if(!empty($search[$relacion][$subcampo]))
-                                            <button type="button"
-                                                    wire:click="limpiarBusqueda('{{ $columna['name'] }}')"
-                                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                                <i class="ti ti-x text-sm"></i>
-                                            </button>
-                                        @endif
-                                    @else
+                        @if($columna['name'] !== 'id_familia') <!-- Ocultar búsqueda para id_familia -->
+                            <th class="border px-4 py-2 relative">
+                                @if($columna['searchable'])
+                                    <div class="relative">
                                         <input type="text"
                                                wire:model.live="search.{{ $columna['name'] }}"
                                                class="ti-form-input w-full text-sm px-2 py-1 border rounded focus:ring-1 focus:ring-blue-500"
@@ -52,51 +39,50 @@
                                                 <i class="ti ti-x text-sm"></i>
                                             </button>
                                         @endif
-                                    @endif
-                                </div>
-                            @endif
-                        </th>
+                                    </div>
+                                @endif
+                            </th>
+                        @endif
                     @endforeach
                     <th class="border px-4 py-2"></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($familias as $familia)
+                @foreach($productos as $producto)
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         @foreach($columnas as $columna)
-                            <td class="py-3 px-6 border">
-                                @if($columna['name'] === 'imagen')
-                                    @if($familia->imagen)
-                                        <img src="{{ asset('storage/' . $familia->imagen) }}" class="w-16 h-16 object-cover rounded" />
-                                    @else
-                                        -
-                                    @endif
-                                @else
-                                    {!! $this->getColumnValue($familia, $columna) !!}
-                                @endif
-                            </td>
+                            @if($columna['name'] !== 'id_familia') <!-- Ocultar celda de id_familia -->
+                                <td class="py-3 px-6 border">
+                                    {{ $this->getColumnValue($producto, $columna) }}
+                                </td>
+                            @endif
                         @endforeach
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-                                @can('familias-show')
-                                    <a href="{{ route('familias.show', $familia) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave" title="Ver">
+                                @can('productos-show')
+                                    <a href="{{ route('productos.show', $producto) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-eye-line"></i>
                                     </a>
                                 @endcan
-                                @can('familias-edit')
-                                    <a href="{{ route('familias.edit', $familia) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave" title="Editar">
+                                @can('asignar-codigos-barras')
+                                    <a href="{{ route('codigos-barras.asignar', $producto->sku) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                        <i class="ri-barcode-line"></i>
+                                    </a>
+                                @endcan
+                                @can('printcards-list')
+                                    <button wire:click="printcards({{ $producto->id }})" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                        <i class="ri-article-line"></i>
+                                    </button>
+                                @endcan
+                                @can('productos-edit')
+                                    <a href="{{ route('productos.edit', $producto) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 @endcan
-                                @can('familias-destroy')
-                                    <button wire:click="confirmarEliminar({{ $familia->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave" title="Eliminar">
+                                @can('productos-destroy')
+                                    <button wire:click="confirmarEliminar({{ $producto->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-delete-bin-2-line"></i>
                                     </button>
-                                @endcan
-                                @can('productos-list')
-                                    <a href="{{ route('familias.productos', $familia) }}" class="ti-btn text-lg text-primary !py-1 !px-1 ti-btn-wave" title="Ver Productos">
-                                        <i class="ri-box-3-line"></i>
-                                    </a>
                                 @endcan
                             </div>
                         </td>
@@ -118,7 +104,7 @@
             </select>
         </div>
         <div>
-            {{ $familias->links('vendor.pagination.tailwind') }}
+            {{ $productos->links('vendor.pagination.tailwind') }}
         </div>
     </div>
 

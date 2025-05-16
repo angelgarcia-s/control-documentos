@@ -23,39 +23,51 @@
     </div>
 @endif
 
-<form action="{{ route('familias.store') }}" method="POST">
+<form action="{{ route('familias.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <div class="box-title">Familia</div>
+                    <div class="box-title">Nueva Familia</div>
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Familia</label>
+                            <label class="form-label">Nombre</label>
                             <input type="text" name="nombre" value="{{ old('nombre') }}" required class="form-control @error('nombre') is-invalid @enderror">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        
+                        <div class="md:col-span-4 col-span-12 mb-4">
+                            <label class="form-label">Categoría</label>
+                            <select name="id_categoria" class="form-control @error('id_categoria') is-invalid @enderror" required>
+                                <option value="">Seleccione</option>
+                                @foreach ($categorias as $categoria)
+                                    <option value="{{ $categoria->id }}" {{ old('id_categoria') == $categoria->id ? 'selected' : '' }}>{{ $categoria->nombre }}</option>
+                                @endforeach
+                            </select>
+                            @error('id_categoria') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-4 col-span-12 mb-4">
+                            <label class="form-label">Imagen</label>
+                            <input type="file" name="imagen" class="form-control @error('imagen') is-invalid @enderror">
+                            @error('imagen') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="md:col-span-12 col-span-12 mb-4">
+                            <label class="form-label">Descripción</label>
+                            <textarea name="descripcion" class="form-control @error('descripcion') is-invalid @enderror" rows="3">{{ old('descripcion') }}</textarea>
+                            @error('descripcion') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                        </div>
                     </div>
                 </div>
-
-                <div class="box-body">
-                    <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="flex justify-end md:col-span-12 col-span-12">
-                            <a href="{{ route('familias.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
-                            <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
-                        </div>
+                <div class="box-footer">
+                    <div class="flex justify-end">
+                        <a href="{{ route('familias.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                        <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
-@endsection
-
-@section('scripts')
-    @vite('resources/assets/js/modal.js')
 @endsection

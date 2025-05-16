@@ -15,13 +15,26 @@ class FamiliasTable extends Component
 
     public $columnas = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'imagen', 'label' => 'Imagen', 'sortable' => false, 'searchable' => false],
         ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
+        ['name' => 'descripcion', 'label' => 'Descripción', 'sortable' => true, 'searchable' => true],
+        ['name' => 'categoria.nombre', 'label' => 'Categoría', 'sortable' => true, 'searchable' => true, 'relationship' => 'categoria'],
         ['name' => 'productos_count', 'label' => 'Productos', 'sortable' => true, 'searchable' => false],
     ];
 
     public function mount()
     {
         $this->confirmingDelete = null;
+        $this->search = [];
+        foreach ($this->columnas as $columna) {
+            if (isset($columna['relationship'])) {
+                [$relacion, $subcampo] = explode('.', $columna['name']);
+                if (!isset($this->search[$relacion])) {
+                    $this->search[$relacion] = [];
+                }
+                $this->search[$relacion][$subcampo] = '';
+            }
+        }
     }
 
     public function clearErrorMessage()
@@ -47,6 +60,9 @@ class FamiliasTable extends Component
                 }
 
                 try {
+                    if ($familia->imagen) {
+                        \Storage::disk('public')->delete($familia->imagen);
+                    }
                     $familia->delete();
                     session()->flash('success', 'Familia eliminada correctamente.');
                     $this->resetPage();
@@ -71,7 +87,7 @@ class FamiliasTable extends Component
     public function render()
     {
         $query = FamiliaProducto::query()
-            ->with(['productos'])
+            ->with(['categoria', 'productos'])
             ->withCount(['productos']);
 
         $query = $this->aplicarFiltros($query, $this->columnas);
@@ -85,6 +101,15 @@ class FamiliasTable extends Component
 
     public function getColumnValue($familia, $columna)
     {
+        if ($columna['name'] === 'imagen') {
+            return $familia->imagen ? '<img src="' . asset('storage/' . $familia->imagen) . '" class="w-10 h-10 object-cover rounded" />' : '-';
+        }
+
+        if (isset($columna['relationship'])) {
+            [$relacion, $subcampo] = explode('.', $columna['name']);
+            return $familia->$relacion->$subcampo ?? '-';
+        }
+
         $campo = $columna['name'];
         return $familia->$campo ?? '-';
     }

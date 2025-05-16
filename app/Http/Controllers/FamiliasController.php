@@ -3,38 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\FamiliaProducto;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 
 class FamiliasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        
         return view('familias.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('familias.create');
+        $categorias = Categoria::orderBy('nombre', 'asc')->get();
+        return view('familias.create', compact('categorias'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255|unique:familia_productos,nombre',
+            'id_categoria' => 'required|exists:categorias,id',
+            'descripcion' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
+            if ($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')->store('images/familias', 'public');
+            }
+
             FamiliaProducto::create($validated);
             return redirect()->route('familias.index')->with('success', 'Familia creada correctamente.');
         } catch (\Exception $e) {
@@ -42,33 +42,34 @@ class FamiliasController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(FamiliaProducto $familia)
     {
-        $familia->load('productos');
         return view('familias.show', compact('familia'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(FamiliaProducto $familia)
     {
-        return view('familias.edit', compact('familia'));
+        $categorias = Categoria::orderBy('nombre', 'asc')->get();
+        return view('familias.edit', compact('familia', 'categorias'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, FamiliaProducto $familia)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255|unique:familia_productos,nombre,' . $familia->id,
+            'id_categoria' => 'required|exists:categorias,id',
+            'descripcion' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
+            if ($request->hasFile('imagen')) {
+                if ($familia->imagen) {
+                    Storage::disk('public')->delete($familia->imagen);
+                }
+                $validated['imagen'] = $request->file('imagen')->store('images/familias', 'public');
+            }
+
             $familia->update($validated);
             return redirect()->route('familias.index')->with('success', 'Familia actualizada correctamente.');
         } catch (\Exception $e) {
@@ -76,15 +77,15 @@ class FamiliasController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(FamiliaProducto $familia)
     {
         try {
-            // Validar si tiene productos asociados
             if ($familia->productos()->count() > 0) {
                 return redirect()->route('familias.index')->with('error', 'No se puede eliminar la familia porque tiene productos asociados.');
+            }
+
+            if ($familia->imagen) {
+                Storage::disk('public')->delete($familia->imagen);
             }
 
             $familia->delete();
@@ -95,5 +96,10 @@ class FamiliasController extends Controller
             }
             return redirect()->route('familias.index')->with('error', 'Error al eliminar la familia: ' . $e->getMessage());
         }
+    }
+
+    public function productos(FamiliaProducto $familia)
+    {
+        return view('familias.productos', compact('familia'));
     }
 }

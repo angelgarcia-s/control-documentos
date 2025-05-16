@@ -12,7 +12,12 @@ class FamiliaProducto extends Model
 
     protected $table = 'familia_productos';
 
-    protected $fillable = ['nombre'];
+    protected $fillable = [
+        'nombre',
+        'id_categoria',
+        'imagen',
+        'descripcion',
+    ];
 
     // Mutador para guardar nombre en minúsculas
     public function setNombreAttribute($value)
@@ -24,6 +29,23 @@ class FamiliaProducto extends Model
     public function getNombreAttribute($value)
     {
         return Str::title($value);
+    }
+
+    // Mutador para guardar descripción en minúsculas
+    public function setDescripcionAttribute($value)
+    {
+        $this->attributes['descripcion'] = strtolower($value);
+    }
+
+    // Accesor para mostrar descripción con la primera letra de cada palabra en mayúsculas
+    public function getDescripcionAttribute($value)
+    {
+        return Str::title($value);
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 
     public function productos()
