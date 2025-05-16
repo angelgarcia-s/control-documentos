@@ -95,7 +95,7 @@
                                 @endcan
                                 @can('productos-list')
                                     <a href="{{ route('familias.productos', $familia) }}" class="ti-btn text-lg text-primary !py-1 !px-1 ti-btn-wave" title="Ver Productos">
-                                        <i class="ri-box-3-line"></i>
+                                        <i class="bi bi-box"></i>
                                     </a>
                                 @endcan
                             </div>
