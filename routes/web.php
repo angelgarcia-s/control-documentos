@@ -25,7 +25,7 @@ use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\ColoresController;
 use App\Http\Controllers\TamanosController;
 use App\Http\Controllers\UnidadMedidaController;
-use App\Http\Controllers\TiposEmpaqueController;
+use App\Http\Controllers\ClasificacionesEnvasesController;
 use App\Http\Controllers\EmpaquesController;
 use App\Http\Controllers\TiposSelloController;
 use App\Http\Controllers\AcabadosController;
@@ -63,7 +63,7 @@ require __DIR__ . '/auth.php';
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::prefix('dashboard')->group(function () {
-        Route::get('/', [DashboardsController::class, 'index'])->name('dashboard')->middleware('can:dashboard-view');
+        Route::get('/', [DashboardsController::class, 'index'])->name('dashboard')->middleware('can:dashboard-show');
     });
 
     // Perfil
@@ -202,15 +202,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{unidad}', [UnidadMedidaController::class, 'destroy'])->name('unidades.destroy')->middleware('can:unidades-destroy');
     });
 
-    // Rutas para Tipos de Empaque
-    Route::prefix('tipos-empaque')->group(function () {
-        Route::get('/', [TiposEmpaqueController::class, 'index'])->name('tipos-empaque.index')->middleware('can:tipos-empaque-list');
-        Route::get('/crear', [TiposEmpaqueController::class, 'create'])->name('tipos-empaque.create')->middleware('can:tipos-empaque-create');
-        Route::post('/', [TiposEmpaqueController::class, 'store'])->name('tipos-empaque.store')->middleware('can:tipos-empaque-create');
-        Route::get('/{tipo_empaque}', [TiposEmpaqueController::class, 'show'])->name('tipos-empaque.show')->middleware('can:tipos-empaque-show');
-        Route::get('/{tipo_empaque}/editar', [TiposEmpaqueController::class, 'edit'])->name('tipos-empaque.edit')->middleware('can:tipos-empaque-edit');
-        Route::put('/{tipo_empaque}', [TiposEmpaqueController::class, 'update'])->name('tipos-empaque.update')->middleware('can:tipos-empaque-edit');
-        Route::delete('/{tipo_empaque}', [TiposEmpaqueController::class, 'destroy'])->name('tipos-empaque.destroy')->middleware('can:tipos-empaque-destroy');
+    // Rutas para Clasificaciones de envase
+    Route::prefix('clasificaciones-envases')->group(function () {
+        Route::get('/', [ClasificacionesEnvasesController::class, 'index'])->name('clasificaciones-envases.index')->middleware('can:clasificaciones-envases-list');
+        Route::get('/crear', [ClasificacionesEnvasesController::class, 'create'])->name('clasificaciones-envases.create')->middleware('can:clasificaciones-envases-create');
+        Route::post('/', [ClasificacionesEnvasesController::class, 'store'])->name('clasificaciones-envases.store')->middleware('can:clasificaciones-envases-create');
+        Route::get('/{clasificacion_envase}', [ClasificacionesEnvasesController::class, 'show'])->name('clasificaciones-envases.show')->middleware('can:clasificaciones-envases-show');
+        Route::get('/{clasificacion_envase}/editar', [ClasificacionesEnvasesController::class, 'edit'])->name('clasificaciones-envases.edit')->middleware('can:clasificaciones-envases-edit');
+        Route::put('/{clasificacion_envase}', [ClasificacionesEnvasesController::class, 'update'])->name('clasificaciones-envases.update')->middleware('can:clasificaciones-envases-edit');
+        Route::delete('/{clasificacion_envase}', [ClasificacionesEnvasesController::class, 'destroy'])->name('clasificaciones-envases.destroy')->middleware('can:clasificaciones-envases-destroy');
     });
 
     // Rutas para Empaques
@@ -292,7 +292,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // DASHBOARDS //
-Route::get('index', [DashboardsController::class, 'index']);
+//Route::get('index', [DashboardsController::class, 'index']);
 Route::get('index2', [DashboardsController::class, 'index2']);
 Route::get('index3', [DashboardsController::class, 'index3']);
 Route::get('index4', [DashboardsController::class, 'index4']);

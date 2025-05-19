@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('codigos_barras', function (Blueprint $table) {
-            $table->string('empaque', 50)->nullable()->after('tipo_empaque');
+            $table->string('empaque', 50)->nullable()->after('clasificacion_envase');
         });
     }
 

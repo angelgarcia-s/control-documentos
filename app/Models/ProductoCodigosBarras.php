@@ -9,12 +9,12 @@ class ProductoCodigosBarras extends Model
 {
     protected $table = 'producto_codigos_barras';
 
-    protected $fillable = ['producto_id', 'codigo_barra_id', 'tipo_empaque', 'contenido'];
+    protected $fillable = ['producto_id', 'codigo_barra_id', 'clasificacion_envase', 'contenido'];
 
     // Mutadores para guardar en minúsculas
-    public function setTipoEmpaqueAttribute($value)
+    public function setClasificacionEnvaseAttribute($value)
     {
-        $this->attributes['tipo_empaque'] = strtolower($value);
+        $this->attributes['clasificacion_envase'] = strtolower($value);
     }
 
     public function setContenidoAttribute($value)
@@ -23,7 +23,7 @@ class ProductoCodigosBarras extends Model
     }
 
     // Accesores para mostrar con la primera letra de cada palabra en mayúsculas
-    public function getTipoEmpaqueAttribute($value)
+    public function getClasificacionEnvaseAttribute($value)
     {
         return Str::title($value);
     }

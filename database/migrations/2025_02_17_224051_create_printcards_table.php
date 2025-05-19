@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('printcards', function (Blueprint $table) {
             $table->id();
-            
+
             // Claves foráneas (Probamos con constrained(), pero si falla, usamos unsignedBigInteger)
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
-            $table->foreignId('tipo_empaque_id')->constrained('tipos_empaque')->onDelete('cascade');
+            $table->foreignId('clasificaciones_envases_id')->constrained('clasificaciones_envases')->onDelete('cascade');
 
             $table->string('codigo_especifico')->unique(); // Código único para identificar el Print Card
             $table->date('fecha_manual')->nullable(); // Fecha de impresión ingresada manualmente

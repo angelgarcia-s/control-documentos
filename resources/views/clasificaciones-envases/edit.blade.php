@@ -23,31 +23,31 @@
     </div>
 @endif
 
-<form action="{{ route('tipos-empaque.update', $tipo_empaque) }}" method="POST">
+<form action="{{ route('clasificaciones-envases.update', $clasificacionEnvase) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <div class="box-title">Editar Tipo de Empaque</div>
+                    <div class="box-title">Editar Clasificaciónd e envase</div>
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Orden</label>
-                            <input type="text" name="orden" value="{{ old('orden', $tipo_empaque->orden) }}" required class="form-control @error('orden') is-invalid @enderror">
+                            <input type="text" name="orden" value="{{ old('orden', $clasificacionEnvase->orden) }}" required class="form-control @error('orden') is-invalid @enderror">
                             @error('orden') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" value="{{ old('nombre', $tipo_empaque->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror">
+                            <input type="text" name="nombre" value="{{ old('nombre', $clasificacionEnvase->nombre) }}" required class="form-control @error('nombre') is-invalid @enderror">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                     </div>
                 </div>
                 <div class="box-footer text-right">
-                    <a href="{{ route('tipos-empaque.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                    <a href="{{ route('clasificaciones-envases.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
                     <button type="submit" class="ti-btn ti-btn-primary-full">Actualizar</button>
                 </div>
             </div>

@@ -19,7 +19,7 @@ class ProductoCodigosBarrasTable extends Component
         ['name' => 'producto.nombre_corto', 'label' => 'Producto', 'sortable' => true, 'searchable' => true, 'relationship' => 'producto'],
         ['name' => 'codigoBarra.codigo', 'label' => 'Código de barras', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
         ['name' => 'codigoBarra.nombre_corto', 'label' => 'Nombre Código', 'sortable' => true, 'searchable' => true, 'relationship' => 'codigoBarra'],
-        ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
+        ['name' => 'clasificacion_envase', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
         ['name' => 'contenido', 'label' => 'Contenido', 'sortable' => true, 'searchable' => true],
     ];
 

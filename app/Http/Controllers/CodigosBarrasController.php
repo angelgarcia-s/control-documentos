@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CodigoBarra;
-use App\Models\TipoEmpaque;
+use App\Models\ClasificacionEnvase;
 use App\Models\Empaque;
 use App\Models\Color;
 use App\Models\Tamano;
@@ -29,7 +29,7 @@ class CodigosBarrasController extends Controller
             'codigos.*.codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
             'codigos.*.consecutivo_codigo' => 'required|string|size:3',
             'codigos.*.nombre' => 'required|string|max:255',
-            'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
+            'codigos.*.clasificacion_envase' => 'required|string|max:50|exists:clasificaciones_envases,nombre',
             'codigos.*.empaque' => 'required|string|max:50|exists:empaques,nombre',
             'codigos.*.contenido' => 'required|string|max:255',
             'codigos.*.color_id' => 'nullable|exists:colores,id',
@@ -48,7 +48,7 @@ class CodigosBarrasController extends Controller
                 'codigo' => $codigoData['codigo'],
                 'consecutivo_codigo' => $codigoData['consecutivo_codigo'],
                 'nombre' => $codigoData['nombre'],
-                'tipo_empaque' => $codigoData['tipo_empaque'],
+                'clasificacion_envase' => $codigoData['clasificacion_envase'],
                 'empaque' => $codigoData['empaque'],
                 'contenido' => $codigoData['contenido'],
                 'color_id' => $codigoData['color_id'],
@@ -69,12 +69,12 @@ class CodigosBarrasController extends Controller
     public function edit(CodigoBarra $codigoBarra)
     {
         // Cargar los catálogos con ordenamiento específico
-        $tiposEmpaque = TipoEmpaque::orderBy('orden', 'asc')->get();
+        $clasificacionesEnvases = ClasificacionEnvase::orderBy('orden', 'asc')->get();
         $empaques = Empaque::orderBy('nombre', 'asc')->get();
         $colores = Color::orderBy('nombre', 'asc')->get();
         $tamanos = Tamano::orderBy('nombre', 'asc')->get();
 
-        return view('codigos-barras.edit', compact('codigoBarra', 'tiposEmpaque', 'empaques', 'colores', 'tamanos'));
+        return view('codigos-barras.edit', compact('codigoBarra', 'clasificacionesEnvases', 'empaques', 'colores', 'tamanos'));
     }
 
     public function update(Request $request, CodigoBarra $codigoBarra)
@@ -83,7 +83,7 @@ class CodigosBarrasController extends Controller
             'tipo' => 'required|in:EAN13,ITF14',
             'codigo' => 'required|string|max:50|unique:codigos_barras,codigo,' . $codigoBarra->id,
             'nombre' => 'required|string|max:255',
-            'tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
+            'clasificacion_envase' => 'required|string|max:50|exists:clasificaciones_envases,nombre',
             'empaque' => 'nullable|string|max:50|exists:empaques,nombre',
             'contenido' => 'nullable|string|max:255',
             'color_id' => 'nullable|exists:colores,id',

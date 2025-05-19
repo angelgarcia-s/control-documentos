@@ -86,7 +86,7 @@
                                         <!-- Código de barras Primario -->
                                         <label class="form-label">Código de barras Primario</label>
                                         @php
-                                            $primario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario');
+                                            $primario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Primario');
                                         @endphp
                                         <p class="form-control border border-slate-200 min-h-9">{{ $primario ? ($primario->codigoBarra->codigo ?? '-') : '-' }}</p>
                                     </div>
@@ -99,7 +99,7 @@
                                     <div class="md:col-span-6 col-span-12 mb-4">
                                         <label class="form-label">Código de barras Secundario</label>
                                         @php
-                                            $secundario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario');
+                                            $secundario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Secundario');
                                         @endphp
                                         <p class="form-control border border-slate-200 min-h-9">{{ $secundario ? ($secundario->codigoBarra->codigo ?? '-') : '-' }}</p>
                                     </div>
@@ -112,7 +112,7 @@
                                     <div class="md:col-span-6 col-span-12 mb-4">
                                         <label class="form-label">Código de barras Terciario</label>
                                         @php
-                                            $terciario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario');
+                                            $terciario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Terciario');
                                         @endphp
                                         <p class="form-control border border-slate-200 min-h-9">{{ $terciario ? ($terciario->codigoBarra->codigo ?? '-') : '-' }}</p>
                                     </div>
@@ -125,7 +125,7 @@
                                     <div class="md:col-span-6 col-span-12 mb-4">
                                         <label class="form-label">Código de barras Cuaternario</label>
                                         @php
-                                            $cuaternario = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario');
+                                            $cuaternario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Cuaternario');
                                         @endphp
                                         <p class="form-control border border-slate-200 min-h-9">{{ $cuaternario ? ($cuaternario->codigoBarra->codigo ?? '-') : '-' }}</p>
                                     </div>
@@ -138,7 +138,7 @@
                                     <div class="md:col-span-6 col-span-12 mb-4">
                                         <label class="form-label">Código de barras Master</label>
                                         @php
-                                            $master = $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master');
+                                            $master = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Master');
                                         @endphp
                                         <p class="form-control border border-slate-200 min-h-9">{{ $master ? ($master->codigoBarra->codigo ?? '-') : '-' }}</p>
                                     </div>

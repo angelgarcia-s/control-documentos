@@ -29,7 +29,7 @@
                                         <td class="text-start">{{ $codigo->nombre_corto ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->empaque ?? 'N/A' }}</td>
                                         <td class="text-start">{{ $codigo->contenido ?? 'N/A' }}</td>
-                                        <td class="text-start">{{ $codigo->tipo_empaque ?? '-' }}</td>
+                                        <td class="text-start">{{ $codigo->clasificacion_envase ?? '-' }}</td>
                                         <td>
                                             <button type="button" wire:click="confirmarDesasignacion({{ $codigo->id }})" class="ti-btn text-xl text-rose-400 !py-1 !px-1 ti-btn-wave">
                                                 <i class="las la-unlink"></i>
@@ -99,10 +99,10 @@
                                    readonly>
                         </div>
                         <div class="md:col-span-3 col-span-12 mb-4 relative">
-                            <label class="form-label">Tipo de Empaque</label>
+                            <label class="form-label">Clasificacion de envase</label>
                             <input type="text"
-                                   wire:model="filas.{{ $index }}.tipo_empaque"
-                                   class="form-control @error('filas.' . $index . '.tipo_empaque') is-invalid @enderror"
+                                   wire:model="filas.{{ $index }}.clasificacion_envase"
+                                   class="form-control @error('filas.' . $index . '.clasificacion_envase') is-invalid @enderror"
                                    readonly>
                         </div>
                         <div class="md:col-span-1 col-span-12 mb-4 flex items-end">

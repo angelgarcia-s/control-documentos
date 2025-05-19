@@ -18,27 +18,27 @@
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <h5 class="box-title">Tipos de Empaque</h5>
+                    <h5 class="box-title">Clasificacion de envases</h5>
                 </div>
                 <div class="box-body space-y-3">
                     <div class="flex justify-between">
                         <div>
-                            @can('tipos-empaque-create')
-                                <a href="{{ route('tipos-empaque.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nuevo Tipo de Empaque</a>
+                            @can('clasificaciones-envases-create')
+                                <a href="{{ route('clasificaciones-envases.create') }}" class="ti-btn ti-btn-primary px-4 py-2 rounded mb-4 inline-block">Agregar Nueva clasificacion de empaque</a>
                             @endcan
                         </div>
                         <div class="space-x-2">
-                            @can('tipos-empaque-import')
+                            @can('clasificaciones-envases-import')
                                 <button type="button" class="ti-btn ti-btn-primary" id="import-xlsx">Importar</button>
                             @endcan
-                            @can('tipos-empaque-download')
+                            @can('clasificaciones-envases-download')
                                 <button type="button" class="ti-btn ti-btn-primary" id="download-xlsx">Descargar</button>
                             @endcan
                         </div>
                     </div>
 
                     <!-- Componente Livewire -->
-                    @livewire('tipos-empaque-table')
+                    @livewire('clasificaciones-envases-table')
                 </div>
             </div>
         </div>

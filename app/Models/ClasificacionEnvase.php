@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class TipoEmpaque extends Model
+class ClasificacionEnvase extends Model
 {
     use HasFactory;
 
-    protected $table = 'tipos_empaque';
+    protected $table = 'clasificaciones_envases';
 
     protected $fillable = ['orden', 'nombre'];
 

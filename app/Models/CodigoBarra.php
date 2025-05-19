@@ -13,7 +13,7 @@ class CodigoBarra extends Model
         'codigo',
         'consecutivo_codigo',
         'nombre',
-        'tipo_empaque',
+        'clasificacion_envase',
         'empaque',
         'contenido',
         'tipo',
@@ -28,9 +28,9 @@ class CodigoBarra extends Model
         $this->attributes['nombre'] = strtolower($value);
     }
 
-    public function setTipoEmpaqueAttribute($value)
+    public function setClasificacionEnvaseAttribute($value)
     {
-        $this->attributes['tipo_empaque'] = strtolower($value);
+        $this->attributes['clasificacion_envase'] = strtolower($value);
     }
 
     public function setEmpaqueAttribute($value)
@@ -59,7 +59,7 @@ class CodigoBarra extends Model
         return Str::title($value);
     }
 
-    public function getTipoEmpaqueAttribute($value)
+    public function getClasificacionEnvaseAttribute($value)
     {
         return Str::title($value);
     }
@@ -83,7 +83,7 @@ class CodigoBarra extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'producto_codigos_barras', 'codigo_barra_id', 'producto_id')
-                    ->withPivot('tipo_empaque', 'contenido');
+                    ->withPivot('clasificacion_envase', 'contenido');
     }
 
     public function color()

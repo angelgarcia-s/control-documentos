@@ -45,27 +45,27 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($tiposEmpaque as $tipoEmpaque)
+                @foreach($clasificacionesEnvases as $clasificacionEnvase)
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                {{ $this->getColumnValue($tipoEmpaque, $columna) }}
+                                {{ $this->getColumnValue($clasificacionEnvase, $columna) }}
                             </td>
                         @endforeach
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
-                                @can('tipos-empaque-show')
-                                    <a href="{{ route('tipos-empaque.show', $tipoEmpaque) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                @can('clasificaciones-envases-show')
+                                    <a href="{{ route('clasificaciones-envases.show', $clasificacionEnvase) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-eye-line"></i>
                                     </a>
                                 @endcan
-                                @can('tipos-empaque-edit')
-                                    <a href="{{ route('tipos-empaque.edit', $tipoEmpaque) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                @can('clasificaciones-envases-edit')
+                                    <a href="{{ route('clasificaciones-envases.edit', $clasificacionEnvase) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 @endcan
-                                @can('tipos-empaque-destroy')
-                                    <button wire:click="confirmarEliminar({{ $tipoEmpaque->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
+                                @can('clasificaciones-envases-destroy')
+                                    <button wire:click="confirmarEliminar({{ $clasificacionEnvase->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-delete-bin-2-line"></i>
                                     </button>
                                 @endcan
@@ -92,7 +92,7 @@
 
         <!-- Paginación de Livewire con Tailwind -->
         <div>
-            {{ $tiposEmpaque->links('vendor.pagination.tailwind') }}
+            {{ $clasificacionesEnvases->links('vendor.pagination.tailwind') }}
         </div>
     </div>
 

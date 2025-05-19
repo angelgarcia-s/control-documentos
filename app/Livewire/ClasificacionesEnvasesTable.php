@@ -3,10 +3,10 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\TipoEmpaque;
+use App\Models\ClasificacionEnvase;
 use App\Traits\HasTableFeatures;
 
-class TiposEmpaqueTable extends Component
+class ClasificacionesEnvasesTable extends Component
 {
     use HasTableFeatures;
 
@@ -38,20 +38,20 @@ class TiposEmpaqueTable extends Component
     public function eliminarElemento()
     {
         if ($this->confirmingDelete) {
-            $tipoEmpaque = TipoEmpaque::find($this->confirmingDelete);
-            if ($tipoEmpaque) {
+            $clasificacionEnvase = ClasificacionEnvase::find($this->confirmingDelete);
+            if ($clasificacionEnvase) {
                 try {
-                    $tipoEmpaque->delete();
-                    session()->flash('success', 'Tipo de empaque eliminado correctamente.');
+                    $clasificacionEnvase->delete();
+                    session()->flash('success', 'Clasificacion de envase eliminada correctamente.');
                     $this->resetPage();
                     $this->dispatch('reiniciarSelects');
                 } catch (\Exception $e) {
-                    $this->errorMessage = 'Error al eliminar el tipo de empaque: ' . $e->getMessage();
+                    $this->errorMessage = 'Error al eliminar la clasificación de envase ' . $e->getMessage();
                 }
 
                 $this->confirmingDelete = null;
             } else {
-                $this->errorMessage = 'Tipo de empaque no encontrado.';
+                $this->errorMessage = 'Clasificacion no encontrada.';
                 $this->confirmingDelete = null;
             }
         }
@@ -64,19 +64,19 @@ class TiposEmpaqueTable extends Component
 
     public function render()
     {
-        $query = TipoEmpaque::query();
+        $query = ClasificacionEnvase::query();
         $query = $this->aplicarFiltros($query, $this->columnas);
-        $tiposEmpaque = $query->paginate($this->perPage);
+        $clasificacionesEnvases = $query->paginate($this->perPage);
 
-        return view('livewire.tipos-empaque-table', [
-            'tiposEmpaque' => $tiposEmpaque,
+        return view('livewire.clasificaciones-envases-table', [
+            'clasificacionesEnvases' => $clasificacionesEnvases,
             'columnas' => $this->columnas,
         ]);
     }
 
-    public function getColumnValue($tipoEmpaque, $columna)
+    public function getColumnValue($clasificacionEnvase, $columna)
     {
         $campo = $columna['name'];
-        return $tipoEmpaque->$campo ?? '-';
+        return $clasificacionEnvase->$campo ?? '-';
     }
 }

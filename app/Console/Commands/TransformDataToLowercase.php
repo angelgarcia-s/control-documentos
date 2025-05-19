@@ -16,7 +16,7 @@ use App\Models\Producto;
 use App\Models\ProductoCodigosBarras;
 use App\Models\Proveedor;
 use App\Models\Tamano;
-use App\Models\TipoEmpaque;
+use App\Models\ClasificacionEnvase;
 use App\Models\TipoSello;
 use App\Models\UnidadMedida;
 use App\Models\User;
@@ -89,7 +89,7 @@ class TransformDataToLowercase extends Command
         $this->info('Transformando tabla codigos_barras...');
         CodigoBarra::query()->update([
             'nombre' => \DB::raw('LOWER(nombre)'),
-            'tipo_empaque' => \DB::raw('LOWER(tipo_empaque)'),
+            'clasificacion_envase' => \DB::raw('LOWER(clasificacion_envase)'),
             'empaque' => \DB::raw('LOWER(empaque)'),
             'contenido' => \DB::raw('LOWER(contenido)'),
             'nombre_corto' => \DB::raw('LOWER(nombre_corto)'),
@@ -98,7 +98,7 @@ class TransformDataToLowercase extends Command
         // Transformar ProductoCodigosBarras
         $this->info('Transformando tabla producto_codigos_barras...');
         ProductoCodigosBarras::query()->update([
-            'tipo_empaque' => \DB::raw('LOWER(tipo_empaque)'),
+            'clasificacion_envase' => \DB::raw('LOWER(clasificacion_envase)'),
             'contenido' => \DB::raw('LOWER(contenido)'),
         ]);
 
@@ -115,9 +115,9 @@ class TransformDataToLowercase extends Command
             'nombre' => \DB::raw('LOWER(nombre)'),
         ]);
 
-        // Transformar TipoEmpaque
+        // Transformar clasificacionEnvase
         $this->info('Transformando tabla tipos_empaque...');
-        TipoEmpaque::query()->update([
+        ClasificacionEnvase::query()->update([
             'nombre' => \DB::raw('LOWER(nombre)'),
         ]);
 

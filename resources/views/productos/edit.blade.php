@@ -135,52 +135,52 @@
                                     <div class="grid grid-cols-12 gap-6">
                                         <div class="col-span-6 sm:col-span-6">
                                             <label class="form-label">Código de barras Primario</label>
-                                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="codigo_barras_primario" value="{{ old('codigo_barras_primario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Primario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('codigo_barras_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="col-span-6 sm:col-span-6">
                                             <label class="form-label">Contenido Primario</label>
-                                            <input type="text" name="contenido_primario" value="{{ old('contenido_primario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Primario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="contenido_primario" value="{{ old('contenido_primario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Primario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('contenido_primario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Código de barras Secundario</label>
-                                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="codigo_barras_secundario" value="{{ old('codigo_barras_secundario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Secundario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('codigo_barras_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Contenido Secundario</label>
-                                            <input type="text" name="contenido_secundario" value="{{ old('contenido_secundario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Secundario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="contenido_secundario" value="{{ old('contenido_secundario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Secundario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('contenido_secundario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Código de barras Terciario</label>
-                                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="codigo_barras_terciario" value="{{ old('codigo_barras_terciario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Terciario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('codigo_barras_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Contenido Terciario</label>
-                                            <input type="text" name="contenido_terciario" value="{{ old('contenido_terciario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Terciario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="contenido_terciario" value="{{ old('contenido_terciario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Terciario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('contenido_terciario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Código de barras Cuaternario</label>
-                                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="codigo_barras_cuaternario" value="{{ old('codigo_barras_cuaternario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Cuaternario')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('codigo_barras_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Contenido Cuaternario</label>
-                                            <input type="text" name="contenido_cuaternario" value="{{ old('contenido_cuaternario', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Cuaternario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="contenido_cuaternario" value="{{ old('contenido_cuaternario', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Cuaternario')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('contenido_cuaternario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Código de barras Master</label>
-                                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="codigo_barras_master" value="{{ old('codigo_barras_master', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Master')->codigoBarra->codigo ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('codigo_barras_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                         <div class="md:col-span-6 col-span-12 mb-4">
                                             <label class="form-label">Contenido Master</label>
-                                            <input type="text" name="contenido_master" value="{{ old('contenido_master', $producto->productoCodigosBarras->firstWhere('tipo_empaque', 'Master')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
+                                            <input type="text" name="contenido_master" value="{{ old('contenido_master', $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Master')->contenido ?? '-') }}" class="form-control opacity-50" disabled>
                                             @error('contenido_master') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                                         </div>
                                     </div>

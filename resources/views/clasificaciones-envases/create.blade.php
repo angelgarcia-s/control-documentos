@@ -23,13 +23,13 @@
     </div>
 @endif
 
-<form action="{{ route('tipos-empaque.store') }}" method="POST">
+<form action="{{ route('clasificaciones-envases.store') }}" method="POST">
     @csrf
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
             <div class="box">
                 <div class="box-header">
-                    <div class="box-title">Tipo de Empaque</div>
+                    <div class="box-title">Clasificaciones de envase</div>
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
@@ -49,7 +49,7 @@
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="flex justify-end md:col-span-12 col-span-12">
-                            <a href="{{ route('tipos-empaque.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
+                            <a href="{{ route('clasificaciones-envases.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Cancelar</a>
                             <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
                         </div>
                     </div>

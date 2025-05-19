@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\TipoEmpaque;
+use App\Models\ClasificacionEnvase;
 use App\Models\Empaque;
 use App\Models\Color;
 use App\Models\Tamano;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class CrearCodigosBarras extends Component
 {
     public $codigos = [];
-    public $tiposEmpaque;
+    public $clasificacionesEnvases;
     public $empaques;
     public $colores;
     public $tamanos;
@@ -21,7 +21,7 @@ class CrearCodigosBarras extends Component
         'codigos.*.tipo' => 'required|in:EAN13,ITF14',
         'codigos.*.codigo' => 'required|string|max:50|unique:codigos_barras,codigo',
         'codigos.*.nombre' => 'required|string|max:255',
-        'codigos.*.tipo_empaque' => 'required|string|max:50|exists:tipos_empaque,nombre',
+        'codigos.*.clasificacion_envase' => 'required|string|max:50|exists:clasificaciones_envases,nombre',
         'codigos.*.empaque' => 'required|string|max:50|exists:empaques,nombre',
         'codigos.*.contenido' => 'required|string|max:255',
         'codigos.*.color_id' => 'nullable|exists:colores,id',
@@ -30,8 +30,8 @@ class CrearCodigosBarras extends Component
 
     public function mount()
     {
-        // Cargar los catálogos para los selects, ordenando alfabéticamente por nombre (excepto tiposEmpaque que usa 'orden')
-        $this->tiposEmpaque = TipoEmpaque::orderBy('orden', 'asc')->get(['id', 'nombre']);
+        // Cargar los catálogos para los selects, ordenando alfabéticamente por nombre (excepto clasificacionesEnvases que usa 'orden')
+        $this->clasificacionesEnvases = ClasificacionEnvase::orderBy('orden', 'asc')->get(['id', 'nombre']);
         $this->empaques = Empaque::orderBy('nombre', 'asc')->get(['id', 'nombre']);
         $this->colores = Color::orderBy('nombre', 'asc')->get(['id', 'nombre']);
         $this->tamanos = Tamano::orderBy('nombre', 'asc')->get(['id', 'nombre']);
@@ -42,7 +42,7 @@ class CrearCodigosBarras extends Component
         'codigos.*.tipo' => 'Tipo',
         'codigos.*.codigo' => 'Código',
         'codigos.*.nombre' => 'Producto',
-        'codigos.*.tipo_empaque' => 'Tipo de Empaque',
+        'codigos.*.clasificacion_envase' => 'Clasificacion Envase',
         'codigos.*.empaque' => 'Empaque',
         'codigos.*.contenido' => 'Contenido',
         'codigos.*.color_id' => 'Color',
@@ -56,7 +56,7 @@ class CrearCodigosBarras extends Component
                 'tipo' => '',
                 'codigo' => '',
                 'nombre' => count($this->codigos) === 0 ? '' : $this->codigos[0]['nombre'],
-                'tipo_empaque' => '',
+                'clasificacion_envase' => '',
                 'empaque' => '',
                 'contenido' => '',
                 'color_id' => '',
@@ -93,7 +93,7 @@ class CrearCodigosBarras extends Component
 
         // Validaciones adicionales
         $codigosUsados = [];
-        $tiposEmpaqueUsados = [];
+        $clasificacionesEnvasesUsados = [];
         $ean13Count = 0;
 
         foreach ($this->codigos as $index => $codigo) {
@@ -104,12 +104,12 @@ class CrearCodigosBarras extends Component
             }
             $codigosUsados[] = $codigo['codigo'];
 
-            // Validar duplicados de tipo_empaque
-            if (in_array($codigo['tipo_empaque'], $tiposEmpaqueUsados)) {
-                $this->addError("codigos.$index.tipo_empaque", "El tipo de empaque '{$codigo['tipo_empaque']}' ya está en otra fila.");
+            // Validar duplicados de clasificacion_envase
+            if (in_array($codigo['clasificacion_envase'], $clasificacionesEnvasesUsados)) {
+                $this->addError("codigos.$index.clasificacion_envase", "El tipo de empaque '{$codigo['clasificacion_envase']}' ya está en otra fila.");
                 return;
             }
-            $tiposEmpaqueUsados[] = $codigo['tipo_empaque'];
+            $clasificacionesEnvasesUsados[] = $codigo['clasificacion_envase'];
 
             // Validar longitud según tipo
             $longitud = strlen($codigo['codigo']);

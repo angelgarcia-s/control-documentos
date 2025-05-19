@@ -300,14 +300,14 @@ sku: Identificador único del producto (string).
 nombre_corto: Nombre corto del producto (string).
 id_familia: Clave foránea que referencia a la tabla familias_productos (integer).
 Relaciones:
-codigosBarras: Relación muchos a muchos con CodigoBarra a través de la tabla pivote producto_codigos_barras, que incluye los campos adicionales tipo_empaque y contenido.
+codigosBarras: Relación muchos a muchos con CodigoBarra a través de la tabla pivote producto_codigos_barras, que incluye los campos adicionales clasificacion_envase y contenido.
 php
 
 Copiar
 public function codigosBarras()
 {
     return $this->belongsToMany(CodigoBarra::class, 'producto_codigos_barras', 'producto_id', 'codigo_barra_id')
-                ->withPivot('tipo_empaque', 'contenido');
+                ->withPivot('clasificacion_envase', 'contenido');
 }
 familia: Relación belongsTo con el modelo FamiliaProducto, usando el campo id_familia.
 php
@@ -322,7 +322,7 @@ Tabla: codigos_barras.
 Campos relevantes:
 codigo: Código de barras único (string).
 nombre: Nombre del código de barras, que representa la familia a la que pertenece (string).
-tipo_empaque: Tipo de empaque asociado al código (string).
+clasificacion_envase: Tipo de empaque asociado al código (string).
 contenido: Contenido del código, como cantidad o descripción (string).
 Modelo FamiliaProducto:
 Tabla: familias_productos.
@@ -379,7 +379,7 @@ Copiar
 @endsection
 Vista asignar-codigos-barras.blade.php:
 Muestra una tabla de códigos ya asignados al producto.
-Proporciona un formulario dinámico para agregar nuevos códigos, con campos para codigo, contenido, y tipo_empaque.
+Proporciona un formulario dinámico para agregar nuevos códigos, con campos para codigo, contenido, y clasificacion_envase.
 Incluye un modal de confirmación para nombres no coincidentes y un modal para desasignar códigos.
 Funcionalidad
 
@@ -401,7 +401,7 @@ public function mount($sku)
     $this->filas[] = [
         'codigo' => '',
         'contenido' => '',
-        'tipo_empaque' => '',
+        'clasificacion_envase' => '',
     ];
     $this->userMessage = "Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.";
     $this->selectorKey = uniqid();
@@ -422,17 +422,17 @@ private function loadProductoAndCodigos()
     $this->producto = Producto::where('sku', $this->sku)->with(['codigosBarras', 'familia'])->firstOrFail();
     $codigosAsignados = $this->producto->codigosBarras;
 
-    $tiposEmpaqueOrden = TipoEmpaque::pluck('orden', 'nombre')->toArray();
+    $tiposEmpaqueOrden = clasificacionEnvase::pluck('orden', 'nombre')->toArray();
 
     $this->codigosAsignados = $codigosAsignados->sortBy([
         ['nombre', 'asc'],
-        fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999,
+        fn($codigo) => $tiposEmpaqueOrden[$codigo->clasificacion_envase] ?? 999,
     ]);
 }
 2. Formulario Dinámico
 
 Propiedad $filas:
-Almacena las filas del formulario, cada una con los campos codigo, contenido, y tipo_empaque.
+Almacena las filas del formulario, cada una con los campos codigo, contenido, y clasificacion_envase.
 Método agregarFila:
 Permite agregar hasta 5 filas al formulario.
 Muestra un mensaje de error si se alcanza el límite.
@@ -445,7 +445,7 @@ public function agregarFila()
         $this->filas[] = [
             'codigo' => '',
             'contenido' => '',
-            'tipo_empaque' => '',
+            'clasificacion_envase' => '',
         ];
         $this->userMessage = "Nueva fila añadida. Ahora tienes " . count($this->filas) . " filas.";
         if ($this->focusedInputIndex !== null) {
@@ -478,7 +478,7 @@ public function eliminarFila($index)
     }
 }
 Interfaz de usuario:
-Las filas del formulario se renderizan con campos de solo lectura (readonly) para codigo, contenido, y tipo_empaque.
+Las filas del formulario se renderizan con campos de solo lectura (readonly) para codigo, contenido, y clasificacion_envase.
 Cada fila, excepto la última, tiene un borde inferior (border-b-2 border-slate-300 pb-2) para separar visualmente las filas.
 php
 
@@ -504,8 +504,8 @@ Copiar
         <div class="md:col-span-3 col-span-12 mb-4 relative">
             <label class="form-label">Tipo de Empaque</label>
             <input type="text"
-                   wire:model="filas.{{ $index }}.tipo_empaque"
-                   class="form-control @error('filas.' . $index . '.tipo_empaque') is-invalid @enderror"
+                   wire:model="filas.{{ $index }}.clasificacion_envase"
+                   class="form-control @error('filas.' . $index . '.clasificacion_envase') is-invalid @enderror"
                    readonly>
         </div>
         <div class="md:col-span-1 col-span-12 mb-4 flex items-end">
@@ -565,17 +565,17 @@ public function asignar()
         return;
     }
 
-    $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
-    if ($tipoEmpaqueSeleccionado) {
+    $clasificacionEnvaseSeleccionado = $codigo->clasificacion_envase;
+    if ($clasificacionEnvaseSeleccionado) {
         foreach ($this->filas as $index => $fila) {
-            if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
-                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+            if ($index !== $this->focusedInputIndex && $fila['clasificacion_envase'] === $clasificacionEnvaseSeleccionado) {
+                $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                 return;
             }
         }
 
-        if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
-            $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+        if ($this->codigosAsignados->contains('clasificacion_envase', $clasificacionEnvaseSeleccionado)) {
+            $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado a otro código para este producto.");
             return;
         }
     }
@@ -608,7 +608,7 @@ private function asignarCodigo($index, $codigo)
     if (isset($this->filas[$index])) {
         $this->filas[$index]['codigo'] = $codigo->codigo;
         $this->filas[$index]['contenido'] = $codigo->contenido ?? 'N/A';
-        $this->filas[$index]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
+        $this->filas[$index]['clasificacion_envase'] = $codigo->clasificacion_envase ?? '-';
     }
 }
 4. Validación de Coincidencia de Nombres
@@ -673,11 +673,11 @@ public function confirmarAsignacion()
             return;
         }
 
-        $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
-        if ($tipoEmpaqueSeleccionado) {
+        $clasificacionEnvaseSeleccionado = $codigo->clasificacion_envase;
+        if ($clasificacionEnvaseSeleccionado) {
             foreach ($this->filas as $index => $fila) {
-                if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
-                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                if ($index !== $this->focusedInputIndex && $fila['clasificacion_envase'] === $clasificacionEnvaseSeleccionado) {
+                    $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                     $this->confirmingAssign = false;
                     $this->selectedCode = null;
                     $this->codigoNombre = null;
@@ -685,8 +685,8 @@ public function confirmarAsignacion()
                 }
             }
 
-            if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
-                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+            if ($this->codigosAsignados->contains('clasificacion_envase', $clasificacionEnvaseSeleccionado)) {
+                $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado a otro código para este producto.");
                 $this->confirmingAssign = false;
                 $this->selectedCode = null;
                 $this->codigoNombre = null;
@@ -736,7 +736,7 @@ public function guardar()
 
     try {
         $codigosAsignadosCodigos = $this->codigosAsignados->pluck('codigo')->toArray();
-        $codigosAsignadosTiposEmpaque = $this->codigosAsignados->pluck('tipo_empaque')->toArray();
+        $codigosAsignadosTiposEmpaque = $this->codigosAsignados->pluck('clasificacion_envase')->toArray();
 
         foreach ($this->filas as $fila) {
             $codigoBarra = CodigoBarra::where('codigo', $fila['codigo'])->first();
@@ -746,14 +746,14 @@ public function guardar()
                     return;
                 }
 
-                $tipoEmpaque = $codigoBarra->tipo_empaque ?? '-';
-                if (in_array($tipoEmpaque, $codigosAsignadosTiposEmpaque)) {
-                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaque . " ya está asignado a otro código para este producto.");
+                $clasificacionEnvase = $codigoBarra->clasificacion_envase ?? '-';
+                if (in_array($clasificacionEnvase, $codigosAsignadosTiposEmpaque)) {
+                    $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvase . " ya está asignado a otro código para este producto.");
                     return;
                 }
 
                 $codigosAsignadosCodigos[] = $fila['codigo'];
-                $codigosAsignadosTiposEmpaque[] = $tipoEmpaque;
+                $codigosAsignadosTiposEmpaque[] = $clasificacionEnvase;
             }
         }
 

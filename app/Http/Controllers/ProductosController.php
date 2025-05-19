@@ -19,9 +19,7 @@ class ProductosController extends Controller
      */
     public function index(Request $request)
 {
-    $user = auth()->user();
-    $hasPermission = $user->hasPermissionTo('productos-list');
-    //dd($user->name, $user->roles->pluck('name'), $user->getAllPermissions()->pluck('name'), $hasPermission);
+
     return view('productos.index');
 }
 

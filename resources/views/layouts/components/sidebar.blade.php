@@ -96,8 +96,8 @@
                         @can('empaques-list')
                             <li class="slide"><a href="{{ route('empaques.index') }}" class="side-menu__item">Empaques</a></li>
                         @endcan
-                        @can('tipos-empaque-list')
-                            <li class="slide"><a href="{{ route('tipos-empaque.index') }}" class="side-menu__item">Tipos de Empaque</a></li>
+                        @can('clasificaciones-envases-list')
+                            <li class="slide"><a href="{{ route('clasificaciones-envases.index') }}" class="side-menu__item">Clasificacion de envases</a></li>
                         @endcan
                         @can('tipos-sello-list')
                             <li class="slide"><a href="{{ route('tipos-sello.index') }}" class="side-menu__item">Tipos de Sello</a></li>

@@ -36,13 +36,13 @@
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Tipo de Empaque</label>
-                            <select name="tipo_empaque" class="form-control @error('tipo_empaque') is-invalid @enderror" required>
+                            <select name="clasificacion_envase" class="form-control @error('clasificacion_envase') is-invalid @enderror" required>
                                 <option value="">Seleccione</option>
                                 @foreach ($tiposEmpaque as $tipo)
-                                    <option value="{{ $tipo->nombre }}" {{ old('tipo_empaque', $asignacion->tipo_empaque) == $tipo->nombre ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
+                                    <option value="{{ $tipo->nombre }}" {{ old('clasificacion_envase', $asignacion->clasificacion_envase) == $tipo->nombre ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
                                 @endforeach
                             </select>
-                            @error('tipo_empaque') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            @error('clasificacion_envase') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-6 col-span-12 mb-4">
                             <label class="form-label">Contenido</label>

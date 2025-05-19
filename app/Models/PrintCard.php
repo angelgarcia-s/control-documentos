@@ -14,7 +14,7 @@ class PrintCard extends Model
 
     protected $fillable = [
         'producto_id',
-        'tipo_empaque_id',
+        'clasificacion_envase_id',
         'codigo_especifico',
         'fecha_manual',
         'codigo_barra',
@@ -39,8 +39,8 @@ class PrintCard extends Model
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
-    public function tipoEmpaque()
+    public function ClasificacionEnvase()
     {
-        return $this->belongsTo(TipoEmpaque::class, 'tipo_empaque_id');
+        return $this->belongsTo(ClasificacionEnvase::class, 'clasificacion_envase_id');
     }
 }

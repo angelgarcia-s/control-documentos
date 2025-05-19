@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Producto;
 use App\Models\CodigoBarra;
-use App\Models\TipoEmpaque;
+use App\Models\ClasificacionEnvase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -33,7 +33,7 @@ class AsignarCodigosBarras extends Component
         $this->filas[] = [
             'codigo' => '',
             'contenido' => '',
-            'tipo_empaque' => '',
+            'clasificacion_envase' => '',
         ];
         $this->userMessage = "Para asignar un código a un producto, primero selecciona el campo código y después elige un código de la lista.";
         $this->selectorKey = uniqid();
@@ -49,11 +49,11 @@ class AsignarCodigosBarras extends Component
         $this->producto = Producto::where('sku', $this->sku)->with('codigosBarras')->firstOrFail();
         $codigosAsignados = $this->producto->codigosBarras;
 
-        $tiposEmpaqueOrden = TipoEmpaque::pluck('orden', 'nombre')->toArray();
+        $clasificacionEnvasesOrden = ClasificacionEnvase::pluck('orden', 'nombre')->toArray();
 
         $this->codigosAsignados = $codigosAsignados->sortBy([
             ['nombre', 'asc'],
-            fn($codigo) => $tiposEmpaqueOrden[$codigo->tipo_empaque] ?? 999,
+            fn($codigo) => $clasificacionEnvasesOrden[$codigo->clasificacion_envase] ?? 999,
         ]);
     }
 
@@ -63,7 +63,7 @@ class AsignarCodigosBarras extends Component
             $this->filas[] = [
                 'codigo' => '',
                 'contenido' => '',
-                'tipo_empaque' => '',
+                'clasificacion_envase' => '',
             ];
             $this->userMessage = "Nueva fila añadida. Ahora tienes " . count($this->filas) . " filas.";
             if ($this->focusedInputIndex !== null) {
@@ -183,17 +183,17 @@ class AsignarCodigosBarras extends Component
             return;
         }
 
-        $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
-        if ($tipoEmpaqueSeleccionado) {
+        $clasificacionEnvaseSeleccionado = $codigo->clasificacion_envase;
+        if ($clasificacionEnvaseSeleccionado) {
             foreach ($this->filas as $index => $fila) {
-                if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
-                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                if ($index !== $this->focusedInputIndex && $fila['clasificacion_envase'] === $clasificacionEnvaseSeleccionado) {
+                    $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                     return;
                 }
             }
 
-            if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
-                $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+            if ($this->codigosAsignados->contains('clasificacion_envase', $clasificacionEnvaseSeleccionado)) {
+                $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado a otro código para este producto.");
                 return;
             }
         }
@@ -239,11 +239,11 @@ class AsignarCodigosBarras extends Component
                 return;
             }
 
-            $tipoEmpaqueSeleccionado = $codigo->tipo_empaque;
-            if ($tipoEmpaqueSeleccionado) {
+            $clasificacionEnvaseSeleccionado = $codigo->clasificacion_envase;
+            if ($clasificacionEnvaseSeleccionado) {
                 foreach ($this->filas as $index => $fila) {
-                    if ($index !== $this->focusedInputIndex && $fila['tipo_empaque'] === $tipoEmpaqueSeleccionado) {
-                        $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
+                    if ($index !== $this->focusedInputIndex && $fila['clasificacion_envase'] === $clasificacionEnvaseSeleccionado) {
+                        $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado en la fila " . ($index + 1) . ". Por favor, selecciona otro código con un tipo de empaque diferente.");
                         $this->confirmingAssign = false;
                         $this->selectedCode = null;
                         $this->codigoNombre = null;
@@ -251,8 +251,8 @@ class AsignarCodigosBarras extends Component
                     }
                 }
 
-                if ($this->codigosAsignados->contains('tipo_empaque', $tipoEmpaqueSeleccionado)) {
-                    $this->addErrorMessage("El tipo de empaque " . $tipoEmpaqueSeleccionado . " ya está asignado a otro código para este producto.");
+                if ($this->codigosAsignados->contains('clasificacion_envase', $clasificacionEnvaseSeleccionado)) {
+                    $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvaseSeleccionado . " ya está asignado a otro código para este producto.");
                     $this->confirmingAssign = false;
                     $this->selectedCode = null;
                     $this->codigoNombre = null;
@@ -287,7 +287,7 @@ class AsignarCodigosBarras extends Component
         if (isset($this->filas[$index])) {
             $this->filas[$index]['codigo'] = $codigo->codigo;
             $this->filas[$index]['contenido'] = $codigo->contenido ?? 'N/A';
-            $this->filas[$index]['tipo_empaque'] = $codigo->tipo_empaque ?? '-';
+            $this->filas[$index]['clasificacion_envase'] = $codigo->clasificacion_envase ?? '-';
         }
     }
 
@@ -319,7 +319,7 @@ class AsignarCodigosBarras extends Component
 
         try {
             $codigosAsignadosCodigos = $this->codigosAsignados->pluck('codigo')->toArray();
-            $codigosAsignadosTiposEmpaque = $this->codigosAsignados->pluck('tipo_empaque')->toArray();
+            $codigosAsignadosClasificacionesEnvases = $this->codigosAsignados->pluck('clasificacion_envase')->toArray();
 
             foreach ($this->filas as $fila) {
                 $codigoBarra = CodigoBarra::where('codigo', $fila['codigo'])->first();
@@ -329,14 +329,14 @@ class AsignarCodigosBarras extends Component
                         return;
                     }
 
-                    $tipoEmpaque = $codigoBarra->tipo_empaque ?? '-';
-                    if (in_array($tipoEmpaque, $codigosAsignadosTiposEmpaque)) {
-                        $this->addErrorMessage("El tipo de empaque " . $tipoEmpaque . " ya está asignado a otro código para este producto.");
+                    $clasificacionEnvase = $codigoBarra->clasificacion_envase ?? '-';
+                    if (in_array($clasificacionEnvase, $codigosAsignadosClasificacionesEnvases)) {
+                        $this->addErrorMessage("El tipo de empaque " . $clasificacionEnvase . " ya está asignado a otro código para este producto.");
                         return;
                     }
 
                     $codigosAsignadosCodigos[] = $fila['codigo'];
-                    $codigosAsignadosTiposEmpaque[] = $tipoEmpaque;
+                    $codigosAsignadosClasificacionesEnvases[] = $clasificacionEnvase;
                 }
             }
 
@@ -366,7 +366,7 @@ class AsignarCodigosBarras extends Component
     public function render()
     {
         return view('livewire.asignar-codigos-barras', [
-            'tiposEmpaque' => TipoEmpaque::all(['id', 'nombre']),
+            'clasificacionEnvase' => clasificacionEnvase::all(['id', 'nombre']),
         ]);
     }
 }

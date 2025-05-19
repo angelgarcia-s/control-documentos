@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipos_empaque', function (Blueprint $table) {
+        Schema::create('clasificaciones_envases', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->unique(); // Nombre del tipo de empaque (ej. Primario, Secundario, etc.)
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipos_empaque');
+        Schema::dropIfExists('clasificaciones_envases');
     }
 };

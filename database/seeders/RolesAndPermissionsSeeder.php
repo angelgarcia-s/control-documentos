@@ -18,6 +18,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $basePermisos = [
             'usuarios' => 'usuarios',
             'roles' => 'roles de usuarios',
+            'dashboards' => 'dashboards',
             'productos' => 'productos',
             'codigos-barras' => 'códigos de barras',
             'producto-codigos-barras' => 'productos con códigos de barras',
@@ -26,7 +27,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'colores' => 'colores de productos',
             'tamanos' => 'tamaños de productos',
             'unidades' => 'unidades de productos',
-            'tipos-empaque' => 'tipos de empaque',
+            'clasificaciones-envases' => 'clasificaciones de envases',
             'empaques' => 'empaques',
             'tipos-sello' => 'tipos de sello',
             'acabados' => 'acabados',

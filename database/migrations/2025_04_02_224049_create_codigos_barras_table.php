@@ -12,7 +12,7 @@ class CreateCodigosBarrasTable extends Migration
             $table->id();
             $table->string('codigo', 50)->unique();
             $table->string('nombre', 255);
-            $table->string('tipo_empaque', 50);
+            $table->string('clasificacion_envase', 50);
             $table->string('contenido')->nullable();
             $table->string('tipo', 10)->in(['EAN13', 'ITF14']);
             $table->timestamps();

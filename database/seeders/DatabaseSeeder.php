@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             FamiliaProductosSeeder::class,
             MaterialesSeeder::class,
             ProveedoresSeeder::class,
-            TiposEmpaqueSeeder::class,
+            ClasificacionesEnvasesSeeder::class,
             UnidadMedidaSeeder::class,
             ProductosSeeder::class,
             RolesAndPermissionsSeeder::class,

@@ -39,7 +39,7 @@
                     </div>
                     <div class="md:col-span-2 col-span-12 mb-4">
                         <label class="form-label">Tipo de Empaque</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $productoCodigosBarra->tipo_empaque ?? '-' }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $productoCodigosBarra->clasificacion_envase ?? '-' }}</p>
                     </div>
                     <div class="md:col-span-2 col-span-12 mb-4">
                         <label class="form-label">Contenido</label>

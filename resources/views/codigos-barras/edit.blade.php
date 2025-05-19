@@ -75,13 +75,13 @@
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Tipo de Empaque</label>
-                            <select name="tipo_empaque" class="form-control @error('tipo_empaque') is-invalid @enderror" required>
+                            <select name="clasificacion_envase" class="form-control @error('clasificacion_envase') is-invalid @enderror" required>
                                 <option value="">Selecciona</option>
-                                @foreach ($tiposEmpaque as $tipo)
-                                    <option value="{{ $tipo->nombre }}" {{ old('tipo_empaque', $codigoBarra->tipo_empaque) == $tipo->nombre ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
+                                @foreach ($clasificacionesEnvases as $clasificacionEnvase)
+                                    <option value="{{ $clasificacionEnvase->nombre }}" {{ old('clasificacion_envase', $codigoBarra->clasificacion_envase) == $clasificacionEnvase->nombre ? 'selected' : '' }}>{{ $clasificacionEnvase->nombre }}</option>
                                 @endforeach
                             </select>
-                            @error('tipo_empaque') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            @error('clasificacion_envase') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Empaque</label>

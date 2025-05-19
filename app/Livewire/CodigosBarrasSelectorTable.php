@@ -19,7 +19,7 @@ class CodigosBarrasSelectorTable extends Component
         ['name' => 'codigo', 'label' => 'Código', 'sortable' => true, 'searchable' => true],
         ['name' => 'nombre_corto', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
         ['name' => 'contenido', 'label' => 'Contenido', 'sortable' => true, 'searchable' => true],
-        ['name' => 'tipo_empaque', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
+        ['name' => 'clasificacion_envase', 'label' => 'Tipo de Empaque', 'sortable' => true, 'searchable' => true],
     ];
 
     public function mount($selectedCode = null, $key = null)

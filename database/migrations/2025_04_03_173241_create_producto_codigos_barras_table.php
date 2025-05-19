@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->foreignId('codigo_barra_id')->constrained('codigos_barras')->onDelete('cascade');
-            $table->string('tipo_empaque', 50);
+            $table->string('clasificacion_envase', 50);
             $table->string('contenido')->nullable();
             $table->timestamps();
 
-            $table->unique(['producto_id', 'tipo_empaque'], 'producto_tipo_empaque_unique');
+            $table->unique(['producto_id', 'clasificacion_envase'], 'producto_clasificacion_envase_unique');
         });
     }
 

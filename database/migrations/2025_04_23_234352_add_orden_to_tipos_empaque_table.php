@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tipos_empaque', function (Blueprint $table) {
+        Schema::table('clasificaciones_envases', function (Blueprint $table) {
             $table->integer('orden')->nullable()->after('id');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tipos_empaque', function (Blueprint $table) {
+        Schema::table('clasificaciones_envases', function (Blueprint $table) {
             $table->dropColumn('orden');
         });
     }

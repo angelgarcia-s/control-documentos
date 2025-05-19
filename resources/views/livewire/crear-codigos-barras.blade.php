@@ -72,14 +72,14 @@
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
-                            <label class="form-label">Tipo de Empaque</label>
-                            <select wire:model="codigos.{{ $index }}.tipo_empaque" class="form-control @error('codigos.' . $index . '.tipo_empaque') is-invalid @enderror">
+                            <label class="form-label">Clasificacion de envase</label>
+                            <select wire:model="codigos.{{ $index }}.clasificacion_envase" class="form-control @error('codigos.' . $index . '.clasificacion_envase') is-invalid @enderror">
                                 <option value="">Seleccione</option>
-                                @foreach ($tiposEmpaque as $tipo)
-                                    <option value="{{ $tipo->nombre }}">{{ $tipo->nombre }}</option>
+                                @foreach ($clasificacionesEnvases as $clasificacion)
+                                    <option value="{{ $clasificacion->nombre }}">{{ $clasificacion->nombre }}</option>
                                 @endforeach
                             </select>
-                            @error('codigos.' . $index . '.tipo_empaque')
+                            @error('codigos.' . $index . '.clasificacion_envase')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

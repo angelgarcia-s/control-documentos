@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\CodigoBarra;
+use App\Models\ClasificacionEnvase;
 use App\Models\ProductoCodigosBarras;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
@@ -19,8 +20,8 @@ class ProductoCodigosBarrasController extends Controller
     {
         $producto = Producto::where('sku', $sku)->firstOrFail();
         $codigosDisponibles = CodigoBarra::all(['id', 'codigo', 'nombre']);
-        $tiposEmpaque = \App\Models\TipoEmpaque::all(['id', 'nombre']);
-        return view('codigos-barras.asignar', compact('producto', 'codigosDisponibles', 'tiposEmpaque', 'sku')); // Añadimos 'sku'
+        $clasificacionesEnvases = ClasificacionEnvase::all(['id', 'nombre']);
+        return view('codigos-barras.asignar', compact('producto', 'codigosDisponibles', 'clasificacionesEnvases', 'sku')); // Añadimos 'sku'
     }
 
     public function store(Request $request, $sku)
@@ -30,7 +31,7 @@ class ProductoCodigosBarrasController extends Controller
             $validated = $request->validate([
                 'filas' => 'required|array',
                 'filas.*.codigo' => 'required|string|exists:codigos_barras,codigo',
-                'filas.*.tipo_empaque' => 'required|string|max:50',
+                'filas.*.clasificacion_envase' => 'required|string|max:50',
                 'filas.*.contenido' => 'nullable|string|max:255',
             ]);
 
@@ -40,18 +41,18 @@ class ProductoCodigosBarrasController extends Controller
             // Obtener los códigos de barras existentes en una sola consulta
             $codigos = CodigoBarra::whereIn('codigo', array_column($validated['filas'], 'codigo'))->pluck('id', 'codigo');
 
-            // Obtener los tipos de empaque ya asignados al producto en una sola consulta
-            $tiposEmpaqueExistentes = $producto->codigosBarras()
-                ->wherePivotIn('tipo_empaque', array_column($validated['filas'], 'tipo_empaque'))
-                ->pluck('producto_codigos_barras.tipo_empaque')
+            // Obtener las clasificaciones de envase ya asignados al producto en una sola consulta
+            $clasificacionEnvaseExistentes = $producto->codigosBarras()
+                ->wherePivotIn('clasificacion_envase', array_column($validated['filas'], 'clasificacion_envase'))
+                ->pluck('producto_codigos_barras.clasificacion_envase')
                 ->toArray();
 
-            // Validar tipos de empaque duplicados
+            // Validar las clasificaciones de envase duplicados
             foreach ($validated['filas'] as $fila) {
-                if (in_array($fila['tipo_empaque'], $tiposEmpaqueExistentes)) {
+                if (in_array($fila['clasificacion_envase'], $clasificacionEnvaseExistentes)) {
                     return response()->json([
                         'success' => false,
-                        'message' => "El tipo de empaque '{$fila['tipo_empaque']}' ya está asignado a otro código para este producto."
+                        'message' => "La clasificacion de envase '{$fila['clasificacion_envase']}' ya está asignado a otro código para este producto."
                     ], 422);
                 }
             }
@@ -62,7 +63,7 @@ class ProductoCodigosBarrasController extends Controller
                 $codigoId = $codigos[$fila['codigo']] ?? null;
                 if ($codigoId) {
                     $pivotData[$codigoId] = [
-                        'tipo_empaque' => $fila['tipo_empaque'],
+                        'clasificacion_envase' => $fila['clasificacion_envase'],
                         'contenido' => $fila['contenido'],
                     ];
                 }
@@ -94,8 +95,8 @@ class ProductoCodigosBarrasController extends Controller
     public function edit($id)
     {
         $asignacion = ProductoCodigosBarras::with(['producto', 'codigoBarra'])->findOrFail($id);
-        $tiposEmpaque = \App\Models\TipoEmpaque::all(['id', 'nombre']);
-        return view('producto-codigos-barras.edit', compact('asignacion', 'tiposEmpaque'));
+        $clasificacionesEnvases = ClasificacionEnvase::all(['id', 'nombre']);
+        return view('producto-codigos-barras.edit', compact('asignacion', 'clasificacionesEnvases'));
     }
 
     public function update(Request $request, $id)
@@ -104,17 +105,17 @@ class ProductoCodigosBarrasController extends Controller
         $producto = $asignacion->producto;
 
         $validated = $request->validate([
-            'tipo_empaque' => 'required|string|max:50',
+            'clasificacion_envase' => 'required|string|max:50',
             'contenido' => 'nullable|string|max:255',
         ]);
 
         try {
-            if ($producto->codigosBarras()->wherePivot('tipo_empaque', $validated['tipo_empaque'])->where('codigo_barra_id', '!=', $asignacion->codigo_barra_id)->exists()) {
-                return redirect()->back()->withErrors(['tipo_empaque' => 'Este tipo de empaque ya está asignado a otro código para este producto.'])->withInput();
+            if ($producto->codigosBarras()->wherePivot('clasificacion_envase', $validated['clasificacion_envase'])->where('codigo_barra_id', '!=', $asignacion->codigo_barra_id)->exists()) {
+                return redirect()->back()->withErrors(['clasificacion_envase' => 'Esta clasificación de envase ya está asignado a otro código para este producto.'])->withInput();
             }
 
             $producto->codigosBarras()->updateExistingPivot($asignacion->codigo_barra_id, [
-                'tipo_empaque' => $validated['tipo_empaque'],
+                'clasificacion_envase' => $validated['clasificacion_envase'],
                 'contenido' => $validated['contenido'],
             ]);
 

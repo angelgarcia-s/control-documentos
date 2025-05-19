@@ -6,14 +6,14 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class TiposEmpaqueSeeder extends Seeder
+class ClasificacionesEnvasesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('tipos_empaque')->insert([
+        DB::table('clasificaciones_envases')->insert([
             ['nombre' => 'Primario'],
             ['nombre' => 'Secundario'],
             ['nombre' => 'Terciario'],
