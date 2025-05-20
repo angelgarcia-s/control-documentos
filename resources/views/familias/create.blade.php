@@ -50,7 +50,7 @@
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Imagen</label>
-                            <input type="file" name="imagen" class="form-control @error('imagen') is-invalid @enderror">
+                            <input type="file" name="imagen" class="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-lg text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-white/50 file:border-0 file:bg-light file:me-4 file:py-3 file:px-4 dark:file:bg-black/20 dark:file:text-white/50 @error('imagen') is-invalid @enderror">
                             @error('imagen') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-12 col-span-12 mb-4">

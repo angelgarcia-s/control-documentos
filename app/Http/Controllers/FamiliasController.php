@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class FamiliasController extends Controller
 {
@@ -63,6 +64,13 @@ class FamiliasController extends Controller
         ]);
 
         try {
+            // Lógica para eliminar la imagen si se solicita
+            if ($request->input('eliminar_imagen') == '1' && $familia->imagen) {
+                $deleted = Storage::disk('public')->delete($familia->imagen);
+                $validated['imagen'] = null;
+            }
+
+            // Lógica para actualizar la imagen si se sube una nueva
             if ($request->hasFile('imagen')) {
                 if ($familia->imagen) {
                     Storage::disk('public')->delete($familia->imagen);

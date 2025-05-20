@@ -16,21 +16,25 @@
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                    <div class="md:col-span-4 col-span-12 mb-4">
+                    <div class="md:col-span-6 col-span-12 mb-4">
                         <label class="form-label">ID</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $familia->id }}</p>
                     </div>
-                    <div class="md:col-span-4 col-span-12 mb-4">
+                    <div class="md:col-span-6 col-span-12 mb-4">
                         <label class="form-label">Nombre</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $familia->nombre }}</p>
                     </div>
-                    <div class="md:col-span-4 col-span-12 mb-4">
+                    <div class="md:col-span-6 col-span-12 mb-4">
                         <label class="form-label">Categoría</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $familia->categoria->nombre ?? '-' }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $familia->categoria->nombre ?: '-' }}</p>
+                    </div>
+                    <div class="md:col-span-6 col-span-12 mb-4">
+                        <label class="form-label">Descripción</label>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $familia->descripcion ?: '-' }}</p>
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Imagen</label>
-                        <div class="border border-slate-200 rounded-lg p-2">
+                        <div class="border border-slate-200 rounded-lg p-2 align-items-center justify-items-center">
                             @if($familia->imagen)
                                 <img src="{{ asset('storage/' . $familia->imagen) }}" alt="{{ $familia->nombre }}" class="w-32 h-32 object-cover rounded">
                             @else
@@ -38,16 +42,15 @@
                             @endif
                         </div>
                     </div>
-                    <div class="md:col-span-8 col-span-12 mb-4">
-                        <label class="form-label">Descripción</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $familia->descripcion ?? '-' }}</p>
-                    </div>
 
                 </div>
             </div>
             <div class="box-footer">
                 <div class="flex justify-end">
-                    <a href="{{ route('familias.index') }}" class="ti-btn ti-btn-secondary-full mr-2">Regresar</a>
+                    @can('familias-edit')
+                        <a href="{{ route('familias.edit', $familia) }}" class="ti-btn ti-btn-info-full mr-2">Editar</a>
+                    @endcan
+                    <a href="{{ route('familias.index') }}" class="ti-btn ti-btn-primary-full mr-2">Regresar</a>
                 </div>
             </div>
         </div>
