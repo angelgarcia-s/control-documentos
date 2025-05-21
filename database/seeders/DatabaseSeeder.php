@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\CodigoBarra;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -30,7 +32,9 @@ class DatabaseSeeder extends Seeder
             ProveedoresSeeder::class,
             ClasificacionesEnvasesSeeder::class,
             UnidadMedidaSeeder::class,
+            EmpaquesSeeder::class,
             ProductosSeeder::class,
+            CodigosBarrasSeeder::class,
             RolesAndPermissionsSeeder::class,
         ]);
     }
