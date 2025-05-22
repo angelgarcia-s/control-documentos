@@ -7,17 +7,12 @@
     </div>
     <x-breadcrumbs />
 </div>
+
 @if (session('success'))
     <x-alert type="success" :message="session('success')" />
 @endif
 @if ($errors->any())
-    <x-alert type="danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </x-alert>
+    <x-alert type="danger" message="Por favor corrige los errores abajo indicados." />
 @endif
 <form action="{{ route('print-cards.store') }}" method="POST">
     @csrf
@@ -31,7 +26,7 @@
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Producto</label>
-                            <select class="form-control js-example-basic-single w-full text-xl" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
+                            <select class="form-control js-example-basic-single w-full text-xl @error('producto_codigo_barra_id') border-red-500 @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($productosCodigosBarras as $producto)
                                     <option value="{{ $producto->id }}" {{ old('producto_codigo_barra_id') == $producto->id ? 'selected' : '' }}>
@@ -41,10 +36,11 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('producto_codigo_barra_id') <div class="text-red-500 text-xs mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Proveedor</label>
-                            <select name="proveedor_id" id="proveedor_id" class="form-control" required>
+                            <select name="proveedor_id" id="proveedor_id" class="form-control @error('proveedor_id') border-red-500 @enderror" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($proveedores as $proveedor)
                                     <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
@@ -52,27 +48,32 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('proveedor_id') <div class="text-red-500 text-xs mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" required maxlength="255">
+                            <input type="text" name="nombre" id="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}" required maxlength="255">
+                            @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Notas</label>
-                            <textarea name="notas" id="notas" class="form-control">{{ old('notas') }}</textarea>
+                            <textarea name="notas" id="notas" class="form-control @error('notas') is-invalid @enderror">{{ old('notas') }}</textarea>
+                            @error('notas') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Registro Sanitario</label>
-                            <input type="text" name="registro_sanitario" id="registro_sanitario" class="form-control" value="{{ old('registro_sanitario') }}" maxlength="255">
+                            <input type="text" name="registro_sanitario" id="registro_sanitario" class="form-control @error('registro_sanitario') is-invalid @enderror" value="{{ old('registro_sanitario') }}" maxlength="255">
+                            @error('registro_sanitario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Fecha</label>
-                            <input type="date" name="fecha" id="fecha" class="form-control" value="{{ old('fecha') }}">
+                            <input type="date" name="fecha" id="fecha" class="form-control @error('fecha') is-invalid @enderror" value="{{ old('fecha') }}">
+                            @error('fecha') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                     </div>
-                    <div class="flex gap-2 mt-6">
-                        <a href="{{ route('print-cards.index') }}" class="ti-btn ti-btn-secondary-full">Cancelar</a>
-                        <button type="submit" class="ti-btn ti-btn-primary-full">Guardar</button>
+                    <div class="flex justify-end md:col-span-12 col-span-12">
+                        <a href="{{ route('print-cards.index') }}" class="ti-btn ti-btn-secondary-full ml-2 !mb-0">Cancelar</a>
+                        <button type="submit" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Guardar</button>
                     </div>
                 </div>
             </div>

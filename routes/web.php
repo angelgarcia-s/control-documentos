@@ -289,6 +289,17 @@ Route::middleware('auth')->group(function () {
         Route::put('/{printCard}', [PrintCardsController::class, 'update'])->name('print-cards.update')->middleware('can:print-cards-edit');
         Route::delete('/{printCard}', [PrintCardsController::class, 'destroy'])->name('print-cards.destroy')->middleware('can:print-cards-destroy');
     });
+
+    // Rutas para PrintCardRevisions
+    Route::prefix('print-card-revisiones')->group(function () {
+        Route::get('/', [App\Http\Controllers\PrintCardRevisionController::class, 'index'])->name('print-card-revisiones.index')->middleware('can:print-card-revisiones-list');
+        Route::get('/print-card/{printCard}/crear', [App\Http\Controllers\PrintCardRevisionController::class, 'create'])->name('print-card-revisiones.create')->middleware('can:print-card-revisiones-create');
+        Route::post('/print-card/{printCard}', [App\Http\Controllers\PrintCardRevisionController::class, 'store'])->name('print-card-revisiones.store')->middleware('can:print-card-revisiones-create');
+        Route::get('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'show'])->name('print-card-revisiones.show')->middleware('can:print-card-revisiones-show');
+        Route::get('/{printCardRevision}/editar', [App\Http\Controllers\PrintCardRevisionController::class, 'edit'])->name('print-card-revisiones.edit')->middleware('can:print-card-revisiones-edit');
+        Route::put('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'update'])->name('print-card-revisiones.update')->middleware('can:print-card-revisiones-edit');
+        Route::delete('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'destroy'])->name('print-card-revisiones.destroy')->middleware('can:print-card-revisiones-destroy');
+    });
 });
 
 // DASHBOARDS //

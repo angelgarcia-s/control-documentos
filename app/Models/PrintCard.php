@@ -34,4 +34,9 @@ class PrintCard extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function revisiones()
+    {
+        return $this->hasMany(PrintCardRevision::class);
+    }
 }

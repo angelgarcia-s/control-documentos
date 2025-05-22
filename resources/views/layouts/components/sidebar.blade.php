@@ -85,6 +85,9 @@
                             @can('print-cards-create')
                                 <li class="slide"><a href="{{ route('print-cards.create') }}" class="side-menu__item">Agregar PrintCard</a></li>
                             @endcan
+                            @can('print-card-revisiones-list')
+                                <li class="slide"><a href="{{ route('print-card-revisiones.index') }}" class="side-menu__item">Revisiones de PrintCard</a></li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan
