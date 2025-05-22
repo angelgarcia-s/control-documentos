@@ -70,6 +70,25 @@
                     </li>
                 @endcan
 
+                <!-- PrintCards -->
+                @can('print-cards-list')
+                    <li class="slide has-sub">
+                        <a href="javascript:void(0);" class="side-menu__item">
+                            <i class="bx bx-printer side-menu__icon"></i>
+                            <span class="side-menu__label">PrintCard</span>
+                            <i class="fe fe-chevron-right side-menu__angle"></i>
+                        </a>
+                        <ul class="slide-menu child1">
+                            @can('print-cards-list')
+                                <li class="slide"><a href="{{ route('print-cards.index') }}" class="side-menu__item">Lista de PrintCard</a></li>
+                            @endcan
+                            @can('print-cards-create')
+                                <li class="slide"><a href="{{ route('print-cards.create') }}" class="side-menu__item">Agregar PrintCard</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
+
                 <!-- Catálogos -->
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item">

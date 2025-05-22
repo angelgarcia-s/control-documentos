@@ -33,7 +33,7 @@ use App\Http\Controllers\MaterialesController;
 use App\Http\Controllers\BarnicesController;
 use App\Http\Controllers\CodigosBarrasController;
 use App\Http\Controllers\ProductoCodigosBarrasController;
-use App\Http\Controllers\PrintCardController;
+use App\Http\Controllers\PrintCardsController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\RolesController;
@@ -280,15 +280,15 @@ Route::middleware('auth')->group(function () {
     });
 
     // Rutas para PrintCards
-    // Route::prefix('printcards')->group(function () {
-    //     Route::get('/', [PrintCardController::class, 'index'])->name('printcards.index')->middleware('can:printcards-list');
-    //     Route::get('/crear', [PrintCardController::class, 'create'])->name('printcards.create')->middleware('can:printcards-create');
-    //     Route::post('/', [PrintCardController::class, 'store'])->name('printcards.store')->middleware('can:printcards-create');
-    //     Route::get('/{printCard}', [PrintCardController::class, 'show'])->name('printcards.show')->middleware('can:printcards-show');
-    //     Route::get('/{printCard}/editar', [PrintCardController::class, 'edit'])->name('printcards.edit')->middleware('can:printcards-edit');
-    //     Route::put('/{printCard}', [PrintCardController::class, 'update'])->name('printcards.update')->middleware('can:printcards-edit');
-    //     Route::delete('/{printCard}', [PrintCardController::class, 'destroy'])->name('printcards.destroy')->middleware('can:printcards-destroy');
-    // });
+    Route::prefix('print-cards')->group(function () {
+        Route::get('/', [PrintCardsController::class, 'index'])->name('print-cards.index')->middleware('can:print-cards-list');
+        Route::get('/crear', [PrintCardsController::class, 'create'])->name('print-cards.create')->middleware('can:print-cards-create');
+        Route::post('/', [PrintCardsController::class, 'store'])->name('print-cards.store')->middleware('can:print-cards-create');
+        Route::get('/{printCard}', [PrintCardsController::class, 'show'])->name('print-cards.show')->middleware('can:print-cards-show');
+        Route::get('/{printCard}/editar', [PrintCardsController::class, 'edit'])->name('print-cards.edit')->middleware('can:print-cards-edit');
+        Route::put('/{printCard}', [PrintCardsController::class, 'update'])->name('print-cards.update')->middleware('can:print-cards-edit');
+        Route::delete('/{printCard}', [PrintCardsController::class, 'destroy'])->name('print-cards.destroy')->middleware('can:print-cards-destroy');
+    });
 });
 
 // DASHBOARDS //
