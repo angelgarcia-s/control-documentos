@@ -149,7 +149,19 @@ export default defineConfig({
                         'resources/assets/js/under-maintenance.js',
                     ],
                     dest: 'assets/'
-                }
+                },
+                {
+                    src: 'resources/assets/libs/jquery/jquery.min.js',
+                    dest: 'assets/libs/jquery'
+                },
+                {
+                    src: 'resources/assets/libs/select2/select2.min.js',
+                    dest: 'assets/libs/select2'
+                },
+                {
+                    src: 'resources/assets/libs/select2/select2.min.css',
+                    dest: 'assets/libs/select2'
+                },
             ]
         }),
         {
@@ -163,10 +175,10 @@ export default defineConfig({
                 };
 
                 const depsToCopy = [
-                    
+
                     { name: 'jsvectormap', src: 'dist', dest: 'jsvectormap/js' } // Ajustado para js/
                 ];
-        
+
                 for (const dep of Object.keys(allDeps)) {
                     // Intenta copiar desde 'dist' primero
                     let srcPath = join('node_modules', dep, 'dist');

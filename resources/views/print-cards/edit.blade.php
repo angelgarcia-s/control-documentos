@@ -3,22 +3,26 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar Tarjeta de Impresión</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Editar PrintCard </h3>
     </div>
     <x-breadcrumbs />
 </div>
+
 @if (session('success'))
-    <x-alert type="success" :message="session('success')" />
+    <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
 @endif
 @if ($errors->any())
-    <x-alert type="danger">
+    <div class="alert alert-danger" role="alert">
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
-    </x-alert>
+    </div>
 @endif
+
 <form action="{{ route('print-cards.update', $printCard) }}" method="POST">
     @csrf
     @method('PUT')
@@ -36,7 +40,7 @@
                         </div>
                         <div class="md:col-span-5 col-span-12 mb-4">
                             <label class="form-label">Producto</label>
-                            <select name="producto_codigo_barra_id" id="producto_codigo_barra_id" class="form-control" required>
+                            <select class="form-control js-example-basic-single w-full" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($productosCodigosBarras as $producto)
                                     <option value="{{ $producto->id }}" {{ (old('producto_codigo_barra_id', $printCard->producto_codigo_barra_id) == $producto->id) ? 'selected' : '' }}>
@@ -50,15 +54,6 @@
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Nombre del PrintCard (código específico)</label>
                             <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre', $printCard->nombre) }}" required maxlength="255">
-                        </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
-                            <label class="form-label">Estado</label>
-                            <select name="status" id="status" class="form-control" required>
-                                <option value="">Seleccione...</option>
-                                <option value="En proyecto" {{ (old('status', $printCard->status) == 'En proyecto') ? 'selected' : '' }}>En proyecto</option>
-                                <option value="Activo" {{ (old('status', $printCard->status) == 'Activo') ? 'selected' : '' }}>Activo</option>
-                                <option value="Discontinuado" {{ (old('status', $printCard->status) == 'Discontinuado') ? 'selected' : '' }}>Discontinuado</option>
-                            </select>
                         </div>
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Proveedor</label>
@@ -97,4 +92,16 @@
         </div>
     </div>
 </form>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#producto_codigo_barra_id').select2({
+            placeholder: 'Buscar producto...',
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 @endsection

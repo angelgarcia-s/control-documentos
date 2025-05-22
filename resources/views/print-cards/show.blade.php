@@ -37,10 +37,6 @@
                         <label class="form-label">Nombre del PrintCard (código específico)</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $printCard->nombre }}</p>
                     </div>
-                    <div class="md:col-span-2 col-span-12 mb-4">
-                        <label class="form-label">Estado</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $printCard->status }}</p>
-                    </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Proveedor</label>
                         <p class="form-control border border-slate-200 min-h-9">{{ $printCard->proveedor->nombre ?? '-' }}</p>

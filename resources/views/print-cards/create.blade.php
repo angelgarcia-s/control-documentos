@@ -31,7 +31,7 @@
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Producto</label>
-                            <select name="producto_codigo_barra_id" id="producto_codigo_barra_id" class="form-control" required>
+                            <select class="form-control js-example-basic-single w-full text-xl" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($productosCodigosBarras as $producto)
                                     <option value="{{ $producto->id }}" {{ old('producto_codigo_barra_id') == $producto->id ? 'selected' : '' }}>
@@ -58,15 +58,6 @@
                             <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre') }}" required maxlength="255">
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Estado</label>
-                            <select name="status" id="status" class="form-control" required>
-                                <option value="">Seleccione...</option>
-                                <option value="En proyecto" {{ old('status') == 'En proyecto' ? 'selected' : '' }}>En proyecto</option>
-                                <option value="Activo" {{ old('status') == 'Activo' ? 'selected' : '' }}>Activo</option>
-                                <option value="Discontinuado" {{ old('status') == 'Discontinuado' ? 'selected' : '' }}>Discontinuado</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Notas</label>
                             <textarea name="notas" id="notas" class="form-control">{{ old('notas') }}</textarea>
                         </div>
@@ -88,4 +79,29 @@
         </div>
     </div>
 </form>
+@endsection
+
+@section('scripts')
+@vite('resources/assets/js/select2.js')
+<script>
+    $(document).ready(function() {
+        $('#producto_codigo_barra_id').select2({
+            placeholder: 'Buscar producto...',
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.querySelector('select[data-choices]');
+        if (select) {
+            new Choices(select, {
+                searchEnabled: true,
+                itemSelectText: '',
+            });
+        }
+    });
+</script>
 @endsection

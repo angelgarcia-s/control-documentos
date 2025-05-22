@@ -38,3 +38,34 @@ input.custom-input-focus.focused {
     --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) #0ea5e9 !important; /* Anillo de 1px, color sky-500 */
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
 }
+
+/* Ajuste visual para Select2 para igualar a .form-control */
+.select2-container--default .select2-selection--single {
+    height: 2.5rem !important; /* igual que .form-control */
+    min-height: 2.5rem !important;
+    padding: 0.5rem 0.85rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    border-radius: 0.35rem !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+}
+.select2-container .select2-selection--single {
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 2.5rem !important;
+    top: 0.25rem !important;
+    right: 0.75rem !important;
+}
