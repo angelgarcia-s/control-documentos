@@ -10,6 +10,10 @@ use App\Models\Proveedor;
 use App\Models\FamiliaProducto;
 use App\Models\Color;
 use App\Models\Tamano;
+use App\Models\PrintCard;
+use App\Models\ProductoCodigosBarras;
+use App\Models\PrintCardRevision;
+
 use Illuminate\Database\QueryException;
 
 class ProductosController extends Controller
@@ -18,10 +22,10 @@ class ProductosController extends Controller
      * Muestra la vista de productos con Livewire.
      */
     public function index(Request $request)
-{
+    {
 
-    return view('productos.index');
-}
+        return view('productos.index');
+    }
 
     /**
      * Muestra el formulario para crear un nuevo producto.
@@ -51,7 +55,6 @@ class ProductosController extends Controller
 
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'sku' => 'required|string|max:45|unique:productos,sku',
             'descripcion' => 'required|string|max:1000',
@@ -69,18 +72,20 @@ class ProductosController extends Controller
         ]);
 
         // Generar nombre_corto automáticamente ya que no se envía desde el formulario
-        $familia = \App\Models\FamiliaProducto::find($validated['id_familia'])->nombre;
-        $color = \App\Models\Color::find($validated['id_color'])->nombre;
-        $tamano = \App\Models\Tamano::find($validated['id_tamano'])->nombre;
+        $familia = FamiliaProducto::find($validated['id_familia'])->nombre;
+        $color = Color::find($validated['id_color'])->nombre;
+        $tamano = Tamano::find($validated['id_tamano'])->nombre;
         $validated['nombre_corto'] = "$familia $color $tamano";
 
-        $producto = Producto::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'sku' => $producto->sku,
-            'message' => 'Producto creado correctamente.'
-        ]);
+        try {
+            $producto = Producto::create($validated);
+            return redirect()->route('productos.create', ['skuGuardado' => $producto->sku])
+                ->with('success', 'Producto creado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Error al crear el producto: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**

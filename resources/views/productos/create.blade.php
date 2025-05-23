@@ -239,7 +239,6 @@
     @vite('resources/assets/js/modal.js')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('crearProductoForm');
             const requierePeso = document.getElementById('requiere_peso');
             const peso = document.getElementById('peso');
             const variacionPeso = document.getElementById('variacion_peso');
@@ -256,7 +255,7 @@
                     variacionPeso.disabled = true;
                     peso.required = false;
                     variacionPeso.required = false;
-                    peso.value = ''; // Limpiar valores si se deshabilitan
+                    peso.value = '';
                     variacionPeso.value = '';
                 }
             }
@@ -266,42 +265,6 @@
 
             // Escuchar cambios en el select
             requierePeso.addEventListener('change', togglePesoFields);
-
-            // Manejo del formulario
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Respuesta del servidor:', data);
-                    if (data.success) {
-                        window.location.href = '{{ route('productos.create') }}?skuGuardado=' + encodeURIComponent(data.sku);
-                    } else {
-                        const errorContainer = document.querySelector('.alert-danger');
-                        if (errorContainer) {
-                            errorContainer.remove();
-                        }
-                        const errors = data.errors;
-                        let errorHtml = '<div class="alert alert-danger" role="alert"><ul>';
-                        for (let field in errors) {
-                            errors[field].forEach(error => {
-                                errorHtml += `<li>${error}</li>`;
-                            });
-                        }
-                        errorHtml += '</ul></div>';
-                        document.querySelector('.page-header').insertAdjacentHTML('afterend', errorHtml);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
         });
     </script>
 @endsection
