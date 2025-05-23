@@ -30,21 +30,21 @@
                                 <option value="ITF14">ITF14</option>
                             </select>
                             @error('codigos.' . $index . '.tipo')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Código</label>
                             <input type="text" wire:model="codigos.{{ $index }}.codigo" class="form-control @error('codigos.' . $index . '.codigo') is-invalid @enderror">
                             @error('codigos.' . $index . '.codigo')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Producto</label>
                             <input type="text" wire:model="codigos.{{ $index }}.nombre" class="form-control @error('codigos.' . $index . '.nombre') is-invalid @enderror" placeholder="Nombre del producto">
                             @error('codigos.' . $index . '.nombre')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
@@ -56,7 +56,7 @@
                                 @endforeach
                             </select>
                             @error('codigos.' . $index . '.color_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
@@ -68,7 +68,7 @@
                                 @endforeach
                             </select>
                             @error('codigos.' . $index . '.tamano_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
@@ -80,7 +80,7 @@
                                 @endforeach
                             </select>
                             @error('codigos.' . $index . '.clasificacion_envase')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
@@ -92,14 +92,14 @@
                                 @endforeach
                             </select>
                             @error('codigos.' . $index . '.empaque')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="md:col-span-2 col-span-12 mb-4">
                             <label class="form-label">Contenido</label>
                             <input type="text" wire:model="codigos.{{ $index }}.contenido" class="form-control @error('codigos.' . $index . '.contenido') is-invalid @enderror" placeholder="Ej. 10 unidades">
                             @error('codigos.' . $index . '.contenido')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
 
