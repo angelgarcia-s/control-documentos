@@ -74,77 +74,117 @@
                 <div class="mb-10"></div>
 
                 <div class="grid grid-cols-12 gap-6">
-                    <div class="col-span-12 md:col-span-6 pr-4 border-r border-gray-100">
+                    <div class="col-span-12 md:col-span-8 pr-4 border-r border-gray-100">
                         <div class="box ">
                             <div class="box-header justify-between">
                                 <div class="box-title">Códigos de barras</div>
                             </div>
                             <div class="box-body">
                                 <div class="grid grid-cols-12 gap-6">
-                                    <div class="col-span-6 sm:col-span-6">
-
-                                        <!-- Código de barras Primario -->
+                                    <!-- Código de barras Primario -->
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Código de barras Primario</label>
                                         @php
                                             $primario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Primario');
                                         @endphp
-                                        <p class="form-control border border-slate-200 min-h-9">{{ $primario ? ($primario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                        <p class="form-control border border-slate-200 min-h-9">
+                                            {{ $primario ? ($primario->codigoBarra->codigo ?? '-') : '-' }}
+                                        </p>
                                     </div>
-                                    <div class="col-span-6 sm:col-span-6">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Contenido Primario</label>
                                         <p class="form-control border border-slate-200 min-h-9">{{ $primario ? ($primario->contenido ?? '-') : '-' }}</p>
                                     </div>
+                                    <div class="grid justify-stretch sm:justify-normal col-span-12 sm:col-span-2">
+                                        @if($primario)
+                                            <a href="{{ route('print-cards.por-codigo-barra', $primario->id) }}" class="ti-btn ti-btn-primary ti-btn-xs btn-wave sm:mt-4 ">Ver PrintCards</a>
+                                        @endif
+
+                                    </div>
+
 
                                     <!-- Código de barras Secundario -->
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Código de barras Secundario</label>
                                         @php
                                             $secundario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Secundario');
                                         @endphp
-                                        <p class="form-control border border-slate-200 min-h-9">{{ $secundario ? ($secundario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                        <p class="form-control border border-slate-200 min-h-9">
+                                            {{ $secundario ? ($secundario->codigoBarra->codigo ?? '-') : '-' }}
+                                        </p>
                                     </div>
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Contenido Secundario</label>
                                         <p class="form-control border border-slate-200 min-h-9">{{ $secundario ? ($secundario->contenido ?? '-') : '-' }}</p>
                                     </div>
+                                    <div class="grid justify-stretch sm:justify-normal col-span-12 sm:col-span-2">
+                                        @if($secundario)
+                                            <a href="{{ route('print-cards.por-codigo-barra', $secundario->id) }}" class="ti-btn ti-btn-primary ti-btn-xs btn-wave sm:mt-4 ">Ver PrintCards</a>
+                                        @endif
+
+                                    </div>
 
                                     <!-- Código de barras Terciario -->
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Código de barras Terciario</label>
                                         @php
                                             $terciario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Terciario');
                                         @endphp
-                                        <p class="form-control border border-slate-200 min-h-9">{{ $terciario ? ($terciario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                        <p class="form-control border border-slate-200 min-h-9">
+                                            {{ $terciario ? ($terciario->codigoBarra->codigo ?? '-') : '-' }}
+                                        </p>
                                     </div>
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Contenido Terciario</label>
                                         <p class="form-control border border-slate-200 min-h-9">{{ $terciario ? ($terciario->contenido ?? '-') : '-' }}</p>
                                     </div>
+                                    <div class="grid justify-stretch sm:justify-normal col-span-12 sm:col-span-2">
+                                        @if($terciario)
+                                            <a href="{{ route('print-cards.por-codigo-barra', $terciario->id) }}" class="ti-btn ti-btn-primary ti-btn-xs btn-wave sm:mt-4 ">Ver PrintCards</a>
+                                        @endif
+
+                                    </div>
 
                                     <!-- Código de barras Cuaternario -->
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Código de barras Cuaternario</label>
                                         @php
                                             $cuaternario = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Cuaternario');
                                         @endphp
-                                        <p class="form-control border border-slate-200 min-h-9">{{ $cuaternario ? ($cuaternario->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                        <p class="form-control border border-slate-200 min-h-9">
+                                            {{ $cuaternario ? ($cuaternario->codigoBarra->codigo ?? '-') : '-' }}
+                                        </p>
                                     </div>
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Contenido Cuaternario</label>
                                         <p class="form-control border border-slate-200 min-h-9">{{ $cuaternario ? ($cuaternario->contenido ?? '-') : '-' }}</p>
                                     </div>
+                                    <div class="grid justify-stretch sm:justify-normal col-span-12 sm:col-span-2">
+                                        @if($cuaternario)
+                                            <a href="{{ route('print-cards.por-codigo-barra', $cuaternario->id) }}" class="ti-btn ti-btn-primary ti-btn-xs btn-wave sm:mt-4 ">Ver PrintCards</a>
+                                        @endif
+
+                                    </div>
 
                                     <!-- Código de barras Master -->
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Código de barras Master</label>
                                         @php
                                             $master = $producto->productoCodigosBarras->firstWhere('clasificacion_envase', 'Master');
                                         @endphp
-                                        <p class="form-control border border-slate-200 min-h-9">{{ $master ? ($master->codigoBarra->codigo ?? '-') : '-' }}</p>
+                                        <p class="form-control border border-slate-200 min-h-9">
+                                            {{ $master ? ($master->codigoBarra->codigo ?? '-') : '-' }}
+                                        </p>
                                     </div>
-                                    <div class="md:col-span-6 col-span-12 mb-4">
+                                    <div class="col-span-6 sm:col-span-5 ">
                                         <label class="form-label">Contenido Master</label>
                                         <p class="form-control border border-slate-200 min-h-9">{{ $master ? ($master->contenido ?? '-') : '-' }}</p>
+                                    </div>
+                                    <div class="grid justify-stretch sm:justify-normal col-span-12 sm:col-span-2">
+                                        @if($master)
+                                            <a href="{{ route('print-cards.por-codigo-barra', $master->id) }}" class="ti-btn ti-btn-primary ti-btn-xs btn-wave sm:mt-4 ">Ver PrintCards</a>
+                                        @endif
+
                                     </div>
                                 </div>
                             </div>
@@ -152,7 +192,7 @@
 
                     </div>
 
-                    <div class="col-span-12 md:col-span-6">
+                    <div class="col-span-12 md:col-span-4">
                         <div class="box">
                             <div class="box-header justify-between">
                                 <div class="box-title">Otros datos</div>

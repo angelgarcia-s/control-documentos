@@ -30,11 +30,9 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <label for="revision" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Número de Revisión <span class="text-red-500">*</span>
-                </label>
+                <label for="revision" class="form-label">Número de Revisión <span class="text-red-500">*</span></label>
                 <input type="number" name="revision" id="revision"
-                    class="ti-form-input @error('revision') border-red-500 @enderror"
+                    class="form-control @error('revision') is-invalid @enderror"
                     value="{{ old('revision', $printCardRevision->revision) }}" min="1" required>
                 @error('revision')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -42,11 +40,9 @@
             </div>
 
             <div>
-                <label for="estado" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Estado <span class="text-red-500">*</span>
-                </label>
+                <label for="estado" class="form-label">Estado <span class="text-red-500">*</span></label>
                 <select name="estado" id="estado"
-                    class="ti-form-select @error('estado') border-red-500 @enderror" required>
+                    class="form-control @error('estado') is-invalid @enderror" required>
                     <option value="En revisión" {{ old('estado', $printCardRevision->estado) == 'En revisión' ? 'selected' : '' }}>En revisión</option>
                     <option value="Aprobado" {{ old('estado', $printCardRevision->estado) == 'Aprobado' ? 'selected' : '' }}>Aprobado</option>
                     <option value="Rechazado" {{ old('estado', $printCardRevision->estado) == 'Rechazado' ? 'selected' : '' }}>Rechazado</option>
@@ -58,9 +54,7 @@
         </div>
 
         <div class="mb-6">
-            <label for="pdf_path" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Archivo PDF
-            </label>
+            <label for="pdf_path" class="form-label">Archivo PDF</label>
             @if($printCardRevision->pdf_path)
                 <div class="flex items-center mb-2">
                     <a href="{{ asset('storage/' . $printCardRevision->pdf_path) }}" target="_blank" class="text-blue-600 hover:underline">
@@ -69,7 +63,7 @@
                 </div>
             @endif
             <input type="file" name="pdf_path" id="pdf_path"
-                class="ti-form-input @error('pdf_path') border-red-500 @enderror"
+                class="form-control @error('pdf_path') is-invalid @enderror"
                 accept=".pdf">
             <small class="text-gray-500">Solo si desea reemplazar el PDF actual</small>
             @error('pdf_path')
@@ -78,22 +72,18 @@
         </div>
 
         <div class="mb-6">
-            <label for="notas" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Notas
-            </label>
+            <label for="notas" class="form-label">Notas</label>
             <textarea name="notas" id="notas" rows="4"
-                class="ti-form-input @error('notas') border-red-500 @enderror">{{ old('notas', $printCardRevision->notas) }}</textarea>
+                class="form-control @error('notas') is-invalid @enderror">{{ old('notas', $printCardRevision->notas) }}</textarea>
             @error('notas')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-6">
-            <label for="historial_revision" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Historial de la Revisión
-            </label>
+            <label for="historial_revision" class="form-label">Historial de la Revisión</label>
             <textarea name="historial_revision" id="historial_revision" rows="4"
-                class="ti-form-input @error('historial_revision') border-red-500 @enderror">{{ old('historial_revision', $printCardRevision->historial_revision) }}</textarea>
+                class="form-control @error('historial_revision') is-invalid @enderror">{{ old('historial_revision', $printCardRevision->historial_revision) }}</textarea>
             @error('historial_revision')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror

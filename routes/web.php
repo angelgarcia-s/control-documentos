@@ -288,6 +288,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{printCard}/editar', [PrintCardsController::class, 'edit'])->name('print-cards.edit')->middleware('can:print-cards-edit');
         Route::put('/{printCard}', [PrintCardsController::class, 'update'])->name('print-cards.update')->middleware('can:print-cards-edit');
         Route::delete('/{printCard}', [PrintCardsController::class, 'destroy'])->name('print-cards.destroy')->middleware('can:print-cards-destroy');
+        Route::get('/por-codigo-barra/{productoCodigoBarra}', [PrintCardsController::class, 'printCardsPorCodigoBarra'])->name('print-cards.por-codigo-barra')->middleware('can:print-cards-list');
     });
 
     // Rutas para PrintCardRevisions

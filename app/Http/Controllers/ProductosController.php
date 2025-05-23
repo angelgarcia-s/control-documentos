@@ -93,7 +93,7 @@ class ProductosController extends Controller
      */
     public function show($id)
     {
-        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras', 'productoCodigosBarras.codigoBarra'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'codigosBarras', 'productoCodigosBarras.codigoBarra'])->findOrFail($id);
         return view('productos.show', compact('producto'));
     }
 
@@ -102,7 +102,7 @@ class ProductosController extends Controller
      */
     public function edit($id)
     {
-        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'printcards', 'codigosBarras'])->findOrFail($id);
+        $producto = Producto::with(['familia', 'categoria', 'proveedor', 'tamano', 'color', 'codigosBarras'])->findOrFail($id);
 
         // Cargar los catálogos con ordenamiento alfabético por nombre
         $unidadesMedida = UnidadMedida::orderBy('nombre', 'asc')->get();

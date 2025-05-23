@@ -47,7 +47,7 @@
                             <td class="py-3 px-6 border">
                                 @if($columna['name'] === 'pdf_path' && $revision->pdf_path)
                                     <a href="{{ asset('storage/' . $revision->pdf_path) }}" target="_blank" class="text-blue-600 hover:underline">
-                                        <i class="ri-file-pdf-line text-lg mr-1"></i>Ver PDF
+                                        <i class="bi bi-file-pdf text-lg mr-1"></i>Ver PDF
                                     </a>
                                 @else
                                     {!! $this->getColumnValue($revision, $columna) !!}
@@ -55,7 +55,8 @@
                             </td>
                         @endforeach
                         <td class="py-3 px-6 border">
-                            <div class="flex items-center space-x-2">                                @can('print-card-revisiones-show')
+                            <div class="flex items-center space-x-2">
+                                @can('print-card-revisiones-show')
                                     <a href="{{ route('print-card-revisiones.show', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                         <i class="ri-eye-line"></i>
                                     </a>

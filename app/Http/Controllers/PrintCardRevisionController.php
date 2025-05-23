@@ -18,22 +18,46 @@ class PrintCardRevisionController extends Controller
 
     public function create(PrintCard $printCard)
     {
-        return view('print-card-revisiones.create', compact('printCard'));
+        // Sugerir número de revisión: 0 si no existe, si existe 0, sugerir el siguiente disponible
+        $revisiones = $printCard->revisiones()->pluck('revision')->toArray();
+        if (!in_array(0, $revisiones)) {
+            $revisionSugerida = 0;
+        } else {
+            $revisionSugerida = empty($revisiones) ? 0 : (max($revisiones) + 1);
+        }
+        return view('print-card-revisiones.create', compact('printCard', 'revisionSugerida'));
     }
 
     public function store(Request $request, PrintCard $printCard)
     {
         $request->validate([
-            'revision' => 'required|integer|min:1',
+            'revision' => 'required|integer|min:0',
             'estado' => 'required|in:En revisión,Aprobado,Rechazado',
             'notas' => 'nullable|string',
             'pdf_path' => 'required|file|mimes:pdf|max:10240',
             'historial_revision' => 'nullable|string',
         ]);
 
+        // Validar que no exista otra revisión con el mismo número para este PrintCard
+        if ($printCard->revisiones()->where('revision', $request->revision)->exists()) {
+            return redirect()->back()
+                ->withErrors(['revision' => 'Ya existe una revisión con ese número para este PrintCard.'])
+                ->withInput();
+        }
+
         $pdf_path = null;
         if ($request->hasFile('pdf_path')) {
-            $pdf_path = $request->file('pdf_path')->store('print-card-revisions', 'public');
+            // Obtener datos para la ruta
+            $producto = $printCard->productoCodigoBarra->producto;
+            $familia = $producto->familia->nombre ?? 'SinFamilia';
+            $categoria = $producto->familia->categoria->nombre ?? 'SinCategoria';
+            // Limpiar nombres para evitar espacios y caracteres problemáticos
+            $nombreCorto = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', strtolower($producto->nombre_corto ?? 'SinNombreCorto')));
+            $nombrePrintCard = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', strtolower($printCard->nombre)));
+            $revisionNum = $request->revision;
+            $nombreArchivo = $nombreCorto . '-' . $nombrePrintCard . '-' . $revisionNum . '.pdf';
+            $ruta = 'PrintCards/' . $categoria . '/' . $familia;
+            $pdf_path = $request->file('pdf_path')->storeAs($ruta, $nombreArchivo, 'public');
         }
 
         $revision = PrintCardRevision::create([
@@ -64,12 +88,19 @@ class PrintCardRevisionController extends Controller
     public function update(Request $request, PrintCardRevision $printCardRevision)
     {
         $request->validate([
-            'revision' => 'required|integer|min:1',
+            'revision' => 'required|integer|min:0',
             'estado' => 'required|in:En revisión,Aprobado,Rechazado',
             'notas' => 'nullable|string',
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240',
             'historial_revision' => 'nullable|string',
         ]);
+
+        // Validar que no exista otra revisión con el mismo número para este PrintCard, excepto la actual
+        if ($printCardRevision->printCard->revisiones()->where('revision', $request->revision)->where('id', '!=', $printCardRevision->id)->exists()) {
+            return redirect()->back()
+                ->withErrors(['revision' => 'Ya existe una revisión con ese número para este PrintCard.'])
+                ->withInput();
+        }
 
         $data = [
             'revision' => $request->revision,
@@ -87,8 +118,16 @@ class PrintCardRevisionController extends Controller
                 Storage::disk('public')->delete($printCardRevision->pdf_path);
             }
 
-            // Almacenar el nuevo PDF
-            $data['pdf_path'] = $request->file('pdf_path')->store('print-card-revisions', 'public');
+            // Obtener datos para la ruta
+            $producto = $printCardRevision->printCard->productoCodigoBarra->producto;
+            $familia = $producto->familia->nombre ?? 'SinFamilia';
+            $categoria = $producto->familia->categoria->nombre ?? 'SinCategoria';
+            $nombreCorto = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', strtolower($producto->nombre_corto ?? 'SinNombreCorto')));
+            $nombrePrintCard = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', strtolower($printCardRevision->printCard->nombre)));
+            $revisionNum = $request->revision;
+            $nombreArchivo = $nombreCorto . '-' . $nombrePrintCard . '-' . $revisionNum . '.pdf';
+            $ruta = 'PrintCards/' . $categoria . '/' . $familia;
+            $data['pdf_path'] = $request->file('pdf_path')->storeAs($ruta, $nombreArchivo, 'public');
         }
 
         $printCardRevision->update($data);

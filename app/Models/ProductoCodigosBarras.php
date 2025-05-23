@@ -43,4 +43,9 @@ class ProductoCodigosBarras extends Model
     {
         return $this->belongsTo(CodigoBarra::class, 'codigo_barra_id');
     }
+
+    public function printcards()
+    {
+        return $this->hasMany(PrintCard::class, 'producto_codigo_barra_id');
+    }
 }

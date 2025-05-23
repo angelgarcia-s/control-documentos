@@ -89,7 +89,6 @@
                                 <th class="py-3 px-6 text-left border">Estado</th>
                                 <th class="py-3 px-6 text-left border">Revisor</th>
                                 <th class="py-3 px-6 text-left border">Fecha</th>
-                                <th class="py-3 px-6 text-left border">PDF</th>
                                 <th class="py-3 px-6 text-left border">Acciones</th>
                             </tr>
                         </thead>
@@ -108,17 +107,18 @@
                                 </td>
                                 <td class="py-3 px-6 border">{{ $revision->revisor->name ?? 'N/A' }}</td>
                                 <td class="py-3 px-6 border">{{ $revision->fecha_revision ? \Carbon\Carbon::parse($revision->fecha_revision)->format('d/m/Y H:i') : 'N/A' }}</td>
-                                <td class="py-3 px-6 border">
-                                    @if($revision->pdf_path)
-                                    <a href="{{ asset('storage/' . $revision->pdf_path) }}" target="_blank" class="text-blue-600 hover:underline">
-                                        <i class="ri-file-pdf-line text-lg mr-1"></i>Ver PDF
-                                    </a>
-                                    @else
-                                    -
-                                    @endif
-                                </td>
+
                                 <td class="py-3 px-6 border">
                                     <div class="flex items-center space-x-2">
+                                        @can('print-card-revisiones-show')
+                                            @if($revision->pdf_path)
+                                            <a href="{{ asset('storage/' . $revision->pdf_path) }}" target="_blank" class="text-red-700">
+                                                <i class="bi bi-file-pdf text-lg mr-1"></i>
+                                            </a>
+                                            @else
+                                            -
+                                            @endif
+                                        @endcan
                                         @can('print-card-revisiones-show')
                                         <a href="{{ route('print-card-revisiones.show', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
                                             <i class="ri-eye-line"></i>

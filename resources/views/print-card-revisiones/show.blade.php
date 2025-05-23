@@ -56,7 +56,7 @@
         <div class="flex items-center gap-2">
             <a href="{{ asset('storage/' . $printCardRevision->pdf_path) }}" target="_blank"
                class="ti-btn ti-btn-primary flex items-center">
-                <i class="ri-file-pdf-line text-lg mr-1"></i> Ver PDF
+                <i class="bi bi-file-pdf text-lg mr-1"></i> Ver PDF
             </a>
             <a href="{{ asset('storage/' . $printCardRevision->pdf_path) }}" download
                class="ti-btn ti-btn-outline-primary flex items-center">
@@ -73,25 +73,19 @@
 
     <div class="flex justify-between mt-6">
         <div>
-            <a href="{{ route('print-cards.show', $printCardRevision->printCard) }}" class="ti-btn ti-btn-secondary">
-                <i class="ri-arrow-left-line mr-1"></i> Volver a PrintCard
-            </a>
+            <a href="{{ route('print-cards.show', $printCardRevision->printCard) }}" class="ti-btn ti-btn-secondary">Volver a PrintCard</a>
         </div>
 
         <div class="flex gap-2">
             @can('print-card-revisiones-edit')
-            <a href="{{ route('print-card-revisiones.edit', $printCardRevision) }}" class="ti-btn ti-btn-primary">
-                <i class="ri-pencil-line mr-1"></i> Editar
-            </a>
+            <a href="{{ route('print-card-revisiones.edit', $printCardRevision) }}" class="ti-btn ti-btn-primary"> Editar</a>
             @endcan
 
             @can('print-card-revisiones-destroy')
             <form action="{{ route('print-card-revisiones.destroy', $printCardRevision) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta revisión?');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="ti-btn ti-btn-danger">
-                    <i class="ri-delete-bin-2-line mr-1"></i> Eliminar
-                </button>
+                <button type="submit" class="ti-btn ti-btn-danger"> Eliminar</button>
             </form>
             @endcan
         </div>

@@ -31,9 +31,9 @@
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Producto</label>
-                            <select class="form-control js-example-basic-single w-full text-xl @error('producto_codigo_barra_id') border-red-500 @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
-                                <option value="">Seleccione...</option>
+                            <label class="form-label" for="producto_codigo_barra_id">Producto</label>
+                            <select class="form-control js-example-basic-single w-full @error('producto_codigo_barra_id') is-invalid @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
+                                <option value=""></option>
                                 @foreach($productosCodigosBarras as $producto)
                                     <option value="{{ $producto->id }}" {{ old('producto_codigo_barra_id') == $producto->id ? 'selected' : '' }}>
                                         {{ $producto->producto->nombre_corto ?? $producto->producto->nombre }}
@@ -42,11 +42,11 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('producto_codigo_barra_id') <div class="text-red-500 text-xs mt-1">{{ $message }}</div> @enderror
+                            @error('producto_codigo_barra_id') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Proveedor</label>
-                            <select name="proveedor_id" id="proveedor_id" class="form-control @error('proveedor_id') border-red-500 @enderror" required>
+                            <label class="form-label" for="proveedor_id">Proveedor</label>
+                            <select name="proveedor_id" id="proveedor_id" class="form-control @error('proveedor_id') is-invalid @enderror" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($proveedores as $proveedor)
                                     <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
@@ -54,25 +54,25 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @error('proveedor_id') <div class="text-red-500 text-xs mt-1">{{ $message }}</div> @enderror
+                            @error('proveedor_id') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Nombre</label>
+                            <label class="form-label" for="nombre">Nombre</label>
                             <input type="text" name="nombre" id="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}" required maxlength="255">
                             @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Notas</label>
+                            <label class="form-label" for="notas">Notas</label>
                             <textarea name="notas" id="notas" class="form-control @error('notas') is-invalid @enderror">{{ old('notas') }}</textarea>
                             @error('notas') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Registro Sanitario</label>
+                            <label class="form-label" for="registro_sanitario">Registro Sanitario</label>
                             <input type="text" name="registro_sanitario" id="registro_sanitario" class="form-control @error('registro_sanitario') is-invalid @enderror" value="{{ old('registro_sanitario') }}" maxlength="255">
                             @error('registro_sanitario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
-                            <label class="form-label">Fecha</label>
+                            <label class="form-label" for="fecha">Fecha</label>
                             <input type="date" name="fecha" id="fecha" class="form-control @error('fecha') is-invalid @enderror" value="{{ old('fecha') }}">
                             @error('fecha') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>

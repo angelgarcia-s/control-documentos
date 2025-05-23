@@ -84,4 +84,11 @@ class PrintCardsController extends Controller
             return redirect()->route('print-cards.index')->with('error', 'Error al eliminar el PrintCard: ' . $e->getMessage());
         }
     }
+
+    public function printCardsPorCodigoBarra($productoCodigoBarraId)
+    {
+        $productoCodigoBarra = ProductoCodigosBarras::with(['producto', 'codigoBarra', 'printcards.proveedor', 'printcards.creador', 'printcards.revisiones'])->findOrFail($productoCodigoBarraId);
+        $printCards = $productoCodigoBarra->printcards;
+        return view('print-cards.por-codigo-barra', compact('productoCodigoBarra', 'printCards'));
+    }
 }
