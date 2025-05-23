@@ -2,9 +2,8 @@
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
         <!-- Mostrar el mensaje de error de Livewire -->
         @if ($errorMessage)
-            <div class="alert alert-danger mb-4" role="alert" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => @this.call('clearErrorMessage'), 3000)" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                {{ $errorMessage }}
-            </div>
+            <x-alert type="danger" :message="$errorMessage" duration="3000"
+                x-init="setTimeout(() => { show = false; $wire.clearErrorMessage(); }, 3000)" />
         @endif
 
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">

@@ -1,6 +1,10 @@
 <div class="overflow-x-auto">
     <div class="ti-custom-table ti-striped-table ti-custom-table-hover">
 
+        @if ($errorMessage)
+            <x-alert type="danger" :message="$errorMessage" duration="3000"
+                x-init="setTimeout(() => { show = false; $wire.clearErrorMessage(); }, 3000)" />
+        @endif
 
         <table class="w-full bg-white table-auto whitespace-nowrap border border-gray-300 rounded-lg">
             <thead class="bg-gray-100 dark:bg-gray-700">

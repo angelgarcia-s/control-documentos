@@ -9,18 +9,16 @@
 </div>
 
 @if (session('success'))
-    <div class="alert alert-success" role="alert">
-        {{ session('success') }}
-    </div>
+    <x-alert type="success" :message="session('success')" />
 @endif
 @if ($errors->any())
-    <div class="alert alert-danger" role="alert">
+    <x-alert type="danger">
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
-    </div>
+    </x-alert>
 @endif
 
 <form action="{{ route('colores.update', $color) }}" method="POST">

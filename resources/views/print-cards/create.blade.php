@@ -12,7 +12,13 @@
     <x-alert type="success" :message="session('success')" />
 @endif
 @if ($errors->any())
-    <x-alert type="danger" message="Por favor corrige los errores abajo indicados." />
+    <x-alert type="danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </x-alert>
 @endif
 <form action="{{ route('print-cards.store') }}" method="POST">
     @csrf

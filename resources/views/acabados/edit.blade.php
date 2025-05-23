@@ -8,6 +8,21 @@
     <x-breadcrumbs />
 </div>
 
+@if (session('success'))
+    <x-alert type="success" :message="session('success')" />
+@endif
+@if (session('error'))
+    <x-alert type="danger" :message="session('error')" />
+@endif
+@if ($errors->any())
+    <x-alert type="danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </x-alert>
+@endif
 
 <form action="{{ route('acabados.update', $acabado) }}" method="POST">
     @csrf

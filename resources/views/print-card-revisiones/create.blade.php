@@ -11,6 +11,19 @@
 </div>
 
 <div class="bg-white dark:bg-bodybg rounded-md p-6 shadow-sm">
+    @if (session('success'))
+        <x-alert type="success" :message="session('success')" />
+    @endif
+    @if ($errors->any())
+        <x-alert type="danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </x-alert>
+    @endif
+
     <form action="{{ route('print-card-revisiones.store', $printCard) }}" method="POST" enctype="multipart/form-data">
         @csrf
 
