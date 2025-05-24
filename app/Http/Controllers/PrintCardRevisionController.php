@@ -88,7 +88,7 @@ class PrintCardRevisionController extends Controller
     public function update(Request $request, PrintCardRevision $printCardRevision)
     {
         $request->validate([
-            'revision' => 'required|integer|min:0',
+            'revision' => 'required|integer',
             'estado' => 'required|in:En revisión,Aprobado,Rechazado',
             'notas' => 'nullable|string',
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240',

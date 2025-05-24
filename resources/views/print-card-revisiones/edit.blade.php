@@ -33,7 +33,7 @@
                 <label for="revision" class="form-label">Número de Revisión <span class="text-red-500">*</span></label>
                 <input type="number" name="revision" id="revision"
                     class="form-control @error('revision') is-invalid @enderror"
-                    value="{{ old('revision', $printCardRevision->revision) }}" min="1" required>
+                    value="{{ old('revision', $printCardRevision->revision) }}" min="0" required>
                 @error('revision')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
