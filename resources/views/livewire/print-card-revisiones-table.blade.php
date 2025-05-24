@@ -45,10 +45,14 @@
                     <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-800">
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
-                                @if($columna['name'] === 'pdf_path' && $revision->pdf_path)
-                                    <a href="{{ asset('storage/' . $revision->pdf_path) }}" target="_blank" class="text-blue-600 hover:underline">
-                                        <i class="bi bi-file-pdf text-lg mr-1"></i>Ver PDF
-                                    </a>
+                                @if($columna['name'] === 'estado')
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                        @if($revision->estado == 'Aprobado') bg-green-100 text-green-800
+                                        @elseif($revision->estado == 'Rechazado') bg-red-100 text-red-800
+                                        @else bg-yellow-100 text-yellow-800
+                                        @endif">
+                                        {{ $revision->estado }}
+                                    </span>
                                 @else
                                     {!! $this->getColumnValue($revision, $columna) !!}
                                 @endif
@@ -57,17 +61,22 @@
                         <td class="py-3 px-6 border">
                             <div class="flex items-center space-x-2">
                                 @can('print-card-revisiones-show')
-                                    <a href="{{ route('print-card-revisiones.show', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                    @if($revision->pdf_path)
+                                        <a href="{{ asset('storage/' . $revision->pdf_path) }}" target="_blank" class="ti-btn text-lg text-red-700 !py-1 !px-1 ti-btn-wave" title="Ver PDF">
+                                            <i class="bi bi-file-pdf"></i>
+                                        </a>
+                                    @endif
+                                    <a href="{{ route('print-card-revisiones.show', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave" title="Ver Detalle">
                                         <i class="ri-eye-line"></i>
                                     </a>
                                 @endcan
                                 @can('print-card-revisiones-edit')
-                                    <a href="{{ route('print-card-revisiones.edit', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave">
+                                    <a href="{{ route('print-card-revisiones.edit', $revision) }}" class="ti-btn text-lg text-slate-400 !py-1 !px-1 ti-btn-wave" title="Editar">
                                         <i class="ri-pencil-line"></i>
                                     </a>
                                 @endcan
                                 @can('print-card-revisiones-destroy')
-                                    <button wire:click="confirmarEliminar({{ $revision->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave">
+                                    <button wire:click="confirmarEliminar({{ $revision->id }})" class="ti-btn text-lg text-rose-400 !py-1 !px-1 ti-btn-wave" title="Eliminar">
                                         <i class="ri-delete-bin-2-line"></i>
                                     </button>
                                 @endcan
