@@ -10,6 +10,8 @@ class PermisosTable extends Component
 {
     use HasTableFeatures;
 
+    public $errorMessage = '';
+
     public $columnas = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
         ['name' => 'name', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],

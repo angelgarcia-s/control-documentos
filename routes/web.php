@@ -63,7 +63,7 @@ require __DIR__ . '/auth.php';
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::prefix('dashboard')->group(function () {
-        Route::get('/', [DashboardsController::class, 'index'])->name('dashboard')->middleware('can:dashboard-show');
+        Route::get('/', [DashboardsController::class, 'index'])->name('dashboard')->middleware('can:dashboards-show');
     });
 
     // Perfil
