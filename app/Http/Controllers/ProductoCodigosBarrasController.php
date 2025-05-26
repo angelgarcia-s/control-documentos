@@ -74,6 +74,19 @@ class ProductoCodigosBarrasController extends Controller
                 $producto->codigosBarras()->syncWithoutDetaching($pivotData);
             }
 
+            // ACTUALIZAR id_proveedor según PrintCards asociadas
+            $proveedorIds = $producto->productoCodigosBarras
+                ->flatMap(function($pcb) { return $pcb->printcards; })
+                ->pluck('proveedor_id')
+                ->filter()
+                ->unique();
+            if ($proveedorIds->count() === 1) {
+                $producto->id_proveedor = $proveedorIds->first();
+            } else {
+                $producto->id_proveedor = null;
+            }
+            $producto->save();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Códigos asignados correctamente.'
@@ -128,9 +141,23 @@ class ProductoCodigosBarrasController extends Controller
     public function destroy($id)
     {
         $asignacion = ProductoCodigosBarras::findOrFail($id);
-
+        $producto = $asignacion->producto;
         try {
             $asignacion->delete();
+
+            // ACTUALIZAR id_proveedor según PrintCards asociadas tras desasignar
+            $proveedorIds = $producto->productoCodigosBarras
+                ->flatMap(function($pcb) { return $pcb->printcards; })
+                ->pluck('proveedor_id')
+                ->filter()
+                ->unique();
+            if ($proveedorIds->count() === 1) {
+                $producto->id_proveedor = $proveedorIds->first();
+            } else {
+                $producto->id_proveedor = null;
+            }
+            $producto->save();
+
             return redirect()->route('producto-codigos-barras.index')->with('success', 'Asignación eliminada correctamente.');
         } catch (\Exception $e) {
             return redirect()->route('producto-codigos-barras.index')->with('error', 'Error al eliminar la asignación: ' . $e->getMessage());

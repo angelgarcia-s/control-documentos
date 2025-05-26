@@ -81,16 +81,20 @@
                             <label class="form-label">Nombre Corto</label>
                             <input type="text" name="nombre_corto" value="{{ old('nombre_corto', $producto->nombre_corto) }}" class="form-control @error('nombre_corto') is-invalid @enderror" readonly placeholder="Se generará automáticamente (Familia + Color + Tamaño)">
                             @error('nombre_corto') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            <p class="text-gray-400 text-muted">Este campo se genera automáticamente.</p>
                         </div>
                         <div class="md:col-span-3 col-span-12 mb-4">
                             <label class="form-label">Proveedor</label>
-                            <select name="id_proveedor" class="form-control @error('id_proveedor') is-invalid @enderror" required>
-                                <option value="">Seleccione</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}" {{ old('id_proveedor', $producto->id_proveedor) == $proveedor->id ? 'selected' : '' }}>{{ $proveedor->nombre }}</option>
-                                @endforeach
-                            </select>
-                            @error('id_proveedor') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            @php
+                                $proveedores = $producto->productoCodigosBarras
+                                    ->flatMap(function($pcb) { return $pcb->printcards; })
+                                    ->pluck('proveedor.nombre')
+                                    ->filter()
+                                    ->unique()
+                                    ->values();
+                            @endphp
+                            <input type="text" class="form-control bg-gray-100" value="{{ $proveedores->isNotEmpty() ? $proveedores->join(', ') : '-' }}" readonly>
+                            <p class="text-gray-400 text-muted">Este campo se actualiza automáticamente según las PrintCards asociadas.</p>
                         </div>
                         <div class="md:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Familia de producto</label>

@@ -135,7 +135,6 @@ class ProductosController extends Controller
             'id_categoria' => 'required|exists:categorias,id',
             'id_tamano' => 'required|exists:tamanos,id',
             'id_color' => 'required|exists:colores,id',
-            'id_proveedor' => 'required|exists:proveedores,id',
             'id_unidad_medida' => 'required|exists:unidades_medida,id',
             'multiplos_master' => 'required|integer',
             'nombre_corto' => 'required|max:500',
@@ -146,7 +145,8 @@ class ProductosController extends Controller
         ]);
 
         try {
-            // Actualizar el producto con los datos validados
+            // Eliminar id_proveedor del array de actualización si existe
+            unset($validated['id_proveedor']);
             $producto->update($validated);
 
             return redirect()->route('productos.index', $producto)->with('success', 'Producto actualizado correctamente.');

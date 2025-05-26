@@ -56,7 +56,17 @@
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Proveedor</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $producto->id_proveedor ? $producto->proveedor->nombre : '-' }}</p>
+                        @php
+                            $proveedores = $producto->productoCodigosBarras
+                                ->flatMap(function($pcb) { return $pcb->printcards; })
+                                ->pluck('proveedor.nombre')
+                                ->filter()
+                                ->unique()
+                                ->values();
+                        @endphp
+                        <p class="form-control border border-slate-200 min-h-9">
+                            {{ $proveedores->isNotEmpty() ? $proveedores->join(', ') : '-' }}
+                        </p>
                     </div>
                     <div class="md:col-span-4 col-span-12 mb-4">
                         <label class="form-label">Familia de producto</label>
