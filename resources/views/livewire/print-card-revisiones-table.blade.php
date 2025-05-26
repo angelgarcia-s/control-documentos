@@ -46,13 +46,16 @@
                         @foreach($columnas as $columna)
                             <td class="py-3 px-6 border">
                                 @if($columna['name'] === 'estado')
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
-                                        @if($revision->estado == 'Aprobado') bg-green-100 text-green-800
-                                        @elseif($revision->estado == 'Rechazado') bg-red-100 text-red-800
-                                        @else bg-yellow-100 text-yellow-800
-                                        @endif">
-                                        {{ $revision->estado }}
-                                    </span>
+                                    @if($revision->estadoPrintCard)
+                                        @php
+                                            $color = $revision->estadoPrintCard->color ?? 'gray';
+                                        @endphp
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-{{ $color }}-100 text-{{ $color }}-800">
+                                            {{ $revision->estadoPrintCard->nombre }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-700">Sin estado</span>
+                                    @endif
                                 @else
                                     {!! $this->getColumnValue($revision, $columna) !!}
                                 @endif

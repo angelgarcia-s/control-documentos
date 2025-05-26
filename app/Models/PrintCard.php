@@ -39,4 +39,9 @@ class PrintCard extends Model
     {
         return $this->hasMany(PrintCardRevision::class);
     }
+
+    public function estadoPrintCard()
+    {
+        return $this->belongsTo(EstadoPrintCard::class, 'estado_printcard_id');
+    }
 }

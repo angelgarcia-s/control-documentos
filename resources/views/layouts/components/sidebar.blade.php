@@ -133,6 +133,9 @@
                         @can('barnices-list')
                             <li class="slide"><a href="{{ route('barnices.index') }}" class="side-menu__item">Barnices</a></li>
                         @endcan
+                        @can('estados-print-cards-list')
+                            <li class="slide"><a href="{{ route('estados-print-cards.index') }}" class="side-menu__item">Status de PrintCards</a></li>
+                        @endcan
                     </ul>
                 </li>
 

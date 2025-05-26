@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PrintCardRevision;
 use App\Models\PrintCard;
+use App\Models\EstadoPrintCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -18,21 +19,21 @@ class PrintCardRevisionController extends Controller
 
     public function create(PrintCard $printCard)
     {
-        // Sugerir número de revisión: 0 si no existe, si existe 0, sugerir el siguiente disponible
         $revisiones = $printCard->revisiones()->pluck('revision')->toArray();
         if (!in_array(0, $revisiones)) {
             $revisionSugerida = 0;
         } else {
             $revisionSugerida = empty($revisiones) ? 0 : (max($revisiones) + 1);
         }
-        return view('print-card-revisiones.create', compact('printCard', 'revisionSugerida'));
+        $estados = EstadoPrintCard::where('activo', 1)->orderBy('nombre')->get();
+        return view('print-card-revisiones.create', compact('printCard', 'revisionSugerida', 'estados'));
     }
 
     public function store(Request $request, PrintCard $printCard)
     {
         $request->validate([
             'revision' => 'required|integer|min:0',
-            'estado' => 'required|in:En revisión,Aprobado,Rechazado',
+            'estado_printcard_id' => 'required|exists:estado_print_cards,id',
             'notas' => 'nullable|string',
             'pdf_path' => 'required|file|mimes:pdf|max:10240',
             'historial_revision' => 'nullable|string',
@@ -63,7 +64,7 @@ class PrintCardRevisionController extends Controller
         $revision = PrintCardRevision::create([
             'print_card_id' => $printCard->id,
             'revision' => $request->revision,
-            'estado' => $request->estado,
+            'estado_printcard_id' => $request->estado_printcard_id,
             'notas' => $request->notas,
             'revisado_por' => Auth::id(),
             'fecha_revision' => Carbon::now(),
@@ -82,14 +83,15 @@ class PrintCardRevisionController extends Controller
 
     public function edit(PrintCardRevision $printCardRevision)
     {
-        return view('print-card-revisiones.edit', compact('printCardRevision'));
+        $estados = EstadoPrintCard::where('activo', 1)->orderBy('nombre')->get();
+        return view('print-card-revisiones.edit', compact('printCardRevision', 'estados'));
     }
 
     public function update(Request $request, PrintCardRevision $printCardRevision)
     {
         $request->validate([
             'revision' => 'required|integer',
-            'estado' => 'required|in:En revisión,Aprobado,Rechazado',
+            'estado_printcard_id' => 'required|exists:estado_print_cards,id',
             'notas' => 'nullable|string',
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240',
             'historial_revision' => 'nullable|string',
@@ -104,7 +106,7 @@ class PrintCardRevisionController extends Controller
 
         $data = [
             'revision' => $request->revision,
-            'estado' => $request->estado,
+            'estado_printcard_id' => $request->estado_printcard_id,
             'notas' => $request->notas,
             'historial_revision' => $request->historial_revision,
             'revisado_por' => Auth::id(),

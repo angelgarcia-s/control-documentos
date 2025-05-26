@@ -38,6 +38,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'administracion' => 'administracion',
             'print-cards' => 'print cards',
             'print-card-revisiones' => 'revisiones de print cards',
+            'estados-print-cards' => 'status de print cards',
         ];
 
         // Definir las acciones disponibles para cada módulo

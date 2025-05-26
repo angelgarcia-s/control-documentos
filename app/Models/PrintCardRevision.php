@@ -14,7 +14,7 @@ class PrintCardRevision extends Model
     protected $fillable = [
         'print_card_id',
         'revision',
-        'estado',
+        'estado_printcard_id',
         'notas',
         'revisado_por',
         'fecha_revision',
@@ -30,5 +30,10 @@ class PrintCardRevision extends Model
     public function revisor()
     {
         return $this->belongsTo(User::class, 'revisado_por');
+    }
+
+    public function estadoPrintCard()
+    {
+        return $this->belongsTo(EstadoPrintCard::class, 'estado_printcard_id');
     }
 }

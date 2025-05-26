@@ -34,11 +34,13 @@ use App\Http\Controllers\BarnicesController;
 use App\Http\Controllers\CodigosBarrasController;
 use App\Http\Controllers\ProductoCodigosBarrasController;
 use App\Http\Controllers\PrintCardsController;
+use App\Http\Controllers\PrintCardRevisionController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\CategoriasPermisosController;
+use App\Http\Controllers\EstadoPrintCardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -102,12 +104,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PermissionsController::class, 'store'])->name('permisos.store')->middleware('can:permisos-create');
         Route::get('/{permission}/editar', [PermissionsController::class, 'edit'])->name('permisos.edit')->middleware('can:permisos-edit');
         Route::put('/{permission}', [PermissionsController::class, 'update'])->name('permisos.update')->middleware('can:permisos-edit');
+    });
 
-        // Rutas para Gestión de Nombres de Visualización de Categorías
-        Route::prefix('categorias')->group(function () {
-            Route::get('/edit', [CategoriasPermisosController::class, 'edit'])->name('categorias-permisos.edit')->middleware('can:permisos-edit');
-            Route::post('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware(['can:permisos-edit', \App\Http\Middleware\DebugRequest::class]);
-        });
+    // Rutas para Gestión de Nombres de Visualización de Categorías
+    Route::prefix('categorias')->group(function () {
+        Route::get('/edit', [CategoriasPermisosController::class, 'edit'])->name('categorias-permisos.edit')->middleware('can:permisos-edit');
+        Route::post('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware('can:permisos-edit',);
     });
 
     // Rutas para Productos
@@ -293,14 +295,26 @@ Route::middleware('auth')->group(function () {
 
     // Rutas para PrintCardRevisions
     Route::prefix('print-card-revisiones')->group(function () {
-        Route::get('/', [App\Http\Controllers\PrintCardRevisionController::class, 'index'])->name('print-card-revisiones.index')->middleware('can:print-card-revisiones-list');
-        Route::get('/print-card/{printCard}/crear', [App\Http\Controllers\PrintCardRevisionController::class, 'create'])->name('print-card-revisiones.create')->middleware('can:print-card-revisiones-create');
-        Route::post('/print-card/{printCard}', [App\Http\Controllers\PrintCardRevisionController::class, 'store'])->name('print-card-revisiones.store')->middleware('can:print-card-revisiones-create');
-        Route::get('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'show'])->name('print-card-revisiones.show')->middleware('can:print-card-revisiones-show');
-        Route::get('/{printCardRevision}/editar', [App\Http\Controllers\PrintCardRevisionController::class, 'edit'])->name('print-card-revisiones.edit')->middleware('can:print-card-revisiones-edit');
-        Route::put('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'update'])->name('print-card-revisiones.update')->middleware('can:print-card-revisiones-edit');
-        Route::delete('/{printCardRevision}', [App\Http\Controllers\PrintCardRevisionController::class, 'destroy'])->name('print-card-revisiones.destroy')->middleware('can:print-card-revisiones-destroy');
+        Route::get('/', [PrintCardRevisionController::class, 'index'])->name('print-card-revisiones.index')->middleware('can:print-card-revisiones-list');
+        Route::get('/print-card/{printCard}/crear', [PrintCardRevisionController::class, 'create'])->name('print-card-revisiones.create')->middleware('can:print-card-revisiones-create');
+        Route::post('/print-card/{printCard}', [PrintCardRevisionController::class, 'store'])->name('print-card-revisiones.store')->middleware('can:print-card-revisiones-create');
+        Route::get('/{printCardRevision}', [PrintCardRevisionController::class, 'show'])->name('print-card-revisiones.show')->middleware('can:print-card-revisiones-show');
+        Route::get('/{printCardRevision}/editar', [PrintCardRevisionController::class, 'edit'])->name('print-card-revisiones.edit')->middleware('can:print-card-revisiones-edit');
+        Route::put('/{printCardRevision}', [PrintCardRevisionController::class, 'update'])->name('print-card-revisiones.update')->middleware('can:print-card-revisiones-edit');
+        Route::delete('/{printCardRevision}', [PrintCardRevisionController::class, 'destroy'])->name('print-card-revisiones.destroy')->middleware('can:print-card-revisiones-destroy');
     });
+
+    // Rutas para estados-print-cards
+    Route::prefix('estados-print-cards')->group(function () {
+        Route::get('/', [EstadoPrintCardController::class, 'index'])->name('estados-print-cards.index')->middleware('can:estados-print-cards-list');
+        Route::get('/crear', [EstadoPrintCardController::class, 'create'])->name('estados-print-cards.create')->middleware('can:estados-print-cards-create');
+        Route::post('/', [EstadoPrintCardController::class, 'store'])->name('estados-print-cards.store')->middleware('can:estados-print-cards-create');
+        Route::get('/{estado}', [EstadoPrintCardController::class, 'show'])->name('estados-print-cards.show')->middleware('can:estados-print-cards-show');
+        Route::get('/{estado}/editar', [EstadoPrintCardController::class, 'edit'])->name('estados-print-cards.edit')->middleware('can:estados-print-cards-edit');
+        Route::put('/{estado}', [EstadoPrintCardController::class, 'update'])->name('estados-print-cards.update')->middleware('can:estados-print-cards-edit');
+        Route::delete('/{estado}', [EstadoPrintCardController::class, 'destroy'])->name('estados-print-cards.destroy')->middleware('can:estados-print-cards-destroy');
+    });
+
 });
 
 // DASHBOARDS //

@@ -40,14 +40,17 @@
             </div>
 
             <div>
-                <label for="estado" class="form-label">Estado <span class="text-red-500">*</span></label>
-                <select name="estado" id="estado"
-                    class="form-control @error('estado') is-invalid @enderror" required>
-                    <option value="En revisión" {{ old('estado', $printCardRevision->estado) == 'En revisión' ? 'selected' : '' }}>En revisión</option>
-                    <option value="Aprobado" {{ old('estado', $printCardRevision->estado) == 'Aprobado' ? 'selected' : '' }}>Aprobado</option>
-                    <option value="Rechazado" {{ old('estado', $printCardRevision->estado) == 'Rechazado' ? 'selected' : '' }}>Rechazado</option>
+                <label for="estado_printcard_id" class="form-label">Estado <span class="text-red-500">*</span></label>
+                <select name="estado_printcard_id" id="estado_printcard_id"
+                    class="form-control @error('estado_printcard_id') is-invalid @enderror" required>
+                    <option value="">Seleccione un estado</option>
+                    @foreach($estados as $estado)
+                        <option value="{{ $estado->id }}" {{ old('estado_printcard_id', $printCardRevision->estado_printcard_id) == $estado->id ? 'selected' : '' }}>
+                            {{ $estado->nombre }}
+                        </option>
+                    @endforeach
                 </select>
-                @error('estado')
+                @error('estado_printcard_id')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
