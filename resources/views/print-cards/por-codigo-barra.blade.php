@@ -93,7 +93,9 @@
             @endcan
         </div>
         @endif
+        <div class="flex justify-end md:col-span-12 col-span-12">
+            <a href="{{ url()->previous() }}" class="ti-btn ti-btn-primary-full mt-6">Regresar</a>
+        </div>
     </div>
 </div>
-<a href="{{ url()->previous() }}" class="ti-btn ti-btn-primary-full mt-6">Regresar</a>
 @endsection
