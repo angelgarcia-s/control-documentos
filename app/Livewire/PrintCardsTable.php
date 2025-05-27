@@ -12,9 +12,11 @@ class PrintCardsTable extends Component
 
     public $confirmingDelete = null;
     public $errorMessage = '';
+    public $columnasPersonalizadas = null;
 
     public $columnas = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
+        ['name' => 'sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true, 'relationship' => 'productoCodigoBarra.sku'],
         ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
         ['name' => 'revision', 'label' => 'Revisión', 'sortable' => true, 'searchable' => true],
         ['name' => 'estado', 'label' => 'Estado', 'sortable' => true, 'searchable' => true],
@@ -23,6 +25,16 @@ class PrintCardsTable extends Component
         ['name' => 'registro_sanitario', 'label' => 'Registro Sanitario', 'sortable' => true, 'searchable' => true],
         ['name' => 'fecha', 'label' => 'Fecha', 'sortable' => true, 'searchable' => false],
     ];
+
+
+    public function mount($productoCodigoBarra = null, $columnasPersonalizadas = null)
+    {
+        if ($columnasPersonalizadas) {
+            $this->columnas = array_values(array_filter($this->columnas, function($col) use ($columnasPersonalizadas) {
+                return in_array($col['name'], $columnasPersonalizadas);
+            }));
+        }
+    }
 
     public function clearErrorMessage()
     {
@@ -76,8 +88,12 @@ class PrintCardsTable extends Component
     public function getColumnValue($printCard, $columna)
     {
         if (isset($columna['relationship'])) {
+
             if ($columna['relationship'] === 'productoCodigoBarra') {
                 return $printCard->productoCodigoBarra->producto->nombre_corto ?? '-';
+            }
+            if ($columna['relationship'] === 'productoCodigoBarra.sku') {
+                return $printCard->productoCodigoBarra->producto->sku ?? '-';
             }
             if ($columna['relationship'] === 'proveedor') {
                 return $printCard->proveedor->nombre ?? '-';
