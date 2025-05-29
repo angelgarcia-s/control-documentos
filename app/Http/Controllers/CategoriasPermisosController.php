@@ -42,10 +42,18 @@ class CategoriasPermisosController extends Controller
         // Decodificar el orden de categorías desde JSON a un arreglo
         $ordenCategorias = json_decode($request->input('orden_categorias', '[]'), true);
 
+        // Validar que todos los nombres visuales estén completos
+        foreach ($categorias as $cat) {
+            $encodedCat = $cat;
+            $nombreVisual = $displayNamesEncoded[$encodedCat] ?? '';
+            if (trim($nombreVisual) === '') {
+                return redirect()->back()->withErrors(['error' => 'Todos los nombres de visualización son obligatorios.'])->withInput();
+            }
+        }
+
         // Decodificar las claves del arreglo display_names
         $displayNames = [];
         foreach ($displayNamesEncoded as $encodedCategoria => $nombreVisual) {
-            // No necesitamos urldecode porque las categorías ahora tienen guiones
             $categoria = $encodedCategoria;
             // Si el nombre visual está vacío, usar el nombre transformado de la categoría
             $nombreVisual = trim($nombreVisual) ?: ucwords(str_replace('-', ' ', $categoria));
@@ -68,7 +76,7 @@ class CategoriasPermisosController extends Controller
             );
         }
 
-        return redirect()->route('permisos.index')
+        return redirect()->route('categorias-permisos.edit')
             ->with('success', 'Nombres de visualización y orden de categorías actualizados correctamente.');
     }
 }

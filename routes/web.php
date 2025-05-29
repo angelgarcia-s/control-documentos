@@ -109,7 +109,8 @@ Route::middleware('auth')->group(function () {
     // Rutas para Gestión de Nombres de Visualización de Categorías
     Route::prefix('categorias')->group(function () {
         Route::get('/edit', [CategoriasPermisosController::class, 'edit'])->name('categorias-permisos.edit')->middleware('can:permisos-edit');
-        Route::post('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware('can:permisos-edit',);
+        Route::put('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware('can:permisos-edit');
+        Route::post('/', [CategoriasPermisosController::class, 'update'])->name('categorias-permisos.update')->middleware('can:permisos-edit');
     });
 
     // Rutas para Productos

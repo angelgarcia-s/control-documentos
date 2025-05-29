@@ -31,6 +31,7 @@
 
 <form id="categorias-permisos-form" action="{{ route('categorias-permisos.update') }}" method="POST">
     @csrf
+    @method('PUT')
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12">
             <div class="box">
