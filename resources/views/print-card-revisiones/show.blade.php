@@ -29,11 +29,11 @@
                     </span>
                 </div>
                 <div class="grid grid-cols-12 gap-6 mb-6">
-                    <div class="md:col-span-6 col-span-12 mb-4">
+                    <div class="col-span-12 mb-4">
                         <label class="form-label mb-2">Historial de la Revisión</label>
                         <p class="form-control border border-slate-200 min-h-9"> {{ $printCardRevision->historial_revision ?? 'Sin historial registrado' }}</p>
                     </div>
-                    <div class="md:col-span-6 col-span-12 mb-4">
+                    <div class="col-span-12 mb-4">
                         <label class="form-label mb-2">Notas</label>
                         <p class="form-control border border-slate-200 min-h-9"> {{ $printCardRevision->notas ?? 'Sin notas' }}</p>
                     </div>

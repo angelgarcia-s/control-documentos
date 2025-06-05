@@ -59,7 +59,7 @@
 
         <div class="mb-6">
             <label for="pdf_path" class="form-label">Archivo PDF <span class="text-red-500">*</span></label>
-            <input type="file" name="pdf_path" id="file-input" class="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-white/50
+            <input type="file" name="pdf_path" id="small-file-input" class="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-white/50
                                               file:border-0
                                               file:bg-light file:me-4
                                               file:py-3 file:px-4

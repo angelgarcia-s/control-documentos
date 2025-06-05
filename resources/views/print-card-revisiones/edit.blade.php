@@ -1,18 +1,5 @@
 @extends('layouts.master')
 
-@section('styles')
-
-        <!-- Dropzone File Upload  Css -->
-        <link rel="stylesheet" href="{{asset('build/assets/libs/dropzone/dropzone.css')}}">
-
-        <!-- filepond File Upload  Css -->
-        <link rel="stylesheet" href="{{asset('build/assets/libs/filepond/filepond.min.css')}}">
-        <link rel="stylesheet" href="{{asset('build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css')}}">
-        <link rel="stylesheet" href="{{asset('build/assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.css')}}">
-        <link rel="stylesheet" href="{{asset('build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css')}}">
-
-@endsection
-
 @section('content')
 <div class="block justify-between page-header md:flex mb-4">
     <div>
@@ -46,7 +33,7 @@
                     @csrf
                     @method('PUT')
                     <div class="grid grid-cols-12 gap-6 mb-4">
-                        <div class="col-span-12 md:col-span-2">
+                        <div class="col-span-12 md:col-span-3">
                             <label for="revision" class="form-label">Número de Revisión <span class="text-red-500">*</span></label>
                             <input type="number" name="revision" id="revision"
                                 class="form-control @error('revision') is-invalid @enderror"
@@ -70,16 +57,20 @@
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="col-span-12 md:col-span-5">
+                        <div class="col-span-12 md:col-span-6">
                             <label for="pdf_path" class="form-label">Archivo PDF</label>
-                            <input type="file" name="pdf_path" class="filepond basic-filepond" data-allow-reorder="true" data-max-file-size="3MB" data-max-files="1" @error('pdf_path') is-invalid @enderror accept=".pdf">
+                            <input type="file" name="pdf_path" id="small-file-input" class="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-white/50
+                                              file:border-0
+                                              file:bg-light file:me-4
+                                              file:py-2 file:px-4
+                                              dark:file:bg-black/20 dark:file:text-white/50
 
-
+                            @error('pdf_path') is-invalid @enderror" accept=".pdf">
                             @error('pdf_path')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="col-span-12 md:col-span-6">
+                        <div class="col-span-12">
                             <label for="historial_revision" class="form-label">Historial de cambios</label>
                             <textarea name="historial_revision" id="historial_revision" rows="4"
                                 class="form-control @error('historial_revision') is-invalid @enderror">{{ old('historial_revision', $printCardRevision->historial_revision) }}</textarea>
@@ -87,7 +78,7 @@
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="col-span-12 md:col-span-6">
+                        <div class="col-span-12">
                             <label for="notas" class="form-label">Notas</label>
                             <textarea name="notas" id="notas" rows="4"
                                 class="form-control @error('notas') is-invalid @enderror">{{ old('notas', $printCardRevision->notas) }}</textarea>
@@ -97,12 +88,8 @@
                         </div>
                     </div>
                     <div class="flex justify-end gap-3">
-                        <a href="{{ url()->previous() }}" class="ti-btn ti-btn-secondary">
-                            <i class="ri-arrow-left-line mr-1"></i> Cancelar
-                        </a>
-                        <button type="submit" class="ti-btn ti-btn-primary">
-                            <i class="ri-save-line mr-1"></i> Actualizar Revisión
-                        </button>
+                        <a href="{{ url()->previous() }}" class="ti-btn ti-btn-secondary-full ml-2 !mb-0">Cancelar</a>
+                        <button type="submit" class="ti-btn ti-btn-primary-full ml-2 !mb-0">Actualizar Revisión</button>
                     </div>
                 </form>
             </div>
@@ -112,22 +99,4 @@
 @endsection
 
 @section('scripts')
-
-        <!-- DropZone File Upload JS -->
-        <script src="{{asset('build/assets/libs/dropzone/dropzone-min.js')}}"></script>
-
-        <!-- Filepond File Upload JS -->
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-crop/filepond-plugin-image-crop.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-resize/filepond-plugin-image-resize.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond-plugin-image-transform/filepond-plugin-image-transform.min.js')}}"></script>
-        <script src="{{asset('build/assets/libs/filepond/filepond.min.js')}}"></script>
-        @vite('resources/assets/js/fileupload.js')
-
-
 @endsection

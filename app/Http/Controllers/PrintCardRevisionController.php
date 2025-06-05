@@ -36,7 +36,7 @@ class PrintCardRevisionController extends Controller
             'estado_printcard_id' => 'required|exists:estado_print_cards,id',
             'notas' => 'nullable|string',
             'pdf_path' => 'required|file|mimes:pdf|max:10240',
-            'historial_revision' => 'nullable|string',
+            'historial_revision' => 'required|string',
         ]);
 
         // Validar que no exista otra revisión con el mismo número para este PrintCard
@@ -94,7 +94,7 @@ class PrintCardRevisionController extends Controller
             'estado_printcard_id' => 'required|exists:estado_print_cards,id',
             'notas' => 'nullable|string',
             'pdf_path' => 'nullable|file|mimes:pdf|max:10240',
-            'historial_revision' => 'nullable|string',
+            'historial_revision' => 'required|string',
         ]);
 
         // Validar que no exista otra revisión con el mismo número para este PrintCard, excepto la actual
