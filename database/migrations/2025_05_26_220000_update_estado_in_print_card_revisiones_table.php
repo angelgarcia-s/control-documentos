@@ -16,7 +16,6 @@ class UpdateEstadoInPrintCardRevisionesTable extends Migration
             $table->unsignedBigInteger('estado_printcard_id')->nullable()->after('print_card_id');
         });
 
-        // 2. (Opcional) Migrar datos del ENUM a la nueva columna (deberá hacerse en un paso aparte si se requiere lógica especial)
 
         // 3. Eliminar la columna ENUM 'estado'
         Schema::table('print_card_revisiones', function (Blueprint $table) {
@@ -37,7 +36,7 @@ class UpdateEstadoInPrintCardRevisionesTable extends Migration
         Schema::table('print_card_revisiones', function (Blueprint $table) {
             $table->dropForeign(['estado_printcard_id']);
             $table->dropColumn('estado_printcard_id');
-            $table->enum('estado', ['PENDIENTE', 'EN PROCESO', 'FINALIZADO', 'CANCELADO'])->nullable(); // Ajustar valores según los originales
+            $table->enum('estado', ['Vigente', 'En Proyecto', 'Descontinuado'])->nullable(); // Ajustar valores según los originales
         });
     }
 }

@@ -42,7 +42,7 @@
                             <select class="form-control js-example-basic-single w-full @error('producto_codigo_barra_id') is-invalid @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value=""></option>
                                 @foreach($productosCodigosBarras as $producto)
-                                    <option value="{{ $producto->id }}" {{ old('producto_codigo_barra_id') == $producto->id ? 'selected' : '' }}>
+                                    <option value="{{ $producto->id }}" {{ old('producto_codigo_barra_id', $productoCodigoBarraId ?? null) == $producto->id ? 'selected' : '' }}>
                                         {{ $producto->producto->nombre_corto ?? $producto->producto->nombre }}
                                         ({{ $producto->codigoBarra->codigo ?? 'SIN CÓDIGO' }})
                                         - {{ $producto->clasificacion_envase }}
@@ -82,9 +82,9 @@
                             <input type="text" name="registro_sanitario" id="registro_sanitario" class="form-control @error('registro_sanitario') is-invalid @enderror" value="{{ old('registro_sanitario') }}" maxlength="255">
                             @error('registro_sanitario') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
-                        <div class="md:col-span-4 col-span-12 mb-4">
+                        <div class="md:col-span-12 col-span-12 mb-4">
                             <label class="form-label" for="notas">Notas</label>
-                            <textarea name="notas" id="notas" class="form-control @error('notas') is-invalid @enderror">{{ old('notas') }}</textarea>
+                            <textarea name="notas" id="notas" class="form-control">{{ old('notas') }}</textarea>
                             @error('notas') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                         </div>
 
@@ -105,7 +105,6 @@
     <!-- Date & Time Picker JS -->
     <script src="{{asset('build/assets/libs/flatpickr/flatpickr.min.js')}}"></script>
     @vite('resources/assets/js/date-time_pickers.js')
-
     @vite('resources/assets/js/select2.js')
     <script>
         $(document).ready(function() {
@@ -114,18 +113,6 @@
                 allowClear: true,
                 width: '100%'
             });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const select = document.querySelector('select[data-choices]');
-            if (select) {
-                new Choices(select, {
-                    searchEnabled: true,
-                    itemSelectText: '',
-                });
-            }
         });
     </script>
 @endsection

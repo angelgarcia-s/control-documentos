@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('print_card_id')->constrained('print_cards')->onDelete('cascade');
             $table->integer('revision');
-            $table->enum('estado', ['En revisión', 'Aprobado', 'Rechazado']); // Enum temporal
+            $table->enum('estado', ['Vigente', 'En Proyecto', 'Descontinuado']); // Enum temporal
             $table->text('notas')->nullable();
             $table->foreignId('revisado_por')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('fecha_revision')->nullable();

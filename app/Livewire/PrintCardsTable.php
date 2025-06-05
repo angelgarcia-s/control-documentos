@@ -13,10 +13,13 @@ class PrintCardsTable extends Component
     public $confirmingDelete = null;
     public $errorMessage = '';
     public $columnasPersonalizadas = null;
+    public $productoCodigoBarra = null;
 
     public $columnas = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
         ['name' => 'sku', 'label' => 'SKU', 'sortable' => true, 'searchable' => true, 'relationship' => 'productoCodigoBarra.sku'],
+        ['name' => 'codigo_barras', 'label' => 'Código de Barras', 'sortable' => true, 'searchable' => true, 'relationship' => 'productoCodigoBarra.codigoBarra'],
+        ['name' => 'clasificacion_envase', 'label' => 'Clasificación de Envase', 'sortable' => true, 'searchable' => true, 'relationship' => 'productoCodigoBarra.clasificacion_envase'],
         ['name' => 'nombre', 'label' => 'Nombre', 'sortable' => true, 'searchable' => true],
         ['name' => 'revision', 'label' => 'Revisión', 'sortable' => true, 'searchable' => true],
         ['name' => 'estado', 'label' => 'Estado', 'sortable' => true, 'searchable' => true],
@@ -29,6 +32,7 @@ class PrintCardsTable extends Component
 
     public function mount($productoCodigoBarra = null, $columnasPersonalizadas = null)
     {
+        $this->productoCodigoBarra = $productoCodigoBarra;
         if ($columnasPersonalizadas) {
             $this->columnas = array_values(array_filter($this->columnas, function($col) use ($columnasPersonalizadas) {
                 return in_array($col['name'], $columnasPersonalizadas);
@@ -76,6 +80,9 @@ class PrintCardsTable extends Component
     public function render()
     {
         $query = PrintCard::query()->with(['productoCodigoBarra.producto', 'proveedor', 'creador']);
+        if ($this->productoCodigoBarra) {
+            $query->where('producto_codigo_barra_id', $this->productoCodigoBarra->id);
+        }
         $query = $this->aplicarFiltros($query, $this->columnas);
         $printCards = $query->paginate($this->perPage);
 
@@ -88,12 +95,17 @@ class PrintCardsTable extends Component
     public function getColumnValue($printCard, $columna)
     {
         if (isset($columna['relationship'])) {
-
             if ($columna['relationship'] === 'productoCodigoBarra') {
                 return $printCard->productoCodigoBarra->producto->nombre_corto ?? '-';
             }
             if ($columna['relationship'] === 'productoCodigoBarra.sku') {
                 return $printCard->productoCodigoBarra->producto->sku ?? '-';
+            }
+            if ($columna['relationship'] === 'productoCodigoBarra.codigoBarra') {
+                return $printCard->productoCodigoBarra->codigoBarra->codigo ?? '-';
+            }
+            if ($columna['relationship'] === 'productoCodigoBarra.clasificacion_envase') {
+                return $printCard->productoCodigoBarra->clasificacion_envase ?? '-';
             }
             if ($columna['relationship'] === 'proveedor') {
                 return $printCard->proveedor->nombre ?? '-';

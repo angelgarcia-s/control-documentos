@@ -26,12 +26,13 @@
     <div class="box-header flex justify-between">
         <div class="box-title">PrintCards asociados</div>
         @can('print-cards-create')
-        <a href="{{ route('print-cards.create') }}" class="ti-btn ti-btn-primary">
+        <a href="{{ route('print-cards.create', ['producto_codigo_barra_id' => $productoCodigoBarra->id]) }}" class="ti-btn ti-btn-primary">
             <i class="ri-add-line mr-1"></i> Nuevo PrintCard
         </a>
         @endcan
     </div>
     <div class="box-body">
+    @if ($productoCodigoBarra->printCards->count() > 0)
         @livewire('print-cards-table', [
             'productoCodigoBarra' => $productoCodigoBarra,
             'columnasPersonalizadas' => [
@@ -42,5 +43,15 @@
             <a href="{{ url()->previous() }}" class="ti-btn ti-btn-primary-full mt-6">Regresar</a>
         </div>
     </div>
+    @else
+        <div class="p-4 text-center">
+            <p class="text-gray-500">No hay PrintCards asociados a este código de barras.</p>
+            @can('print-cards-create')
+            <a href="{{ route('print-cards.create') }}" class="ti-btn ti-btn-primary mt-2">
+                <i class="ri-add-line mr-1"></i> Crear el primer PrintCard
+            </a>
+            @endcan
+        </div>
+    @endif
 </div>
 @endsection

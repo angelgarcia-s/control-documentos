@@ -39,11 +39,11 @@
                 </div>
                 <div class="box-body">
                     <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
-                        <div class="md:col-span-1 col-span-12 mb-4">
+                        <div class="md:col-span-1 lg:col-span-1 col-span-12 mb-4">
                             <label class="form-label">ID</label>
                             <input type="text" class="form-control" value="{{ $printCard->id }}" disabled>
                         </div>
-                        <div class="md:col-span-4 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-4 col-span-12 mb-4">
                             <label class="form-label" for="producto_codigo_barra_id">Producto</label>
                             <select class="form-control js-example-basic-single w-full text-xl @error('producto_codigo_barra_id') is-invalid @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value="">Seleccione...</option>
@@ -56,11 +56,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="md:col-span-5 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-5 col-span-12 mb-4">
                             <label class="form-label" for="nombre">Nombre del PrintCard (código específico)</label>
                             <input type="text" name="nombre" id="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre', $printCard->nombre) }}" required maxlength="255">
                         </div>
-                        <div class="md:col-span-2 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-2 col-span-12 mb-4">
                             <label class="form-label" for="fecha">Fecha de creación</label>
                             {{-- <input type="date" name="fecha" id="date" class="form-control @error('fecha') is-invalid @enderror" value="{{ old('fecha', $printCard->fecha ? \Carbon\Carbon::parse($printCard->fecha)->format('d-m-Y') : null) }}"> --}}
                             <div class="input-group">
@@ -70,7 +70,7 @@
                             </div>
 
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-4 col-span-12 mb-4">
                             <label class="form-label" for="proveedor_id">Proveedor</label>
                             <select name="proveedor_id" id="proveedor_id" class="form-control @error('proveedor_id') is-invalid @enderror" required>
                                 <option value="">Seleccione...</option>
@@ -81,18 +81,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-4 col-span-12 mb-4">
                             <label class="form-label" for="registro_sanitario">Registro Sanitario</label>
                             <input type="text" name="registro_sanitario" id="registro_sanitario" class="form-control @error('registro_sanitario') is-invalid @enderror" value="{{ old('registro_sanitario', $printCard->registro_sanitario) }}" maxlength="255">
                         </div>
-                        <div class="md:col-span-3 col-span-12 mb-4">
+                        <div class="md:col-span-8 lg:col-span-4 col-span-12 mb-4">
                             <label class="form-label">Creado por</label>
                             <input type="text" class="form-control" value="{{ $printCard->creador->name ?? '-' }}" disabled>
                         </div>
 
                         <div class="md:col-span-12 col-span-12 mb-4">
                             <label class="form-label" for="notas">Notas</label>
-                            <textarea name="notas" id="notas" class="form-control @error('notas') is-invalid @enderror">{{ old('notas', $printCard->notas) }}</textarea>
+                            <textarea name="notas" id="notas" class="form-control mb-2 max-h-48 overflow-y-auto @error('notas') is-invalid @enderror">{{ old('notas', $printCard->notas) }}</textarea>
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 mt-6">

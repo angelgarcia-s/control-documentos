@@ -3,7 +3,7 @@
 @section('content')
 <div class="block justify-between page-header md:flex">
     <div>
-        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Detalle de Tarjeta de Impresión</h3>
+        <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-[1.125rem] font-semibold">Detalle de la PrintCard</h3>
     </div>
     <x-breadcrumbs />
 </div>
@@ -17,7 +17,7 @@
     <div class="col-span-12">
         <div class="box">
             <div class="box-header">
-                <div class="box-title">Datos de la Tarjeta</div>
+                <div class="box-title">Datos de la PrintCard:   {{ $printCard->nombre }} </div>
             </div>
             <div class="box-body">
                 <div class="grid grid-cols-12 sm:gap-x-6 sm:gap-y-4">
@@ -43,7 +43,7 @@
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Registro Sanitario</label>
-                        <p class="form-control border border-slate-200 min-h-9">{{ $printCard->registro_sanitario }}</p>
+                        <p class="form-control border border-slate-200 min-h-9">{{ $printCard->registro_sanitario ?? '-' }}</p>
                     </div>
                     <div class="md:col-span-3 col-span-12 mb-4">
                         <label class="form-label">Creado por</label>

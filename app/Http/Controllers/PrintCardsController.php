@@ -16,13 +16,14 @@ class PrintCardsController extends Controller
         return view('print-cards.index', compact('printCards'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $productosCodigosBarras = ProductoCodigosBarras::with('producto')->get();
         $proveedores = Proveedor::all();
         // Obtener todas las clasificaciones de envase únicas disponibles
         $clasificacionesEnvase = ProductoCodigosBarras::select('clasificacion_envase')->distinct()->pluck('clasificacion_envase');
-        return view('print-cards.create', compact('productosCodigosBarras', 'proveedores', 'clasificacionesEnvase'));
+        $productoCodigoBarraId = $request->get('producto_codigo_barra_id');
+        return view('print-cards.create', compact('productosCodigosBarras', 'proveedores', 'clasificacionesEnvase', 'productoCodigoBarraId'));
     }
 
     public function store(Request $request)

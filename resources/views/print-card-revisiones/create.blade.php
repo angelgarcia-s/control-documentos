@@ -59,14 +59,27 @@
 
         <div class="mb-6">
             <label for="pdf_path" class="form-label">Archivo PDF <span class="text-red-500">*</span></label>
-            <input type="file" name="pdf_path" id="pdf_path"
-                class="form-control @error('pdf_path') is-invalid @enderror"
+            <input type="file" name="pdf_path" id="file-input" class="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-white/50
+                                              file:border-0
+                                              file:bg-light file:me-4
+                                              file:py-3 file:px-4
+                                              dark:file:bg-black/20 dark:file:text-white/50
+
+                 @error('pdf_path') is-invalid @enderror"
                 accept=".pdf" required>
             @error('pdf_path')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 
+        <div class="mb-6">
+            <label for="historial_revision" class="form-label">Historial de cambios</label>
+            <textarea name="historial_revision" id="historial_revision" rows="4"
+                class="form-control @error('historial_revision') is-invalid @enderror">{{ old('historial_revision') }}</textarea>
+            @error('historial_revision')
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
         <div class="mb-6">
             <label for="notas" class="form-label">Notas</label>
             <textarea name="notas" id="notas" rows="4"
@@ -76,14 +89,6 @@
             @enderror
         </div>
 
-        <div class="mb-6">
-            <label for="historial_revision" class="form-label">Historial de la Revisión</label>
-            <textarea name="historial_revision" id="historial_revision" rows="4"
-                class="form-control @error('historial_revision') is-invalid @enderror">{{ old('historial_revision') }}</textarea>
-            @error('historial_revision')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
-        </div>
 
         <div class="flex justify-end gap-3">
             <a href="{{ url()->previous() }}" class="ti-btn ti-btn-secondary-full ml-2 !mb-0">Cancelar </a>
