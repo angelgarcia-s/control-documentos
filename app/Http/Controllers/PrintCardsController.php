@@ -92,4 +92,45 @@ class PrintCardsController extends Controller
         $printCards = $productoCodigoBarra->printcards;
         return view('print-cards.por-codigo-barra', compact('productoCodigoBarra', 'printCards'));
     }
+
+    /**
+     * Verificar si un nombre de PrintCard ya existe globalmente en otros productos
+     */
+    public function verificarDuplicadosGlobales(Request $request)
+    {
+        $nombre = $request->get('nombre');
+        $productoCodigoBarraIdActual = $request->get('producto_codigo_barra_id');
+        $printCardIdActual = $request->get('printcard_id'); // Para excluir en edición
+
+        if (!$nombre) {
+            return response()->json(['duplicados' => []]);
+        }
+
+        // Buscar PrintCards con el mismo nombre en otros productos
+        $duplicados = PrintCard::with(['productoCodigoBarra.producto', 'productoCodigoBarra.codigoBarra', 'proveedor'])
+            ->where('nombre', $nombre)
+            ->when($productoCodigoBarraIdActual, function($query) use ($productoCodigoBarraIdActual) {
+                // Excluir el producto actual si se proporciona
+                return $query->where('producto_codigo_barra_id', '!=', $productoCodigoBarraIdActual);
+            })
+            ->when($printCardIdActual, function($query) use ($printCardIdActual) {
+                // Excluir el PrintCard actual en caso de edición
+                return $query->where('id', '!=', $printCardIdActual);
+            })
+            ->get()
+            ->map(function($printCard) {
+                return [
+                    'printcard_id' => $printCard->id,
+                    'producto_nombre' => $printCard->productoCodigoBarra->producto->nombre_corto ?? $printCard->productoCodigoBarra->producto->nombre,
+                    'codigo_barra' => $printCard->productoCodigoBarra->codigoBarra->codigo ?? 'SIN CÓDIGO',
+                    'clasificacion_envase' => $printCard->productoCodigoBarra->clasificacion_envase,
+                    'proveedor' => $printCard->proveedor->nombre ?? 'N/A'
+                ];
+            });
+
+        return response()->json([
+            'duplicados' => $duplicados,
+            'cantidad' => $duplicados->count()
+        ]);
+    }
 }

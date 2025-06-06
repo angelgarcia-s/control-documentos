@@ -292,6 +292,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{printCard}', [PrintCardsController::class, 'update'])->name('print-cards.update')->middleware('can:print-cards-edit');
         Route::delete('/{printCard}', [PrintCardsController::class, 'destroy'])->name('print-cards.destroy')->middleware('can:print-cards-destroy');
         Route::get('/por-codigo-barra/{productoCodigoBarra}', [PrintCardsController::class, 'printCardsPorCodigoBarra'])->name('print-cards.por-codigo-barra')->middleware('can:print-cards-list');
+        Route::post('/verificar-duplicados-globales', [PrintCardsController::class, 'verificarDuplicadosGlobales'])->name('print-cards.verificar-duplicados-globales')->middleware('can:print-cards-create');
     });
 
     // Rutas para PrintCardRevisions

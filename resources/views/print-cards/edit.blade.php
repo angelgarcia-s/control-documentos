@@ -45,7 +45,7 @@
                         </div>
                         <div class="md:col-span-8 lg:col-span-4 col-span-12 mb-4">
                             <label class="form-label" for="producto_codigo_barra_id">Producto</label>
-                            <select class="form-control js-example-basic-single w-full text-xl @error('producto_codigo_barra_id') is-invalid @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
+                            <select class="form-control js-example-basic-single w-full select-loading @error('producto_codigo_barra_id') is-invalid @enderror" name="producto_codigo_barra_id" id="producto_codigo_barra_id" required>
                                 <option value="">Seleccione...</option>
                                 @foreach($productosCodigosBarras as $producto)
                                     <option value="{{ $producto->id }}" {{ (old('producto_codigo_barra_id', $printCard->producto_codigo_barra_id) == $producto->id) ? 'selected' : '' }}>
@@ -59,10 +59,27 @@
                         <div class="md:col-span-8 lg:col-span-5 col-span-12 mb-4">
                             <label class="form-label" for="nombre">Nombre del PrintCard (código específico)</label>
                             <input type="text" name="nombre" id="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre', $printCard->nombre) }}" required maxlength="255">
+                            @error('nombre') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                            <div id="advertencia-duplicados" class="mt-2" style="display: none;">
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="ri-alert-line text-yellow-400"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-700">
+                                                Este nombre ya existe en otros productos.
+                                                <button type="button" id="mostrar-modal-duplicados" class="font-medium text-yellow-800 underline hover:text-yellow-900">
+                                                    Ver detalles
+                                                </button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="md:col-span-8 lg:col-span-2 col-span-12 mb-4">
                             <label class="form-label" for="fecha">Fecha de creación</label>
-                            {{-- <input type="date" name="fecha" id="date" class="form-control @error('fecha') is-invalid @enderror" value="{{ old('fecha', $printCard->fecha ? \Carbon\Carbon::parse($printCard->fecha)->format('d-m-Y') : null) }}"> --}}
                             <div class="input-group">
                                 <div class="input-group-text text-[#8c9097] dark:text-white/50"> <i class="ri-calendar-line"></i> </div>
                                 <input type="text" name="fecha" id="date" class="form-control @error('fecha') is-invalid @enderror" value="{{ old('fecha', $printCard->fecha)  }}">
@@ -104,18 +121,182 @@
         </div>
     </div>
 </form>
+
+<!-- Modal para mostrar duplicados -->
+<div class="hs-overlay hidden ti-modal" id="modal-duplicados">
+    <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out min-h-[calc(100%-3.5rem)] flex items-center">
+        <div class="ti-modal-content w-full">
+            <div class="ti-modal-header">
+                <h6 class="modal-title text-[1rem] font-semibold">Nombres Duplicados Encontrados</h6>
+                <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#modal-duplicados">
+                    <span class="sr-only">Close</span>
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="ti-modal-body px-4">
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-3">
+                        El nombre "<span id="nombre-duplicado-display" class="font-semibold"></span>" ya está siendo utilizado en los siguientes productos:
+                    </p>
+                </div>
+                <div class="space-y-3" id="lista-duplicados">
+                    <!-- Lista de duplicados se llenará dinámicamente -->
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p class="text-sm text-blue-700">
+                        <i class="ri-information-line mr-1"></i>
+                        Puedes continuar usando este nombre ya que será único para el producto seleccionado.
+                    </p>
+                </div>
+            </div>
+            <div class="ti-modal-footer">
+                <button type="button" class="hs-dropdown-toggle ti-btn ti-btn-secondary-full" data-hs-overlay="#modal-duplicados">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
     <!-- Date & Time Picker JS -->
         <script src="{{asset('build/assets/libs/flatpickr/flatpickr.min.js')}}"></script>
-        @vite('resources/assets/js/date-time_pickers.js')
+        @vite('resources/assets/js/date-time_pickers.js')    <style>
+        /* Estilos para el select antes de que Select2 se inicialice */
+        .select-loading {
+            font-size: 0.875rem !important; /* Texto más pequeño */
+            line-height: 1.25rem !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+            text-overflow: ellipsis !important;
+            max-height: 38px !important; /* Altura fija del select */
+        }
+
+        .select-loading option {
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        /* Remover estilos cuando Select2 esté activo */
+        .select2-hidden-accessible {
+            font-size: inherit !important;
+            line-height: inherit !important;
+            overflow: inherit !important;
+            white-space: inherit !important;
+            text-overflow: inherit !important;
+            max-height: inherit !important;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
+            // Inicializar Select2 y remover clase de loading
             $('#producto_codigo_barra_id').select2({
                 placeholder: 'Buscar producto...',
                 allowClear: true,
                 width: '100%'
+            }).removeClass('select-loading');
+
+            // Variables para almacenar duplicados
+            let duplicadosActuales = [];
+            let timeoutVerificacion;
+
+            // Función para verificar duplicados
+            function verificarDuplicados() {
+                const nombre = $('#nombre').val().trim();
+                const productoId = $('#producto_codigo_barra_id').val();
+
+                if (nombre.length < 2) {
+                    $('#advertencia-duplicados').hide();
+                    return;
+                }
+
+                // Hacer petición AJAX
+                $.ajax({
+                    url: '{{ route("print-cards.verificar-duplicados-globales") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        nombre: nombre,
+                        producto_codigo_barra_id: productoId,
+                        printcard_id: '{{ $printCard->id }}' // Excluir el PrintCard actual
+                    },
+                    success: function(response) {
+                        if (response.cantidad > 0) {
+                            duplicadosActuales = response.duplicados;
+                            $('#advertencia-duplicados').show();
+                        } else {
+                            $('#advertencia-duplicados').hide();
+                        }
+                    },
+                    error: function() {
+                        $('#advertencia-duplicados').hide();
+                    }
+                });
+            }
+
+            // Event listeners
+            $('#nombre').on('input', function() {
+                clearTimeout(timeoutVerificacion);
+                timeoutVerificacion = setTimeout(verificarDuplicados, 500); // Esperar 500ms después de que el usuario deje de escribir
+            });
+
+            $('#producto_codigo_barra_id').on('change', function() {
+                if ($('#nombre').val().trim().length > 1) {
+                    verificarDuplicados();
+                }
+            });
+
+            // Mostrar modal con detalles
+            $('#mostrar-modal-duplicados').on('click', function() {
+                const nombreDisplay = $('#nombre').val();
+                $('#nombre-duplicado-display').text(nombreDisplay);
+
+                // Limpiar lista anterior
+                const listaDuplicados = $('#lista-duplicados');
+                listaDuplicados.empty();
+
+                // Llenar lista de duplicados
+                duplicadosActuales.forEach(function(duplicado) {
+                    const itemDuplicado = $(`
+                        <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h5 class="font-medium text-gray-900">${duplicado.producto_nombre}</h5>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <span class="inline-flex items-center">
+                                            <i class="ri-barcode-line mr-1"></i>
+                                            Código: ${duplicado.codigo_barra}
+                                        </span>
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        <span class="inline-flex items-center">
+                                            <i class="ri-package-line mr-1"></i>
+                                            Envase: ${duplicado.clasificacion_envase}
+                                        </span>
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        <span class="inline-flex items-center">
+                                            <i class="ri-building-line mr-1"></i>
+                                            Proveedor: ${duplicado.proveedor}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    ID: ${duplicado.printcard_id}
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    listaDuplicados.append(itemDuplicado);
+                });
+
+                // Mostrar modal
+                HSOverlay.open(document.querySelector('#modal-duplicados'));
             });
         });
     </script>
