@@ -62,7 +62,7 @@ trait HasTableFeatures
                         $columna = collect($columnas)->firstWhere('name', $fullField);
                         if ($columna && $columna['searchable']) {
                             if (isset($columna['relationship'])) {
-                                $query->whereHas($columna['relationship'], fn ($q) => $q->where($subcampo, 'like', "%{$subvalor}%"));
+                                $this->aplicarBusquedaRelacion($query, $columna['relationship'], $subvalor);
                             }
                         }
                     }
@@ -72,7 +72,7 @@ trait HasTableFeatures
                     $columna = collect($columnas)->firstWhere('name', $campo);
                     if ($columna && $columna['searchable']) {
                         if (isset($columna['relationship'])) {
-                            $query->whereHas($columna['relationship'], fn ($q) => $q->where('nombre', 'like', "%{$valor}%"));
+                            $this->aplicarBusquedaRelacion($query, $columna['relationship'], $valor);
                         } else {
                             $query->where($campo, 'like', "%{$valor}%");
                         }
@@ -93,5 +93,51 @@ trait HasTableFeatures
         }
 
         return $query;
+    }
+
+    /**
+     * Aplicar búsqueda en relaciones complejas
+     * Maneja tanto relaciones simples como anidadas (ej: 'productoCodigoBarra.sku')
+     */
+    private function aplicarBusquedaRelacion($query, $relationship, $valor)
+    {
+        if (str_contains($relationship, '.')) {
+            // Relación anidada como 'productoCodigoBarra.sku'
+            $partes = explode('.', $relationship);
+
+            if (count($partes) === 2) {
+                [$relacion, $campo] = $partes;
+
+                // Casos especiales para diferentes tipos de relaciones
+                if ($relacion === 'productoCodigoBarra') {
+                    if ($campo === 'sku') {
+                        // Buscar en producto.sku a través de productoCodigoBarra
+                        $query->whereHas('productoCodigoBarra.producto', function($q) use ($valor) {
+                            $q->where('sku', 'like', "%{$valor}%");
+                        });
+                    } elseif ($campo === 'codigoBarra') {
+                        // Buscar en codigoBarra.codigo a través de productoCodigoBarra
+                        $query->whereHas('productoCodigoBarra.codigoBarra', function($q) use ($valor) {
+                            $q->where('codigo', 'like', "%{$valor}%");
+                        });
+                    } else {
+                        // Campo directo en productoCodigoBarra (como clasificacion_envase)
+                        $query->whereHas('productoCodigoBarra', function($q) use ($campo, $valor) {
+                            $q->where($campo, 'like', "%{$valor}%");
+                        });
+                    }
+                } else {
+                    // Relación genérica anidada
+                    $query->whereHas($relacion, function($q) use ($campo, $valor) {
+                        $q->where($campo, 'like', "%{$valor}%");
+                    });
+                }
+            }
+        } else {
+            // Relación simple
+            $query->whereHas($relationship, function($q) use ($valor) {
+                $q->where('nombre', 'like', "%{$valor}%");
+            });
+        }
     }
 }

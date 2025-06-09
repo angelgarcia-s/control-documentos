@@ -9,7 +9,12 @@ class ProductoCodigosBarras extends Model
 {
     protected $table = 'producto_codigos_barras';
 
-    protected $fillable = ['producto_id', 'codigo_barra_id', 'clasificacion_envase', 'contenido'];
+    protected $fillable = [
+        'producto_id',
+        'codigo_barra_id',
+        'clasificacion_envase',
+        'contenido'
+    ];
 
     // Mutadores para guardar en minúsculas
     public function setClasificacionEnvaseAttribute($value)
