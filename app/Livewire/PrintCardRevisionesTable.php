@@ -15,11 +15,11 @@ class PrintCardRevisionesTable extends Component
 
     public $columnas = [
         ['name' => 'id', 'label' => 'ID', 'sortable' => true, 'searchable' => true],
-        ['name' => 'print_card_id', 'label' => 'PrintCard', 'sortable' => true, 'searchable' => true],
+        ['name' => 'printCard', 'label' => 'PrintCard', 'sortable' => true, 'searchable' => true, 'relationship' => 'printCard', 'search_field' => 'nombre'],
         ['name' => 'revision', 'label' => 'Revisión', 'sortable' => true, 'searchable' => true],
         ['name' => 'estado', 'label' => 'Estado', 'sortable' => true, 'searchable' => true],
         ['name' => 'notas', 'label' => 'Notas', 'sortable' => false, 'searchable' => true],
-        ['name' => 'revisado_por', 'label' => 'Revisor', 'sortable' => true, 'searchable' => true],
+        ['name' => 'revisor', 'label' => 'Revisor', 'sortable' => true, 'searchable' => true, 'relationship' => 'revisor', 'search_field' => 'name'],
         ['name' => 'fecha_revision', 'label' => 'Fecha Revisión', 'sortable' => true, 'searchable' => false],
         ['name' => 'pdf_path', 'label' => 'PDF', 'sortable' => false, 'searchable' => false],
         ['name' => 'historial_revision', 'label' => 'Historial', 'sortable' => false, 'searchable' => false],
@@ -77,18 +77,25 @@ class PrintCardRevisionesTable extends Component
 
     public function getColumnValue($revision, $columna)
     {
+        if (isset($columna['relationship'])) {
+            if ($columna['name'] === 'printCard') {
+                return $revision->printCard->nombre ?? '-';
+            }
+            if ($columna['name'] === 'revisor') {
+                return $revision->revisor->name ?? '-';
+            }
+        }
+
         $campo = $columna['name'];
-        if ($campo === 'print_card_id') {
-            return $revision->printCard->nombre ?? '-';
-        }
-        if ($campo === 'revisado_por') {
-            return $revision->revisor->name ?? '-';
-        }
         if ($campo === 'pdf_path') {
-            return $revision->pdf_path ? '<a href="' . asset('storage/' . $revision->pdf_path) . '" target="_blank">Ver PDF</a>' : '-';
+            return $revision->pdf_path ? '<a href="' . asset('storage/' . $revision->pdf_path) . '" target="_blank" class="text-blue-600 hover:text-blue-800 underline">Ver PDF</a>' : '-';
         }
         if ($campo === 'fecha_revision') {
             return $revision->fecha_revision ? \Carbon\Carbon::parse($revision->fecha_revision)->format('d/m/Y H:i') : '-';
+        }
+        if ($campo === 'historial_revision') {
+            return $revision->historial_revision ?
+                '<span class="text-xs bg-gray-100 px-2 py-1 rounded">' . substr($revision->historial_revision, 0, 50) . '...</span>' : '-';
         }
         return $revision->$campo ?? '-';
     }
