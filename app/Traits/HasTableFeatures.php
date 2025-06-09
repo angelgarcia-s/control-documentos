@@ -74,7 +74,12 @@ trait HasTableFeatures
                         if (isset($columna['relationship'])) {
                             $this->aplicarBusquedaRelacion($query, $columna['relationship'], $valor, $columna);
                         } else {
-                            $query->where($campo, 'like', "%{$valor}%");
+                            // Detectar si es un número para usar = en lugar de LIKE
+                            if (is_numeric($valor)) {
+                                $query->where($campo, $valor);
+                            } else {
+                                $query->where($campo, 'like', "%{$valor}%");
+                            }
                         }
                     }
                 }
@@ -107,7 +112,7 @@ trait HasTableFeatures
 
             if (count($partes) === 2) {
                 [$relacion, $campo] = $partes;
-                
+
                 // Aplicar búsqueda genérica en relación anidada
                 $query->whereHas($relacion, function($q) use ($campo, $valor) {
                     $q->where($campo, 'like', "%{$valor}%");
@@ -116,11 +121,11 @@ trait HasTableFeatures
         } else {
             // Relación simple - usar search_field si está definido, sino usar 'nombre' por defecto
             $searchField = 'nombre'; // Campo por defecto
-            
+
             if ($columna && isset($columna['search_field'])) {
                 $searchField = $columna['search_field'];
             }
-            
+
             $query->whereHas($relationship, function($q) use ($searchField, $valor) {
                 $q->where($searchField, 'like', "%{$valor}%");
             });
