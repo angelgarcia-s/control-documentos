@@ -42,7 +42,7 @@
 
         <!-- SWITCHER -->
 
-        {{-- @include('layouts.components.switcher') --}}
+        @include('layouts.components.switcher')
 
         <!-- END SWITCHER -->
 
